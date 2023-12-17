@@ -4,10 +4,12 @@ import { Outlet } from "react-router-dom";
 const Layout = () => {
   return (
     <main>
-      <Header />
       <SideBar />
-      <div className="w-main">
-        <Outlet />
+      <div className="ml-[200px]">
+        <Header />
+        <div className="w-full bg-[#f5f5f5] pt-5">
+          <Outlet />
+        </div>
       </div>
     </main>
   );

@@ -130,3 +130,8 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+.react-datepicker__input-container input {
+  outline: none;
+  border: none;
+}
