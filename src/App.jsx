@@ -1,6 +1,7 @@
 /** @format */
 import { Layout, NotFound } from "./components";
-import { Blog, Login, Profile, Register, Study } from "./pages/Student";
+import { Blog, Profile, Study } from "./pages/Student";
+import { Register, Login } from "./pages/Public";
 import {
   DashBoash,
   ManageBlog,
@@ -8,6 +9,9 @@ import {
   ManageSchedule,
   ManageStudent,
   ManageMail,
+  Role,
+  Account,
+  ManageAttendance,
 } from "./pages/Admin";
 import path from "./ultils/path";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -30,7 +34,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: path.ADMIN,
+    path: `${path.ADMIN}`,
     element: <Layout />,
     errorElement: <NotFound />,
 
@@ -48,8 +52,12 @@ const router = createBrowserRouter([
         element: <ManageCourse />,
       },
       {
-        path: path.MANAGE_STUDENT,
+        path: path.MANAGE_STUDENT_CRUD,
         element: <ManageStudent />,
+      },
+      {
+        path: path.MANAGE_STUDENT_ATTENDANCE,
+        element: <ManageAttendance />,
       },
       {
         path: path.MANAGE_SCHEDULE,
@@ -58,6 +66,14 @@ const router = createBrowserRouter([
       {
         path: path.MANAGE_MAIL,
         element: <ManageMail />,
+      },
+      {
+        path: path.ADMIN_ROLE,
+        element: <Role />,
+      },
+      {
+        path: path.ADMIN_ACCOUNT,
+        element: <Account />,
       },
     ],
   },
