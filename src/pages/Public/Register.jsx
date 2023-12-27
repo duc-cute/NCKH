@@ -1,181 +1,98 @@
 /** @format */
 
 import { FaRegRegistered } from "react-icons/fa";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button, InputField } from "../../components";
+import { validate } from "../../ultils/helper";
+import { apiRegister } from "../../apis";
 
 const Register = () => {
-  // check email
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^@]+@eaut\.edu\.vn$/;
-    return emailRegex.test(email)
-      ? ""
-      : "You must enter the email provided by the school.";
-  };
-
-  // check student Code
-  const [studentCode, setStudentCode] = useState("");
-  const [studentCodeError, setStudentCodeError] = useState("");
-  const validateStudentCode = (studentCode) => {
-    const studentCodeRegex = /^[0-9]{8}$/;
-    return studentCodeRegex.test(studentCode)
-      ? ""
-      : "Student code consists of 8 digits.";
-  };
-
-  // check password
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    return passwordRegex.test(password)
-      ? ""
-      : "Password 8 characters or more, including numbers and capital letters.";
-  };
-
-  // check confirm Password
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [invalid, setInvalid] = useState([]);
+  const [payload, setPayload] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    fullname: "",
+    username: "",
+  });
+  const handleSubmit = useCallback(async () => {
+    const invalid = validate(payload, setInvalid);
+    if (invalid == 0) {
+      const { email, password, fullname, username } = payload;
+      const response = await apiRegister({
+        Email: email,
+        Password: password,
+        FullName: fullname,
+        UserName: username,
+      });
+      console.log("res", response);
+    }
+  });
 
   return (
     <>
-      <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <section className="bg-gray-50 min-h-screen flex items-center">
+        <div className="flex flex-col items-center justify-center px-6 py-4 mx-auto  lg:py-0 w-full">
           <a
             href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 "
           >
             <FaRegRegistered className="w-8 h-8 mr-2" alt="Register" />
             Register an account
           </a>
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          <div className="w-full bg-white rounded-lg shadow  md:mt-0 sm:max-w-md xl:p-0 ">
+            <div className="px-6 space-y-4 md:space-y-6 sm:p-8">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Create an account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
-                <div>
-                  <input
-                    type="fullname"
-                    name="fullname"
-                    id="fullname"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="First and last name"
-                    required
-                    onChange={(e) => {
-                      setStudentCode(e.target.value);
-                      setStudentCodeError(validateStudentCode(e.target.value));
-                    }}
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Email"
-                    required
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setEmailError(validateEmail(e.target.value));
-                    }}
-                  />
-
-                  <div className="mt-2">
-                    {emailError && (
-                      <span className="text-red-500 text-xs italic">
-                        {emailError}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <input
-                    type="text"
-                    name="Usename"
-                    id="Usename"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Usename"
-                    required
-                    onChange={(e) => {
-                      setStudentCode(e.target.value);
-                      setStudentCodeError(validateStudentCode(e.target.value));
-                    }}
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="student-code"
-                    id="student-code"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Student code"
-                    required
-                    onChange={(e) => {
-                      setStudentCode(e.target.value);
-                      setStudentCodeError(validateStudentCode(e.target.value));
-                    }}
-                  />
-                  <div className="mt-2">
-                    {studentCodeError && (
-                      <span className="text-red-500 text-xs italic">
-                        {studentCodeError}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Password"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setPasswordError(validatePassword(e.target.value));
-                    }}
-                  />
-                  <div className="mt-2">
-                    {passwordError && (
-                      <span className="text-red-500 text-xs italic">
-                        {passwordError}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    name="confirm-password"
-                    id="confirm-password"
-                    placeholder="Confirm password"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setConfirmPasswordError(
-                        password !== e.target.value
-                          ? "Passwords do not match."
-                          : ""
-                      );
-                    }}
-                  />
-                  <div className="mt-2">
-                    {confirmPasswordError && (
-                      <span className="text-red-500 text-xs italic">
-                        {confirmPasswordError}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-start">
+              <div className="space-y-2 md:space-y-4" action="#">
+                <InputField
+                  nameKey="fullname"
+                  placeholder="Full Name"
+                  value={payload.fullname}
+                  setValue={setPayload}
+                  inValid={invalid}
+                  setInvalid={setInvalid}
+                  label="Full Name"
+                />
+                <InputField
+                  nameKey="email"
+                  placeholder="Email"
+                  value={payload.email}
+                  setValue={setPayload}
+                  inValid={invalid}
+                  setInvalid={setInvalid}
+                  label="Email"
+                />
+                <InputField
+                  nameKey={"username"}
+                  placeholder="username"
+                  value={payload.username}
+                  inValid={invalid}
+                  setValue={setPayload}
+                  setInvalid={setInvalid}
+                  label="User Name"
+                />
+                <InputField
+                  nameKey={"password"}
+                  placeholder="Password"
+                  value={payload.password}
+                  inValid={invalid}
+                  setValue={setPayload}
+                  setInvalid={setInvalid}
+                  label="Password"
+                />
+                <InputField
+                  nameKey={"confirmPassword"}
+                  placeholder="Confirm Password"
+                  value={payload.confirmPassword}
+                  inValid={invalid}
+                  setValue={setPayload}
+                  setInvalid={setInvalid}
+                  label="Confirm Password"
+                />
+                {/* <div className="flex items-start">
                   <div className="flex items-center h-5">
                     <input
                       id="terms"
@@ -199,34 +116,27 @@ const Register = () => {
                       </a>
                     </label>
                   </div>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-[#1678ff] w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                </div> */}
+                <Button
+                  handleOnclick={handleSubmit}
+                  style="flex justify-center  bg-[#1678ff] w-full capitalize text-white"
                 >
                   Create an account
-                </button>
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                </Button>
+                <p className="text-sm font-light text-gray-500">
                   Already have an account?{" "}
-                  {/* <a
-                    href=""
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                  >
-                    Login here
-                  </a> */}
                   <Link
                     to="/Login"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    className="font-medium text-primary-600 hover:underline "
                   >
                     Login here
                   </Link>
                 </p>
-              </form>
+              </div>
             </div>
           </div>
         </div>
       </section>
-      );
     </>
   );
 };
