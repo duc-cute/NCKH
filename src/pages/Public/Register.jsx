@@ -2,13 +2,15 @@
 
 import { FaRegRegistered } from "react-icons/fa";
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, InputField } from "../../components";
 import { validate } from "../../ultils/helper";
 import { apiRegister } from "../../apis";
-
+import swal from "sweetalert2";
+import path from "../../ultils/path";
 const Register = () => {
   const [invalid, setInvalid] = useState([]);
+  const navigate = useNavigate();
   const [payload, setPayload] = useState({
     email: "",
     password: "",
@@ -27,6 +29,9 @@ const Register = () => {
         UserName: username,
       });
       console.log("res", response);
+      if (response.status === 200) {
+        navigate(`/${path.LOGIN}`);
+      } else swal.fire("Oops!", "Some things went wrong", "error");
     }
   });
 

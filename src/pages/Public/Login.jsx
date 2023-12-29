@@ -8,9 +8,12 @@ import { validate } from "../../ultils/helper";
 import { apiLogin } from "../../apis";
 import path from "../../ultils/path";
 import swal from "sweetalert2";
+import { login } from "../../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const [invalidField, setInvalidField] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [payload, setPayload] = useState({
     email: "",
     password: "",
@@ -20,13 +23,25 @@ const Login = () => {
     const { email, password } = payload;
     const invalids = validate(payload, setInvalidField);
     if (invalids === 0) {
-      const response = await apiLogin({ Email: email, Password: password });
-      console.log("res", response);
-      if (response.status === 200) {
+      const res = await apiLogin({ Email: email, Password: password });
+      console.log("re", res);
+      if (res?.status === 200) {
+        dispatch(
+          login({
+            isLoggedIn: true,
+            token: res.access_token,
+            userData: {
+              email: res.Email,
+              username: res.UserName,
+              avatar: res?.Avatar,
+              fullname: res.FullName,
+            },
+          })
+        );
         navigate(`/${path.ADMIN}/${path.MANAGE_STUDENT_CRUD}`);
-      } else swal.fire("Oops!", rs?.mes, "error");
+      } else swal.fire("Oops!", res?.mesage, "error");
     }
-  });
+  }, [payload]);
   return (
     <>
       <section className="bg-gray-50 ">
@@ -39,7 +54,7 @@ const Login = () => {
             Sign in to your account
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <form className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
                 Log in
               </h1>
@@ -84,7 +99,7 @@ const Login = () => {
                   </Link>
                 </p>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
