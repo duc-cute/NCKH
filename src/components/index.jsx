@@ -9,6 +9,10 @@ export { default as InputField } from "./Input/InputField";
 export { default as InputSearch } from "./Input/InputSearch";
 export { default as RadioAttendance } from "./Input/RadioAttendance";
 
+export { default as SelectOption } from "./Input/SelectOption";
+export { default as InputFile } from "./Input/InputFile";
+export { default as ScoreOther } from "./Input/ScoreOther";
+
 export { default as Table } from "./Table/Table";
 export { default as Tag } from "./Tag/Tag";
 export { default as Modal } from "./ModalAdmin/Modal";
