@@ -1,10 +1,37 @@
 /** @format */
 
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "../redux/counter/counterSlice";
+import storage from "redux-persist/lib/storage";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import userReducer from "../redux/user/userSlice";
+
+const commonConfig = {
+  key: "app/user",
+  storage,
+};
+
+const userConfig = {
+  ...commonConfig,
+  whitelist: ["isLoggedIn", "token", "current"],
+};
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    user: persistReducer(userConfig, userReducer),
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
+
+export const persistor = persistStore(store);

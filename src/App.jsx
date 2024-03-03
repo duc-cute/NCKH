@@ -11,6 +11,7 @@ import {
   ManageMail,
   Role,
   Account,
+  ManageScore,
   ManageAttendance,
 } from "./pages/Admin";
 import path from "./ultils/path";
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: path.MANAGE_COURSE,
         element: <ManageCourse />,
+      },
+      {
+        path: path.MANAGE_STUDENT_SCORE,
+        element: <ManageScore />,
       },
       {
         path: path.MANAGE_STUDENT_CRUD,
