@@ -1,5 +1,5 @@
 /** @format */
-import { Layout, NotFound } from "./components";
+import { Layout, Modal, NotFound } from "./components";
 import { Blog, Profile, Study } from "./pages/Student";
 import { Register, Login } from "./pages/Public";
 import {
@@ -16,6 +16,8 @@ import {
 } from "./pages/Admin";
 import path from "./ultils/path";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const router = createBrowserRouter([
   {
     path: path.HOME,
@@ -88,9 +90,23 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="min-h-screen">
-      <RouterProvider router={router} />
-    </div>
+    <>
+      <div className="min-h-screen">
+        <RouterProvider router={router} />
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
   );
 }
 

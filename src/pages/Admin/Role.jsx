@@ -1,13 +1,7 @@
 /** @format */
 
 import React, { useState } from "react";
-import {
-  Button,
-  InputField,
-  InputSearch,
-  Modal,
-  Table,
-} from "../../components";
+import { Button, InputSearch, Modal, Table } from "../../components";
 import icons from "../../ultils/icons";
 
 const { TiPlus, LuPencilLine, IoClose, LuSettings } = icons;

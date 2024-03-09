@@ -1,245 +1,90 @@
 /** @format */
 
-import React, { useRef, useState, useEffect } from "react";
-import * as XLSX from "xlsx";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import icons from "../../ultils/icons";
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  CgImport,
-  TiPlus,
-  FiTrash2,
-  LuPencilLine,
-} = icons;
+const { AiOutlineCloudUpload, CgImport } = icons;
+import { toast } from "react-toastify";
 import {
   Button,
   ScoreOther,
-  InputField,
   Table,
-  Tag,
-  InputFile,
   SelectOption,
+  Modal,
+  DragFile,
 } from "../../components";
 import {
+  apiAllFaculties,
+  apiClassById,
+  apiCoursesById,
+  apiDataPoint,
   apiImportScore,
-  getAllFaculties,
-  getClassById,
-  getcoursesById,
-  getDataPoint,
 } from "../../apis";
+import { readFileData } from "../../ultils/helper";
+import {
+  cellScorePositions,
+  columnsStudent,
+  headerDataScore,
+} from "../../ultils/constant";
 
 const ManageScore = () => {
-  const fileInputRef = useRef(null);
-  const handleFileChange = () => {
-    const inputValue = fileInputRef.current.getInputValue();
-    console.log("Giá trị của input:", inputValue);
-  };
-
-  const handleImportButtonClick = () => {
-    const fileValue = fileInputRef.current.getInputValue();
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = e.target.result;
-      const workbook = XLSX.read(data, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-
-      // chọn vị trí cụ thể và tìm kiếm từ khóa cụ thể cho các thông tin trong file excel
-      const cellPositions = ["A8", "A9", "A10", "D10", "I8", "I9", "I10"];
-      const infoScore = cellPositions.map((cellPos) => {
-        const cell = XLSX.utils.decode_cell(cellPos);
-        const value = worksheet[XLSX.utils.encode_cell(cell)]?.v || null;
-        return value ? value.trim() : null;
-      });
-
-      const transformedInfoScore = infoScore.map((item) => {
-        if (item) {
-          const [, value] = item.split(":");
-          return value.trim();
-        }
-        return null;
-      });
-
-      // đọc data student và điểm student từ file excel
-      const inFoStudentAndPoint = XLSX.utils.sheet_to_json(worksheet, {
-        header: [
-          "stt",
-          "studentCode",
-          "name",
-          "gender",
-          "attendanceScore",
-          "midtermScore",
-          "examScore",
-          "averageScore",
-          "letterGrade",
-          "numericGrade",
-          "scoreModule",
-          "note",
-        ],
-        range: 12,
-        cellText: true,
-      });
-
-      // tách dữ liệu sinh viên và điểm của sinh viên
-      const DataStudents = [];
-      const DataPoint = [];
-
-      // lặp qua inFoStudentAndPoint đọc từ excel để push các giá trị vào mảng được tách
-      // nếu không tồn tại msv, name, gender thì dừng vòng lặp
-      for (const item of inFoStudentAndPoint) {
-        if (!item.studentCode || !item.name || !item.gender) {
-          break;
-        }
-
-        DataStudents.push({
-          Msv: item.studentCode,
-          FullName: item.name,
-          Gender: item.gender,
-        });
-
-        DataPoint.push({
-          Frequent: +item.attendanceScore,
-          MidtermScore: +item.midtermScore,
-          FinalExamScore: +item.examScore,
-          AverageScore: +item.averageScore,
-          Scores: +item.numericGrade,
-          LetterGrades: item.letterGrade,
-          Note: item.note,
-        });
-      }
-
-      // trả data cần lấy
-      const dataManageScore = {
-        Course: transformedInfoScore[0],
-        Teacher: transformedInfoScore[1],
-        Faculity: transformedInfoScore[3],
-        Class: transformedInfoScore[2],
-        TotalHours: +transformedInfoScore[4],
-        NumberOfCredits: +transformedInfoScore[5],
-        FinalExamDate: transformedInfoScore[6],
-        DataStudents: DataStudents,
-        DataPoint: DataPoint,
-      };
-
-      console.log("response data to server: ", dataManageScore);
-
-      // import data
-      apiImportScore(dataManageScore)
-        .then((response) => {
-          console.log("Server response:", response.status);
-        })
-        .catch((error) => {
-          console.error("There was an error!", error);
-        });
-    };
-    reader.readAsBinaryString(fileValue);
-  };
+  const [showModal, setShowModal] = useState(false);
+  const [fileName, setFileName] = useState(null);
 
   // state data
-  const [loading, setLoading] = useState(true);
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
   const [courses, setCourses] = useState([]);
 
   // state id: id khoa, lớp, môn học
-  const [facultyId, setFacultyId] = useState();
-  const [classScoreId, setClassScoreId] = useState();
-  const [courceScoreId, setCourceScoreId] = useState();
+  const [facultyId, setFacultyId] = useState(null);
+  const [classScoreId, setClassScoreId] = useState(null);
+  const [courceScoreId, setCourceScoreId] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
+  const [dataSelect, setDataSelect] = useState(null);
 
-  // api select option khoa
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const facultie = await getAllFaculties();
-        setFaculties(facultie);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const handleImportButtonClick = useCallback(async () => {
+    let DataStudents = [];
+    let DataPoint = [];
+
+    dataPreview.dataMain.map((item) => {
+      const { Msv, FullName, Gender, stt, ...ortherData } = item;
+      if (!isNaN(item.Msv)) {
+        DataStudents.push({ Msv, FullName, Gender });
+        DataPoint.push({ ...ortherData });
       }
+    });
+    // // trả data cần lấy
+    const dataManageScore = {
+      Course: dataPreview.dataDescription[0],
+      Teacher: dataPreview.dataDescription[1],
+      Faculity: dataPreview.dataDescription[3],
+      Class: dataPreview.dataDescription[2],
+      TotalHours: +dataPreview.dataDescription[4],
+      NumberOfCredits: +dataPreview.dataDescription[5],
+      FinalExamDate: dataPreview.dataDescription[6],
+      DataStudents: DataStudents,
+      DataPoint: DataPoint,
     };
-    fetchData();
-  }, []);
 
-  // api select option lớp
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const classScore = await getClassById(facultyId);
-        setClassScores(classScore);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [facultyId]);
+    const response = await apiImportScore(dataManageScore);
+    if (response.status === 200) {
+      toast.success(response.message);
+      setFileName(null);
+    } else toast.error(response.message);
+  }, [dataPreview, fileName]);
 
-  // api select option môn học
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const course = await getcoursesById(classScoreId);
-        setCourses(course);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [classScoreId]);
-
-  // api data point student
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dataPoint = await getDataPoint(
-          facultyId,
-          classScoreId,
-          courceScoreId
-        );
-        console.log("dữ liệu điểm của sinh viên: ", dataPoint);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
-
-  const data = [
-    {
-      key: "1",
-      name: "mạnh",
-      msv: 20211841,
-      sex: "male",
-      attendanceScore: 8,
-      midtermScore: 9,
-      testMarks: 10,
-      courseAverage: 8,
-      letterGrade: "A",
-      scores: 9,
-      note: "Không",
+  const handlePreviewData = useCallback(
+    async (fileValue) => {
+      let dataMain = await readFileData(
+        fileValue,
+        cellScorePositions,
+        headerDataScore,
+        12
+      );
+      setDataPreview(dataMain);
     },
-  ];
-
-  const columns = [
-    {
-      title: "Mã sinh viên",
-      key: "msv",
-      sort: true,
-      render: (msv) => (
-        <span className="text-[#1677ff] cursor-pointer">{msv}</span>
-      ),
-    },
-    { title: "Họ tên", key: "name" },
-    { title: "Giới tính", key: "sex" },
-    { title: "Điểm chuyên cần", key: "attendanceScore" },
-    { title: "Điểm giữa kỳ", key: "midtermScore" },
-    { title: "Điểm thi", key: "testMarks" },
-    { title: "TBCHP", key: "courseAverage" },
-    { title: "Điểm chữ", key: "letterGrade" },
-    { title: "Điểm số", key: "scores" },
-    { title: "Ghi chú", key: "note" },
-  ];
+    [dataPreview]
+  );
 
   const groupButton = [
     {
@@ -257,7 +102,7 @@ const ManageScore = () => {
       id: 2,
       button: (
         <Button
-          handleOnclick={handleImportButtonClick}
+          handleOnclick={() => setShowModal(true)}
           style={"py-[7px] text-white rounded-md "}
           icon=<CgImport />
         >
@@ -265,65 +110,130 @@ const ManageScore = () => {
         </Button>
       ),
     },
-    {
-      id: 3,
-      button: <InputFile ref={fileInputRef} onChange={handleFileChange} />,
-    },
   ];
 
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const facultie = await apiAllFaculties();
+      setFaculties(facultie?.data);
+    };
+    fetchData();
+  }, []);
+
+  // api select option lớp
+  useEffect(() => {
+    const fetchData = async () => {
+      const classScore = await apiClassById(facultyId);
+      setClassScores(classScore?.data);
+    };
+    if (facultyId) fetchData();
+  }, [facultyId]);
+
+  // api select option môn học
+  useEffect(() => {
+    const fetchData = async () => {
+      const course = await apiCoursesById(classScoreId);
+      setCourses(course?.data);
+    };
+    if (classScoreId) fetchData();
+  }, [classScoreId]);
+
+  // api data point student
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await apiDataPoint(facultyId, classScoreId, courceScoreId);
+      if (res.status === 200)
+        setDataSelect({
+          dataStudents: res.dataStudents,
+          dataTeacher: res.dataTeacher[0],
+        });
+    };
+    if (facultyId && classScoreId && courceScoreId) fetchData();
+  }, [facultyId, classScoreId, courceScoreId]);
+
   return (
-    <div className=" h-[1000px]">
-      <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
-        <div className="flex gap-3 items-center justify-between pt-5 mb-6">
-          <SelectOption
-            name={"Chọn khoa"}
-            loading={loading}
-            data={faculties}
-            displayField={"FacultyName"}
-            onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
-            }}
-          />
+    <>
+      <div className=" h-[1000px]">
+        <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
+          <div className="flex gap-3 items-center justify-between pt-5 mb-6">
+            <SelectOption
+              name={"Chọn khoa"}
+              data={faculties}
+              displayField={"FacultyName"}
+              onChange={(event) => {
+                setFacultyId(event.target.value);
+                setClassScores([]);
+                setCourses([]);
+              }}
+            />
 
-          <SelectOption
-            name={"Chọn lớp"}
-            loading={loading}
-            data={classScores}
-            displayField={"NameClass"}
-            onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
-            }}
-          />
+            <SelectOption
+              name={"Chọn lớp"}
+              data={classScores}
+              displayField={"NameClass"}
+              onChange={(event) => {
+                setClassScoreId(event.target.value);
+                setCourses([]);
+              }}
+            />
 
-          <SelectOption
-            name={"Chọn môn học"}
-            loading={loading}
-            data={courses}
-            displayField={"NameCourse"}
-            onChange={(event) => {
-              setCourceScoreId(event.target.value);
-            }}
+            <SelectOption
+              name={"Chọn môn học"}
+              data={courses}
+              displayField={"NameCourse"}
+              onChange={(event) => {
+                setCourceScoreId(event.target.value);
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-3 self-end">
+            <Button>Search</Button>
+            <Button style={"bg-white text-black"}>Clear</Button>
+          </div>
+        </div>
+
+        <div className="mx-4 mt-4">
+          <Table
+            title="Danh sách bảng điểm"
+            columns={columnsStudent}
+            data={dataSelect?.dataStudents}
+            groupButton={groupButton}
+            dataScoreOther={
+              <ScoreOther
+                className={dataSelect?.dataTeacher?.NameClass}
+                facultyName={dataSelect?.dataTeacher?.FacultyName}
+                teacherName={dataSelect?.dataTeacher?.FullName}
+              />
+            }
+            maxH={300}
           />
         </div>
-        <div className="flex items-center gap-3 self-end">
-          <Button>Search</Button>
-          <Button style={"bg-white text-black"}>Clear</Button>
-        </div>
       </div>
-
-      <div className="mx-4 mt-4">
-        <Table
-          title="Danh sách bảng điểm"
-          columns={columns}
-          data={data}
-          groupButton={groupButton}
-          dataScoreOther={<ScoreOther />}
-        />
-      </div>
-    </div>
+      {showModal && (
+        <Modal
+          show={showModal}
+          setShow={setShowModal}
+          title={"Data Import Score"}
+          disableOkBtn={dataPreview.length < 1}
+          onClickBtnOk={handleImportButtonClick}
+          textOk={"Import"}
+          onClickBtnCancel={() => {
+            setShowModal(false);
+            setFileName(null);
+            setDataPreview([]);
+          }}
+        >
+          <DragFile
+            data={dataPreview?.dataMain?.filter((el) => !isNaN(el.Msv))}
+            columns={columnsStudent}
+            onChange={handlePreviewData}
+            fileName={fileName}
+            setFileName={setFileName}
+          />
+        </Modal>
+      )}
+    </>
   );
 };
 

@@ -21,6 +21,7 @@ module.exports = {
       },
       height: {
         header: "80px",
+        table: "270px",
       },
       backgroundColor: {
         main: "#001529",

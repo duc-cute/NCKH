@@ -9,7 +9,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     let localStorageData = window.localStorage.getItem("persist:app/user");
-    console.log("localStorageData", localStorageData);
     if (localStorageData) {
       localStorageData = JSON.parse(localStorageData);
       const accessToken = JSON.parse(localStorageData.token);
@@ -27,7 +26,7 @@ instance.interceptors.response.use(
     return response.data;
   },
   function (error) {
-    return error.response;
+    return error.response.data;
   }
 );
 
