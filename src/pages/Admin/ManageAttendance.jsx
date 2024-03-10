@@ -121,7 +121,7 @@ const groupButton = [
     button: (
       <Button
         style={"py-[7px] text-white rounded-md "}
-        icon=<AiOutlineCloudUpload />
+        icon={<AiOutlineCloudUpload />}
       >
         Export
       </Button>
