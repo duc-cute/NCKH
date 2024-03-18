@@ -12,7 +12,13 @@ import {
   RadioAttendance,
   Tag,
 } from "../../components";
-import { apiImportAttendance } from "../../apis";
+import {
+  apiImportAttendance,
+  apiAllFaculties,
+  apiClassById,
+  apiCoursesById,
+  apiDataPoint,
+} from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
 import { toast } from "react-toastify";
@@ -31,7 +37,17 @@ const ManageAttendance = () => {
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
+
+  // state data
+  const [faculties, setFaculties] = useState([]);
+  const [classScores, setClassScores] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
+
+  // state id: id khoa, lớp, môn học
+  const [facultyId, setFacultyId] = useState(null);
+  const [classScoreId, setClassScoreId] = useState(null);
+  const [courceScoreId, setCourceScoreId] = useState(null);
 
   const handleChangeSchoolYear = (e) => {
     setSelectedSchoolYear(e.target.value);
@@ -45,8 +61,7 @@ const ManageAttendance = () => {
       toast.success(response.message);
       setFileName(null);
     } else toast.error(response.message);
-
-  }, [dataPreview, fileName, selectedSchoolYear]);    
+  }, [dataPreview, fileName, selectedSchoolYear]);
 
   const handlePreviewData = useCallback(
     (fileValue) => {
@@ -60,7 +75,57 @@ const ManageAttendance = () => {
     },
     [dataPreview, selectedSchoolYear]
   );
-  
+
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/attendance/all-faculty";
+      const facultie = await apiAllFaculties(url);
+      setFaculties(facultie?.data);
+    };
+    fetchData();
+  }, []);
+
+  // api select option lớp
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/attendance/class-by-id-faculty";
+      const classScore = await apiClassById(url, facultyId);
+      setClassScores(classScore?.data);
+    };
+    if (facultyId) fetchData();
+  }, [facultyId]);
+
+  // api select option môn học
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/attendance/course-by-id-class";
+      const course = await apiCoursesById(url, classScoreId);
+      setCourses(course?.data);
+    };
+    if (classScoreId) fetchData();
+  }, [classScoreId]);
+
+  // api data point student
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/attendance/select-attendance";
+      const res = await apiDataPoint(
+        url,
+        facultyId,
+        classScoreId,
+        courceScoreId
+      );
+      console.log(res);
+      if (res.status === 200)
+        setDataSelect({
+          dataStudents: res.dataStudents,
+          dataTeacher: res.dataTeacher[0],
+        });
+    };
+    if (facultyId && classScoreId && courceScoreId) fetchData();
+  }, [facultyId, classScoreId, courceScoreId]);
+
   const data = [
     {
       key: "1",
@@ -186,11 +251,35 @@ const ManageAttendance = () => {
       <div className=" h-[1000px]">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
-            <SelectOption name={"Chọn khoa"} />
+            <SelectOption
+              name={"Chọn khoa"}
+              data={faculties}
+              displayField={"FacultyName"}
+              onChange={(event) => {
+                setFacultyId(event.target.value);
+                setClassScores([]);
+                setCourses([]);
+              }}
+            />
 
-            <SelectOption name={"Chọn lớp"} />
+            <SelectOption
+              name={"Chọn lớp"}
+              data={classScores}
+              displayField={"NameClass"}
+              onChange={(event) => {
+                setClassScoreId(event.target.value);
+                setCourses([]);
+              }}
+            />
 
-            <SelectOption name={"Chọn môn học"} />
+            <SelectOption
+              name={"Chọn môn học"}
+              data={courses}
+              displayField={"NameCourse"}
+              onChange={(event) => {
+                setCourceScoreId(event.target.value);
+              }}
+            />
           </div>
           <div className="flex items-center gap-3 self-end">
             <Button>Search</Button>
@@ -201,7 +290,7 @@ const ManageAttendance = () => {
           <Table
             title="Danh sách điểm danh sinh viên"
             columns={columns}
-            data={data} 
+            data={data}
             groupButton={groupButton}
           />
         </div>
