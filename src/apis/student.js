@@ -8,3 +8,10 @@ export const apiImportScore = (data) =>
     method: "post",
     data,
   });
+
+export const apiImportAttendance = (data) =>
+  axios({
+    url: "/v1/attendance/import-attendance",
+    method: "post",
+    data,
+  });

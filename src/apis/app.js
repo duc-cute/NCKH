@@ -3,26 +3,26 @@
 
 import axios from "../axios";
 
-export const apiAllFaculties = () =>
+export const apiAllFaculties = (url) =>
   axios({
-    url: "/v1/point/select-all-faculty",
+    url: `/${url}`,
     method: "get",
   });
 
-export const apiClassById = (id) =>
+export const apiClassById = (url, id) =>
   axios({
-    url: `/v1/point/select-class-by-id/${id}`,
+    url: `/${url}/${id}`,
     method: "get",
   });
 
-export const apiCoursesById = (id) =>
+export const apiCoursesById = (url, id) =>
   axios({
-    url: `/v1/point/select-courses-by-id-class/${id}`,
+    url: `/${url}/${id}`,
     method: "get",
   });
 
-export const apiDataPoint = (IdFaculty, idClass, idCourse) =>
+export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
   axios({
-    url: `/v1/point/select-point-by-id-class-id-faculty-id-course?IdFaculty=${IdFaculty}&idClass=${idClass}&idCourse=${idCourse}`,
+    url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
     method: "get",
   });

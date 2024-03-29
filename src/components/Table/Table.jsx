@@ -37,7 +37,7 @@ const Table = ({
       // const queries = Object.fromEntries([...params]);
     }
   }, [params, data]);
-  console.log("displayData", displayData);
+  // console.log("displayData", displayData);
 
   return (
     <>

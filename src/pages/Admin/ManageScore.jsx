@@ -29,18 +29,18 @@ import {
 const ManageScore = () => {
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
 
   // state data
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [dataSelect, setDataSelect] = useState(null);
 
   // state id: id khoa, lớp, môn học
   const [facultyId, setFacultyId] = useState(null);
   const [classScoreId, setClassScoreId] = useState(null);
   const [courceScoreId, setCourceScoreId] = useState(null);
-  const [dataPreview, setDataPreview] = useState([]);
-  const [dataSelect, setDataSelect] = useState(null);
 
   const handleImportButtonClick = useCallback(async () => {
     let DataStudents = [];
@@ -67,6 +67,7 @@ const ManageScore = () => {
     };
 
     const response = await apiImportScore(dataManageScore);
+    console.log("res: ", response);
     if (response.status === 200) {
       toast.success(response.message);
       setFileName(null);
@@ -115,7 +116,8 @@ const ManageScore = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const facultie = await apiAllFaculties();
+      const url = "v1/point/select-all-faculty";
+      const facultie = await apiAllFaculties(url);
       setFaculties(facultie?.data);
     };
     fetchData();
@@ -124,7 +126,8 @@ const ManageScore = () => {
   // api select option lớp
   useEffect(() => {
     const fetchData = async () => {
-      const classScore = await apiClassById(facultyId);
+      const url = "v1/point/select-class-by-id";
+      const classScore = await apiClassById(url, facultyId);
       setClassScores(classScore?.data);
     };
     if (facultyId) fetchData();
@@ -133,7 +136,8 @@ const ManageScore = () => {
   // api select option môn học
   useEffect(() => {
     const fetchData = async () => {
-      const course = await apiCoursesById(classScoreId);
+      const url = "v1/point/select-courses-by-id-class";
+      const course = await apiCoursesById(url, classScoreId);
       setCourses(course?.data);
     };
     if (classScoreId) fetchData();
@@ -142,7 +146,14 @@ const ManageScore = () => {
   // api data point student
   useEffect(() => {
     const fetchData = async () => {
-      const res = await apiDataPoint(facultyId, classScoreId, courceScoreId);
+      const url = "v1/point/select-point-by-id-class-id-faculty-id-course";
+      const res = await apiDataPoint(
+        url,
+        facultyId,
+        classScoreId,
+        courceScoreId
+      );
+      console.log(res);
       if (res.status === 200)
         setDataSelect({
           dataStudents: res.dataStudents,
