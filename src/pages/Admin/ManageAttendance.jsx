@@ -1,6 +1,7 @@
 /** @format */
 
 import React, { useState, useCallback, useEffect } from "react";
+import moment from "moment";
 import {
   Button,
   ScoreOther,
@@ -22,6 +23,7 @@ import {
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
 import { toast } from "react-toastify";
+import { columnsAttendance } from "../../ultils/constant";
 
 const {
   AiOutlineCloudUpload,
@@ -37,6 +39,7 @@ const ManageAttendance = () => {
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
+  const [dataImport, setDataImport] = useState({});
 
   // state data
   const [faculties, setFaculties] = useState([]);
@@ -52,22 +55,46 @@ const ManageAttendance = () => {
   const handleChangeSchoolYear = (e) => {
     setSelectedSchoolYear(e.target.value);
   };
+  console.log("data", dataPreview);
 
   const handleImportButtonClick = useCallback(async () => {
-    const dataResponve = dataPreview;
-    console.log(dataResponve);
-    const response = await apiImportAttendance(dataResponve);
+    const response = await apiImportAttendance(dataImport);
     if (response.status === 200) {
       toast.success(response.message);
       setFileName(null);
+      setDataPreview([]);
     } else toast.error(response.message);
-  }, [dataPreview, fileName, selectedSchoolYear]);
+  }, [dataPreview, fileName]);
 
   const handlePreviewData = useCallback(
     (fileValue) => {
       readFileDataAttendance(fileValue, selectedSchoolYear)
         .then((dataMain) => {
-          setDataPreview(dataMain);
+          setDataImport(dataMain);
+          console.log("data", dataMain);
+          let dataFormat = dataMain.DataAttendance.map((data) => {
+            const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
+            let End = Attendance[Attendance.length - 1].Day;
+            let Start = Attendance[0].Day;
+            let totalPercentDateStudy = Attendance.reduce(
+              (acc, curr) => {
+                if (curr.AttendanceStatus !== "") acc++;
+                return acc;
+              },
+              [0]
+            );
+
+            return {
+              Msv,
+              FullName,
+              DateOfBirth,
+              Comment,
+              End,
+              Start,
+              totalPercentDateStudy: [totalPercentDateStudy, Attendance.length],
+            };
+          });
+          setDataPreview(dataFormat);
         })
         .catch((error) => {
           console.error("Error while previewing data:", error);
@@ -84,7 +111,7 @@ const ManageAttendance = () => {
       setFaculties(facultie?.data);
     };
     fetchData();
-  }, []);
+  }, [dataImport]);
 
   // api select option lớp
   useEffect(() => {
@@ -109,6 +136,7 @@ const ManageAttendance = () => {
   // api data point student
   useEffect(() => {
     const fetchData = async () => {
+      let dataFormat = [];
       const url = "v1/attendance/select-attendance";
       const res = await apiDataPoint(
         url,
@@ -116,78 +144,36 @@ const ManageAttendance = () => {
         classScoreId,
         courceScoreId
       );
-      console.log(res);
+
       if (res.status === 200)
-        setDataSelect({
-          dataStudents: res.dataStudents,
-          dataTeacher: res.dataTeacher[0],
+        dataFormat = res.data.DataAttendance.map((data) => {
+          const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
+          let End = Attendance[Attendance.length - 1].Day;
+          let Start = Attendance[0].Day;
+          let totalPercentDateStudy = Attendance.reduce(
+            (acc, curr) => {
+              if (curr.AttendanceStatus !== "") acc++;
+              return acc;
+            },
+            [0]
+          );
+
+          return {
+            Msv,
+            FullName,
+            DateOfBirth: moment(DateOfBirth).format("DD/MM/YYYY"),
+            Comment,
+            End: moment(End).format("DD/MM/YYYY"),
+            Start: moment(Start).format("DD/MM/YYYY"),
+            totalPercentDateStudy: [totalPercentDateStudy, Attendance.length],
+          };
         });
+      setDataSelect({
+        dataStudents: dataFormat,
+      });
     };
     if (facultyId && classScoreId && courceScoreId) fetchData();
   }, [facultyId, classScoreId, courceScoreId]);
-
-  const data = [
-    {
-      key: "1",
-      msv: 20211841,
-      name: "Nguyễn Văn Đức",
-      dateofbirth: "15-01-2003",
-      attendant: true,
-      totalPercentDateStudy: "60",
-    },
-    {
-      key: "2",
-      msv: 20211841,
-      name: "Nguyễn Hải",
-      dateofbirth: "15-01-2003",
-      attendant: true,
-      totalPercentDateStudy: "90",
-    },
-    {
-      key: "3",
-      msv: 20211841,
-      name: "Nguyễn Thị Thu Hiền",
-      dateofbirth: "15-01-2003",
-      reason: true,
-      totalPercentDateStudy: "70",
-    },
-    {
-      key: "4",
-      msv: 20211841,
-      name: "Nguyễn Thị Hà",
-      dateofbirth: "15-01-2003",
-      late: true,
-      totalPercentDateStudy: "50",
-    },
-  ];
-
-  const columns = [
-    {
-      title: "Mã sinh viên",
-      key: "msv",
-      sort: true,
-      render: (msv) => <span style={{ color: "#1677ff" }}>{msv}</span>,
-    },
-    { title: "Họ tên", key: "name" },
-    { title: "Ngày sinh", key: "dateofbirth" },
-
-    {
-      title: "ngày học",
-      key: "attendant",
-      render: (status) => <RadioAttendance status={status} />,
-    },
-    {
-      title: "Tổng số buổi nghỉ",
-      key: "totalPercentDateStudy",
-      sort: true,
-      render: (total) => (
-        <div className="flex items-center justify-center">
-          <Tag status={+total > 80 ? "" : "warning"}>{total}/15</Tag>
-        </div>
-      ),
-    },
-    { title: "Ghi chú", key: "comment" },
-  ];
 
   const schoolYear = [
     { key: 1, course: "Học kỳ 1 Năm học 2022-2023" },
@@ -289,8 +275,8 @@ const ManageAttendance = () => {
         <div className="mx-4 mt-4">
           <Table
             title="Danh sách điểm danh sinh viên"
-            columns={columns}
-            data={data}
+            columns={columnsAttendance}
+            data={dataSelect?.dataStudents}
             groupButton={groupButton}
           />
         </div>
@@ -300,7 +286,7 @@ const ManageAttendance = () => {
           show={showModal}
           setShow={setShowModal}
           title={"Data Import Score"}
-          // disableOkBtn={dataPreview.length < 1}
+          disableOkBtn={dataPreview.length < 1}
           onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}
           onClickBtnCancel={() => {
@@ -310,11 +296,11 @@ const ManageAttendance = () => {
           }}
         >
           <DragFile
-            // data={dataPreview?.dataMain?.filter((el) => !isNaN(el.Msv))}
-            // columns={columnsStudent}
+            data={dataPreview}
+            columns={columnsAttendance}
             onChange={handlePreviewData}
-            // fileName={fileName}
-            // setFileName={setFileName}
+            fileName={fileName}
+            setFileName={setFileName}
           />
         </Modal>
       )}

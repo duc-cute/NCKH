@@ -63,7 +63,7 @@ const Table = ({
           <table className="w-full h-full  text-left rtl:text-right">
             <thead className="text-[14px]  capitalize font-semibold bg-[#fafafa] py-2">
               <tr>
-                {columns.map((column, index) => (
+                {columns?.map((column, index) => (
                   <th key={index} scope="col" className="px-4 py-3 ">
                     <div className="flex items-center">
                       {column?.title}
@@ -86,14 +86,14 @@ const Table = ({
               </tr>
             </thead>
             <tbody>
-              {data && data.length > 0 ? (
+              {data && data?.length > 0 ? (
                 <>
                   {displayData?.map((item, index) => (
                     <tr
                       key={index}
                       className="bg-white border-b border-[1px] border-gray-100 border-solid font-medium  hover:bg-gray-50 "
                     >
-                      {columns.map((column, index) => (
+                      {columns?.map((column, index) => (
                         <td key={column?.key} className="px-4 py-4 ">
                           {column.render
                             ? column.render(item[column.key], index)
