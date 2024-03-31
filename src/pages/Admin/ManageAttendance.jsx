@@ -33,6 +33,142 @@ const {
   FiTrash2,
   LuPencilLine,
 } = icons;
+<<<<<<< HEAD
+=======
+const data = [
+  {
+    key: "1",
+    msv: 20211841,
+    name: "Nguyễn Văn Đức",
+    dateofbirth: "15-01-2003",
+    sex: "male",
+    email: "20211841@eaut.edu.vn",
+    attendant: true,
+    totalPercentDateStudy: "60",
+  },
+  {
+    key: "2",
+    msv: 20211841,
+    name: "Nguyễn Hải",
+    dateofbirth: "15-01-2003",
+    sex: "female",
+    email: "20211841@eaut.edu.vn",
+    attendant: true,
+    totalPercentDateStudy: "90",
+  },
+  {
+    key: "3",
+    msv: 20211841,
+    name: "Nguyễn Thị Thu Hiền",
+    dateofbirth: "15-01-2003",
+    sex: "female",
+    email: "20211841@eaut.edu.vn",
+    reason: true,
+    totalPercentDateStudy: "70",
+  },
+  {
+    key: "4",
+    msv: 20211841,
+    name: "Nguyễn Thị Hà",
+    dateofbirth: "15-01-2003",
+    sex: "female",
+    email: "20211841@eaut.edu.vn",
+    late: true,
+    totalPercentDateStudy: "50",
+  },
+];
+
+const columns = [
+  {
+    title: "Mã sinh viên",
+    key: "msv",
+    sort: true,
+    render: (msv) => <span style={{ color: "#1677ff" }}>{msv}</span>,
+  },
+  { title: "Họ tên", key: "name" },
+  { title: "Ngày sinh", key: "dateofbirth" },
+  { title: "Email", key: "email" },
+  {
+    title: "Có lí do",
+    key: "reason",
+    render: (status) => <RadioAttendance status={status} />,
+  },
+  {
+    title: "Đi muộn",
+    key: "late",
+    render: (status) => <RadioAttendance status={status} />,
+  },
+  {
+    title: "Không lí do",
+    key: "notReason",
+    render: (status) => <RadioAttendance status={status} />,
+  },
+  {
+    title: "Đi học",
+    key: "attendant",
+    render: (status) => <RadioAttendance status={status} />,
+  },
+  {
+    title: "Tổng số buổi học",
+    key: "totalPercentDateStudy",
+    sort: true,
+    render: (total) => (
+      <div className="flex items-center justify-center">
+        <Tag status={+total > 80 ? "" : "warning"}>{total}%</Tag>
+      </div>
+    ),
+  },
+
+  {
+    title: "Action",
+    key: "action",
+    render: () => (
+      <div className="flex items-center gap-3 cursor-pointer">
+        <FiTrash2 color="red" />
+        <LuPencilLine color="#1677ff" />
+      </div>
+    ),
+  },
+];
+
+const groupButton = [
+  {
+    id: 1,
+    button: (
+      <Button
+        style={"py-[7px] text-white rounded-md "}
+        icon={<AiOutlineCloudUpload />}
+      >
+        Export
+      </Button>
+    ),
+  },
+  {
+    id: 2,
+    button: (
+      <Button style={"py-[7px] text-white rounded-md "} icon=<CgImport />>
+        Import
+      </Button>
+    ),
+  },
+  {
+    id: 3,
+    button: (
+      <Button style={"py-[7px] text-white rounded-md "} icon=<TiPlus />>
+        Thêm mới
+      </Button>
+    ),
+  },
+  {
+    id: 4,
+    button: (
+      <Button style={"py-[7px] text-white rounded-md "} icon=<AiOutlineSend />>
+        Gửi cảnh báo
+      </Button>
+    ),
+  },
+];
+>>>>>>> 3f36ba5f3a6e6d4b15666b1dc989fd46e0e83b8d
 
 const ManageAttendance = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
