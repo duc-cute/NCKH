@@ -65,7 +65,7 @@ const Table = ({
               <tr>
                 {columns?.map((column, index) => (
                   <th key={index} scope="col" className="px-4 py-3 ">
-                    <div className="flex items-center">
+                    <div className="flex items-center whitespace-nowrap">
                       {column?.title}
                       {column?.sort && (
                         <span onClick={() => handleSort(column?.key)}>
@@ -93,10 +93,10 @@ const Table = ({
                       key={index}
                       className="bg-white border-b border-[1px] border-gray-100 border-solid font-medium  hover:bg-gray-50 "
                     >
-                      {columns?.map((column, index) => (
-                        <td key={column?.key} className="px-4 py-4 ">
+                      {columns?.map((column, ind) => (
+                        <td key={ind} className="px-4 py-4">
                           {column.render
-                            ? column.render(item[column.key], index)
+                            ? column.render(item[column.key], item)
                             : item[column.key]}
                         </td>
                       ))}

@@ -12,10 +12,13 @@ export { default as RadioAttendance } from "./Input/RadioAttendance";
 export { default as SelectOption } from "./Input/SelectOption";
 export { default as InputFile } from "./Input/InputFile";
 export { default as DragFile } from "./Input/DragFile";
+export { default as InputForm } from "./Input/InputForm";
+export { default as SelectLib } from "./Input/SelectLib";
 export { default as ScoreOther } from "./Input/ScoreOther";
 
 export { default as Table } from "./Table/Table";
 export { default as Tag } from "./Tag/Tag";
 export { default as Modal } from "./Modal/Modal";
+export { default as Drawer } from "./Drawer/Drawer";
 export { default as PaginaItem } from "./Paginate/PaginaItem";
 export { default as Pagination } from "./Paginate/Pagination";

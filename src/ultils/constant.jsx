@@ -92,3 +92,23 @@ export const columnsAttendance = [
   },
   { title: "Ghi chú", key: "Comment" },
 ];
+
+export const listStudentWarning = [
+  { id: 1, label: "Nợ học phí" },
+  { id: 2, label: "Nợ môn" },
+  { id: 3, label: "Có ý định bỏ học" },
+];
+
+export const listStatusWarning = [
+  { id: 1, label: <span className="text-[#1677ff]">5% Mức độ 1</span> },
+  { id: 2, label: <span className="text-[#faad14]">10% Mức độ 2</span> },
+  { id: 3, label: <span className="text-[#581c87]">15% Mức độ 3</span> },
+  { id: 4, label: <span className="text-[#ff4d4f]">25% Mức độ 4</span> },
+];
+
+export const levelColor = [
+  "text-[#1677ff]",
+  "text-[#faad14]",
+  "text-[#581c87]",
+  "text-[#ff4d4f]",
+];
