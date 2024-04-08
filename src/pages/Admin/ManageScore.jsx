@@ -105,7 +105,7 @@ const ManageScore = () => {
         <Button
           handleOnclick={() => setShowModal(true)}
           style={"py-[7px] text-white rounded-md "}
-          icon=<CgImport />
+          icon={<CgImport />}
         >
           Import
         </Button>

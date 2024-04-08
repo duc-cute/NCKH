@@ -61,7 +61,7 @@ const groupButton = [
   {
     id: 2,
     button: (
-      <Button style={"py-[7px] text-white rounded-md "} icon=<TiPlus />>
+      <Button style={"py-[7px] text-white rounded-md "} icon={<TiPlus />}>
         Thêm mới
       </Button>
     ),

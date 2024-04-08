@@ -17,80 +17,80 @@ const menus = [
   {
     id: 1,
     path: `/${path.ADMIN}`,
-    title: <Link to={`/${path.ADMIN}`}>DashBoard</Link>,
+    title: <Link to={`/${path.ADMIN}`}>Bảng điều khiển</Link>,
     icon: <LuLayoutDashboard />,
   },
   {
     id: 2,
 
-    title: <label>Manage Students</label>,
+    title: <label>Quản lý sinh viên</label>,
     icon: <BsFillPeopleFill />,
 
     subtitle: [
       {
         id: 2.1,
         path: path.MANAGE_STUDENT_CRUD,
-        title: <Link to={path.MANAGE_STUDENT_CRUD}>CRUD</Link>,
+        title: <Link to={path.MANAGE_STUDENT_CRUD}>Sinh viên</Link>,
       },
       {
         id: 2.2,
         path: path.MANAGE_STUDENT_SCORE,
-        title: <Link to={path.MANAGE_STUDENT_SCORE}>Manage Score</Link>,
+        title: <Link to={path.MANAGE_STUDENT_SCORE}>Điểm học tập</Link>,
       },
       {
         id: 2.3,
         path: path.MANAGE_STUDENT_ATTENDANCE,
         title: (
-          <Link to={path.MANAGE_STUDENT_ATTENDANCE}>Manage Attendance</Link>
+          <Link to={path.MANAGE_STUDENT_ATTENDANCE}>Điểm danh</Link>
         ),
       },
 
       {
         id: 2.4,
         path: path.MANAGE_STUDENT_TUITION,
-        title: <Link to={path.MANAGE_STUDENT_TUITION}>Manage Tuition</Link>,
+        title: <Link to={path.MANAGE_STUDENT_TUITION}>Học phí</Link>,
       },
     ],
   },
   {
     id: 3,
     path: path.MANAGE_COURSE,
-    title: <Link to={path.MANAGE_COURSE}>Manage Courses</Link>,
+    title: <Link to={path.MANAGE_COURSE}>Quản lý khóa học</Link>,
     icon: <GiArchiveResearch />,
   },
   {
     id: 4,
     path: path.MANAGE_SCHEDULE,
-    title: <Link to={path.MANAGE_SCHEDULE}>Manage Schedule</Link>,
+    title: <Link to={path.MANAGE_SCHEDULE}>Quản lý lịch trình</Link>,
     icon: <AiOutlineSchedule />,
   },
   {
     id: 5,
     path: path.MANAGE_BLOG,
-    title: <Link to={path.MANAGE_BLOG}>Manage Blogs</Link>,
+    title: <Link to={path.MANAGE_BLOG}>Quản lý Blogs</Link>,
     icon: <FaBlog />,
   },
   {
     id: 6,
     path: path.MANAGE_MAIL,
-    title: <Link to={path.MANAGE_MAIL}>Manage Mail</Link>,
+    title: <Link to={path.MANAGE_MAIL}>Quản lý Mail</Link>,
     icon: <AiOutlineMessage />,
   },
   {
     id: 7,
-    title: <label>Administration</label>,
+    title: <label>Quản trị</label>,
     icon: <RiAdminFill />,
 
     subtitle: [
       {
         id: 7.1,
         path: path.ADMIN_ROLE,
-        title: <Link to={path.ADMIN_ROLE}>Role</Link>,
+        title: <Link to={path.ADMIN_ROLE}>Vai trò</Link>,
       },
       {
         id: 7.2,
         path: path.ADMIN_ACCOUNT,
-        title: <Link to={path.ADMIN_ACCOUNT}>Account</Link>,
+        title: <Link to={path.ADMIN_ACCOUNT}>Tài khoản</Link>,
       },
     ],
   },

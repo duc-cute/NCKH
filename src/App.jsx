@@ -8,6 +8,7 @@ import {
   ManageCourse,
   ManageSchedule,
   ManageStudent,
+  ManageTuition,
   ManageMail,
   Role,
   Account,
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
       {
         path: path.MANAGE_STUDENT_ATTENDANCE,
         element: <ManageAttendance />,
+      },
+      {
+        path: path.MANAGE_STUDENT_TUITION,
+        element: <ManageTuition />,
       },
       {
         path: path.MANAGE_SCHEDULE,

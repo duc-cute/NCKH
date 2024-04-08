@@ -224,10 +224,10 @@ const Role = () => {
       <Modal
         show={show}
         setShow={setShow}
-        title=<>
-          Function for role:{" "}
+        title={<>
+         Function for role:{" "}
           <span className="text-[22px]">{dataModal?.role}</span>
-        </>
+        </>}
       >
         <div className="flex justify-between gap-2">
           <div className="flex-1">
