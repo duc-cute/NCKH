@@ -253,7 +253,7 @@ const ManageStudent = () => {
   return (
     <div className=" h-[1000px]">
       <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
-        <div className="grid grid-cols-4 gap-3 pt-5  mb-6">
+        <div className="flex gap-3 items-center justify-between pt-5 ">
           <SelectOption
             name={"Chọn khoa"}
             data={faculties}
@@ -261,6 +261,7 @@ const ManageStudent = () => {
             onChange={(event) => {
               setFacultyId(event.target.value);
               setClassScores([]);
+              setCourses([]);
             }}
           />
 
@@ -270,23 +271,18 @@ const ManageStudent = () => {
             displayField={"NameClass"}
             onChange={(event) => {
               setClassScoreId(event.target.value);
+              setCourses([]);
             }}
           />
-          <InputField
-            placeholder={"Search by name"}
-            style={`flex max-h-[40px]`}
-            name={"Họ Tên"}
-          />
-
-          <InputField
-            placeholder={"Seach by msv"}
-            style={`flex max-h-[40px]`}
-            name={"Mã Sinh Viên"}
-          />
-        </div>
-        <div className="flex items-center gap-3 self-end">
-          <Button>Search</Button>
-          <Button style={"bg-white text-black"}>Clear</Button>
+          <div className="flex items-center gap-3 self-end">
+            <InputField
+              placeholder={"Nhập mã sinh viên ..."}
+              style={`flex max-h-[40px] w-[240px]`}
+              name={"Mã sinh viên"}
+            />
+            <Button>Search</Button>
+            <Button style={"bg-white text-black"}>Clear</Button>
+          </div>
         </div>
       </div>
       <div className="mx-4 mt-4 ">

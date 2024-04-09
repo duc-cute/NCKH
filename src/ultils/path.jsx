@@ -24,6 +24,7 @@ const path = {
   MANAGE_SCHEDULE: "manage-schedule",
   MANAGE_BLOG: "manage-blog",
   MANAGE_MAIL: "manage-mail",
+  MANAGE_CATEGORY: "manage-category",
 };
 
 export default path;

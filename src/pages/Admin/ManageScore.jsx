@@ -11,6 +11,7 @@ import {
   SelectOption,
   Modal,
   DragFile,
+  InputField,
 } from "../../components";
 import {
   apiAllFaculties,
@@ -199,6 +200,11 @@ const ManageScore = () => {
             />
           </div>
           <div className="flex items-center gap-3 self-end">
+            <InputField
+              placeholder={"Nhập mã sinh viên ..."}
+              style={`flex max-h-[40px] w-[214px]`}
+              name={"Mã sinh viên"}
+            />
             <Button>Search</Button>
             <Button style={"bg-white text-black"}>Clear</Button>
           </div>

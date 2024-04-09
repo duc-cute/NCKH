@@ -186,10 +186,6 @@ const ManageAttendance = () => {
 
   const groupButton = [
     {
-      id: 1,
-      button: <SelectOption name="Ngày điểm danh" />,
-    },
-    {
       id: 2,
       button: (
         <SelectOption
@@ -216,6 +212,11 @@ const ManageAttendance = () => {
       button: (
         <Button
           handleOnclick={() => {
+            // if (!facultyId || !classScoreId || !courceScoreId) {
+            //   alert("Vui lòng chọn khoa, lớp và môn học trước khi import");
+            //   return;
+            // }
+
             if (selectedSchoolYear == null) {
               alert("Vui lòng chọn khoá học và năm học trước khi import");
             } else {
@@ -267,11 +268,20 @@ const ManageAttendance = () => {
               }}
             />
           </div>
-          <div className="flex items-center gap-3 self-end">
-            <Button>Search</Button>
-            <Button style={"bg-white text-black"}>Clear</Button>
+            
+            <div className="flex items-center gap-3 self-end">
+            <InputField
+              placeholder={"Nhập mã sinh viên ..."}
+              style={`flex max-h-[40px] w-[214px]`}
+              name={"Mã sinh viên"}
+            />
+
+              <Button>Search</Button>
+              <Button style={"bg-white text-black"}>Clear</Button>
+              
           </div>
         </div>
+
         <div className="mx-4 mt-4">
           <Table
             title="Danh sách điểm danh sinh viên"

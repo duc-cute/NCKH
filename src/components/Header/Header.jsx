@@ -13,8 +13,8 @@ const Header = () => {
           alt="logo"
         />
         <div className="text-[24px] text-main font-semibold">
-          <h2 className="uppercase ">trường đại học công nghệ đông á</h2>
-          <p className="text-[12px] mt-2">EAST ASIA UNVERSITY OF TECHNOLOGY</p>
+          <h2 className="uppercase font-serif">trường đại học công nghệ đông á</h2>
+          <p className="text-[12px] mt-2 font-serif">EAST ASIA UNVERSITY OF TECHNOLOGY</p>
         </div>
       </div>
       <div className="flex items-center gap-2">

@@ -50,6 +50,11 @@ const menus = [
         path: path.MANAGE_STUDENT_TUITION,
         title: <Link to={path.MANAGE_STUDENT_TUITION}>Học phí</Link>,
       },
+      {
+        id: 2.5,
+        path: path.MANAGE_CATEGORY,
+        title: <Link to={path.MANAGE_CATEGORY}>Danh mục</Link>,
+      },
     ],
   },
   {
@@ -114,7 +119,7 @@ const SideBar = () => {
   };
 
   return (
-    <aside className="w-[200px] fixed top-0 left-0 bottom-0 bg-main text-white h-full">
+    <aside className="w-[210px] fixed top-0 left-0 bottom-0 bg-main text-white h-full">
       <div className="flex items-center flex-col gap-5 mt-5">
         <img
           className="w-[108px] h-[108px] object-contain"
@@ -134,7 +139,7 @@ const SideBar = () => {
                 ? "bg-[#1677ff] mx-1 rounded-md text-white"
                 : "text-[#ffffffa6]"
             } transition-all duration-200 ease-out ${
-              el.subtitle && el.id === showSubmenu ? "mb-[160px]" : "mb-0"
+              el.subtitle && el.id === showSubmenu ? "mb-[200px]" : "mb-0"
             } `}
           >
             <div
