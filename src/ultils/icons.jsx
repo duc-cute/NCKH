@@ -16,6 +16,8 @@ import { TiPlus } from "react-icons/ti";
 import { FiTrash2 } from "react-icons/fi";
 import { RiAdminFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
+import { MdOutlineSend } from "react-icons/md";
+import { GrUpdate } from "react-icons/gr";
 const icons = {
   BsFillPeopleFill,
   GiArchiveResearch,
@@ -37,6 +39,8 @@ const icons = {
   IoClose,
   GiPadlock,
   GiPadlockOpen,
+  MdOutlineSend,
+  GrUpdate,
 };
 
 export default icons;

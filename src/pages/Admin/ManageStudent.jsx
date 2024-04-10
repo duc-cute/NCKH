@@ -255,6 +255,7 @@ const ManageStudent = () => {
       <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
         <div className="flex gap-3 items-center justify-between pt-5 ">
           <SelectOption
+            style={`w-full`}
             name={"Chọn khoa"}
             data={faculties}
             displayField={"FacultyName"}
@@ -266,6 +267,7 @@ const ManageStudent = () => {
           />
 
           <SelectOption
+            style={`w-full`}
             name={"Chọn lớp"}
             data={classScores}
             displayField={"NameClass"}

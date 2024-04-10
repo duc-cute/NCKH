@@ -13,6 +13,7 @@ import {
   DragFile,
   InputField,
 } from "../../components";
+
 import {
   apiAllFaculties,
   apiClassById,
@@ -20,7 +21,9 @@ import {
   apiDataPoint,
   apiImportScore,
 } from "../../apis";
+
 import { readFileData } from "../../ultils/helper";
+
 import {
   cellScorePositions,
   columnsStudent,
@@ -170,6 +173,7 @@ const ManageScore = () => {
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
+              style={`w-full`}
               name={"Chọn khoa"}
               data={faculties}
               displayField={"FacultyName"}
@@ -181,6 +185,7 @@ const ManageScore = () => {
             />
 
             <SelectOption
+              style={`w-full`}
               name={"Chọn lớp"}
               data={classScores}
               displayField={"NameClass"}
@@ -191,7 +196,8 @@ const ManageScore = () => {
             />
 
             <SelectOption
-              name={"Chọn môn học"}
+              style={`w-full`}
+              name={"Chọn học phần"}
               data={courses}
               displayField={"NameCourse"}
               onChange={(event) => {

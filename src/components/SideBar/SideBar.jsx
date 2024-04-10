@@ -40,9 +40,7 @@ const menus = [
       {
         id: 2.3,
         path: path.MANAGE_STUDENT_ATTENDANCE,
-        title: (
-          <Link to={path.MANAGE_STUDENT_ATTENDANCE}>Điểm danh</Link>
-        ),
+        title: <Link to={path.MANAGE_STUDENT_ATTENDANCE}>Điểm danh</Link>,
       },
 
       {
@@ -60,13 +58,13 @@ const menus = [
   {
     id: 3,
     path: path.MANAGE_COURSE,
-    title: <Link to={path.MANAGE_COURSE}>Quản lý khóa học</Link>,
+    title: <Link to={path.MANAGE_COURSE}>Chương trình đào tạo</Link>,
     icon: <GiArchiveResearch />,
   },
   {
     id: 4,
     path: path.MANAGE_SCHEDULE,
-    title: <Link to={path.MANAGE_SCHEDULE}>Quản lý lịch trình</Link>,
+    title: <Link to={path.MANAGE_SCHEDULE}>Quản lý lịch học</Link>,
     icon: <AiOutlineSchedule />,
   },
   {

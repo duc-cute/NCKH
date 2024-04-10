@@ -1,5 +1,3 @@
-/** @format */
-
 import React, { useState, useCallback, useEffect } from "react";
 import moment from "moment";
 import {
@@ -239,6 +237,7 @@ const ManageAttendance = () => {
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
+              style={`w-full`}
               name={"Chọn khoa"}
               data={faculties}
               displayField={"FacultyName"}
@@ -250,6 +249,7 @@ const ManageAttendance = () => {
             />
 
             <SelectOption
+              style={`w-full`}
               name={"Chọn lớp"}
               data={classScores}
               displayField={"NameClass"}
@@ -260,7 +260,8 @@ const ManageAttendance = () => {
             />
 
             <SelectOption
-              name={"Chọn môn học"}
+              style={`w-full`}
+              name={"Chọn học phần"}
               data={courses}
               displayField={"NameCourse"}
               onChange={(event) => {
@@ -268,23 +269,22 @@ const ManageAttendance = () => {
               }}
             />
           </div>
-            
-            <div className="flex items-center gap-3 self-end">
+
+          <div className="flex items-center gap-3 self-end">
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
               style={`flex max-h-[40px] w-[214px]`}
               name={"Mã sinh viên"}
             />
 
-              <Button>Search</Button>
-              <Button style={"bg-white text-black"}>Clear</Button>
-              
+            <Button>Search</Button>
+            <Button style={"bg-white text-black"}>Clear</Button>
           </div>
         </div>
 
         <div className="mx-4 mt-4">
           <Table
-            title="Danh sách điểm danh sinh viên"
+            title="Danh sách điểm danh"
             columns={columnsAttendance}
             data={dataSelect?.dataStudents}
             groupButton={groupButton}
