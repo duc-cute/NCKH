@@ -18,6 +18,10 @@ import { RiAdminFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineSend } from "react-icons/md";
 import { GrUpdate } from "react-icons/gr";
+import { SiGoogleclassroom } from "react-icons/si";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { SlCalender } from "react-icons/sl";
+import { MdSubject } from "react-icons/md";
 const icons = {
   BsFillPeopleFill,
   GiArchiveResearch,
@@ -41,6 +45,10 @@ const icons = {
   GiPadlockOpen,
   MdOutlineSend,
   GrUpdate,
+  SiGoogleclassroom,
+  FaRegCalendarAlt,
+  SlCalender,
+  MdSubject,
 };
 
 export default icons;

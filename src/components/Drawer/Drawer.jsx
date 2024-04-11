@@ -29,7 +29,7 @@ const Drawer = ({ children, title, style, onClose }) => {
               />
             </svg>
           </Button>
-          <span className="ml-2 text-[16px] font-medium">{title}</span>
+          <span className="ml-2 text-[16px] font-bold">{title}</span>
         </div>
         <div className={twMerge(`px-8 py-4 ${style ? style : ""}`)}>
           {children}

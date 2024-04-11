@@ -10,6 +10,9 @@ import {
   Tag,
   InputForm,
   SelectLib,
+  CategoryDepartment,
+  CategorySchoolYear,
+  CategorySubject,
 } from "../../components";
 
 import icons from "../../ultils/icons";
@@ -37,6 +40,10 @@ const {
   LuPencilLine,
   MdOutlineSend,
   GrUpdate,
+  SiGoogleclassroom,
+  FaRegCalendarAlt,
+  SlCalender,
+  MdSubject,
 } = icons;
 
 const ManageCategory = () => {
@@ -51,6 +58,34 @@ const ManageCategory = () => {
     { title: "Học kì", key: "hocki" },
     { title: "Khoa", key: "khoa" },
     { title: "Số tín chỉ", key: "num" },
+  ];
+
+  const columns2 = [
+    {
+      title: "stt",
+      key: "id",
+      sort: true,
+    },
+    {
+      title: "Năm học",
+      key: "schoolYear",
+      sort: true,
+    },
+    {
+      title: "Học kỳ",
+      key: "hk",
+      sort: true,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (item) => (
+        <div className="flex items-center gap-3 cursor-pointer">
+          <FiTrash2 color="red" />
+          <LuPencilLine color="#1677ff" />
+        </div>
+      ),
+    },
   ];
 
   const data = [
@@ -92,12 +127,51 @@ const ManageCategory = () => {
     },
   ];
 
+  const data2 = [
+    {
+      id: "1",
+      schoolYear: "2022-2023",
+      hk: "Học kỳ 1",
+    },
+    {
+      id: "2",
+      schoolYear: "2022-2023",
+      hk: "Học kỳ 2",
+    },
+    {
+      id: "3",
+      schoolYear: "2023-2024",
+      hk: "Học kỳ 1",
+    },
+    {
+      id: "4",
+      schoolYear: "2023-2024",
+      hk: "Học kỳ 2",
+    },
+  ];
+
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
   const [facultyId, setFacultyId] = useState(null);
   const [classScoreId, setClassScoreId] = useState(null);
   const [courceScoreId, setCourceScoreId] = useState(null);
   const [courses, setCourses] = useState([]);
+
+  const [showDes, setShowDes] = useState(false);
+  const [schoolYear, setSchoolYear] = useState(false);
+  const [subject, setSubject] = useState(false);
+  const [department, setDepartment] = useState(false);
+  const [titleCategory, setTitleCategory] = useState("");
+
+  const {
+    register,
+    setValue,
+    reset,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+    watch,
+  } = useForm();
 
   // api select option khoa
   useEffect(() => {
@@ -197,192 +271,51 @@ const ManageCategory = () => {
     <>
       <div className=" h-[1000px]">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
-          <div className="flex gap-3 items-center justify-between pt-5 ">
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm năm học ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={""}
-                paddingRight={"90px"}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[540px]`}
-              name={"Chọn năm học"}
-              data={faculties}
-              displayField={"FacultyName"}
-              onChange={(event) => {
-                setFacultyId(event.target.value);
-                setClassScores([]);
-                setCourses([]);
+          <div className="flex gap-3 items-center pt-5 justify-end">
+            <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<SlCalender />}
+              handleOnclick={() => {
+                setShowDes(true);
+                setSchoolYear(true);
+                setDepartment(false);
+                setSubject(false);
+                setTitleCategory("Danh mục năm học, học kỳ");
               }}
-            />
+            >
+              Chọn năm học, học kỳ
+            </Button>
 
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm học kỳ ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={""}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[540px]`}
-              name={"Chọn học kỳ"}
-              data={classScores}
-              displayField={"NameClass"}
-              onChange={(event) => {
-                setClassScoreId(event.target.value);
-                setCourses([]);
+            <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<SiGoogleclassroom />}
+              handleOnclick={() => {
+                setShowDes(true);
+                setDepartment(true);
+                setSchoolYear(false);
+                setSubject(false);
+                setTitleCategory("Danh mục khoa, Lớp");
               }}
-            />
+            >
+              Chọn khoa, Lớp
+            </Button>
+
+            {/* <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<MdSubject />}
+              handleOnclick={() => {
+                setShowDes(true);
+                setSubject(true);
+                setSchoolYear(false);
+                setDepartment(false);
+                setTitleCategory("Danh mục học phần");
+              }}
+            >
+              Chọn học phần
+            </Button> */}
           </div>
-          <div className="flex gap-3 items-center justify-between pt-5 ">
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm khoa ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={"Mã sinh viên"}
-                paddingRight={"90px"}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
 
-            <SelectOption
-              style={`w-[540px]`}
-              name={"Chọn khoa"}
-              data={faculties}
-              displayField={"FacultyName"}
-              onChange={(event) => {
-                setFacultyId(event.target.value);
-                setClassScores([]);
-                setCourses([]);
-              }}
-            />
-
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm lớp ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={"Mã sinh viên"}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[540px]`}
-              name={"Chọn lớp"}
-              data={classScores}
-              displayField={"NameClass"}
-              onChange={(event) => {
-                setClassScoreId(event.target.value);
-                setCourses([]);
-              }}
-            />
-          </div>
-          <div className="flex gap-3 items-center pt-5 ">
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm mã học phần ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={"Mã sinh viên"}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[263px]`}
-              name={"Chọn mã học phần"}
-              data={courses}
-              displayField={"NameCourse"}
-              onChange={(event) => {
-                setCourceScoreId(event.target.value);
-              }}
-            />
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm tên học phần ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={""}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[263px]`}
-              name={"Chọn tên học phần"}
-              data={courses}
-              displayField={"NameCourse"}
-              onChange={(event) => {
-                setCourceScoreId(event.target.value);
-              }}
-            />
-          </div>
-          <div className="flex gap-3 items-center pt-5 ">
-            <div className="relative">
-              <InputField
-                placeholder={"Nhập thêm số tín chỉ ..."}
-                style={`flex max-h-[40px] w-[300px]`}
-                name={""}
-              />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-lg">
-                <div className="transition duration-300 ease-in-out rounded-lg p-[14px] py-[10px] flex gap-3">
-                  <MdOutlineSend color="#000" />
-                  <GrUpdate color="#1677ff" />
-                  <FiTrash2 color="red" />
-                </div>
-              </div>
-            </div>
-
-            <SelectOption
-              style={`w-[263px]`}
-              name={"Chọn số tín chỉ"}
-              data={courses}
-              displayField={"NameCourse"}
-              onChange={(event) => {
-                setCourceScoreId(event.target.value);
-              }}
-            />
-          </div>
+          <div className="flex gap-3 items-center pt-5 "></div>
         </div>
 
         <div className="mx-4 mt-4 ">
@@ -393,6 +326,49 @@ const ManageCategory = () => {
             groupButton={groupButton}
           />
         </div>
+        {showDes && (
+          <Drawer
+            title={titleCategory}
+            onClose={() => setShowDes(false)}
+            style={showDes ? "block gap-x-5 gap-y-3" : "hidden"}
+          >
+            <div className="drawer-department">
+              {schoolYear && <CategorySchoolYear />}
+              {department && <CategoryDepartment />}
+              {subject && <CategorySubject />}
+
+              <div className="flex gap-3 mt-12 justify-end">
+                <Button
+                  style={"py-[7px] text-white rounded-md "}
+                  icon={<MdOutlineSend />}
+                >
+                  Thêm mới
+                </Button>
+                <Button
+                  style={"py-[7px] text-white rounded-md "}
+                  icon={<GrUpdate />}
+                >
+                  Cập nhật
+                </Button>
+                <Button
+                  style={"py-[7px] text-white rounded-md "}
+                  icon={<FiTrash2 />}
+                >
+                  Xoá
+                </Button>
+                <Button style={"bg-white text-black"}>Clear</Button>
+              </div>
+
+              <div className="mt-12">
+                <Table
+                  title="Danh sách học phần theo từng khoa"
+                  columns={columns2}
+                  data={data2}
+                />
+              </div>
+            </div>
+          </Drawer>
+        )}
       </div>
     </>
   );

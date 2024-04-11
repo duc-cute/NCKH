@@ -22,3 +22,6 @@ export { default as Modal } from "./Modal/Modal";
 export { default as Drawer } from "./Drawer/Drawer";
 export { default as PaginaItem } from "./Paginate/PaginaItem";
 export { default as Pagination } from "./Paginate/Pagination";
+export { default as CategoryDepartment } from "./Category/CategoryDepartment";
+export { default as CategorySchoolYear } from "./Category/CategorySchoolYear";
+export { default as CategorySubject } from "./Category/CategorySubject";
