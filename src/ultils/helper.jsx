@@ -127,7 +127,14 @@ export const readFileData = (file, cellPositions, header, range) => {
   });
 };
 
-export const readFileDataAttendance = (file, selectedSchoolYear) => {
+export const readFileDataAttendance = (
+  file,
+  selectedSchoolYear,
+  selectedSemester,
+  selectedFaculty,
+  selectedClass,
+  selectedCourse
+) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -216,33 +223,16 @@ export const readFileDataAttendance = (file, selectedSchoolYear) => {
 
         console.log(attendanceStudentCustom);
 
-        const cellAddress = "A6";
-        const cellValue = worksheet[cellAddress]?.v;
-        const objA6 = parseString(cellValue);
-
-        const facultyMappings = {
-          DCCNTT: "Công nghệ thông tin",
-          DCQTKD: "Quản trị kinh doanh",
-        };
-
-        const courseMappings = {
-          KTCT: "Kinh tế chính trị",
-          TKW: "Thiết kế web",
-        };
-
-        let faculty = facultyMappings[objA6.khoa] || "";
-        let course = courseMappings[objA6.tenmonhoc] || "";
-
-        const dataSchoolYear = formatSchoolYear(selectedSchoolYear);
-
         const dataResponve = {
-          Faculty: faculty,
-          Class: objA6.tenlop,
-          Course: course,
-          Semester: dataSchoolYear.semester,
-          SchoolYear: dataSchoolYear.year,
+          Faculty: selectedFaculty,
+          Class: selectedClass,
+          Course: selectedCourse,
+          Semester: selectedSemester,
+          SchoolYear: selectedSchoolYear,
           DataAttendance: attendanceStudentCustom,
         };
+
+        console.log(dataResponve);
 
         resolve(dataResponve);
       } catch (error) {
@@ -253,39 +243,12 @@ export const readFileDataAttendance = (file, selectedSchoolYear) => {
   });
 };
 
-function formatSchoolYear(selectedSchoolYear) {
-  if (selectedSchoolYear) {
-    const matches = selectedSchoolYear.match(/Học kỳ (\d+) Năm học (.+)/);
-
-    if (matches && matches.length === 3) {
-      const semester = parseInt(matches[1]);
-      const year = matches[2];
-      return { semester, year };
-    } else {
-      console.log("Chuỗi không phù hợp định dạng");
-    }
-  } else {
-    console.log("selectedSchoolYear không tồn tại hoặc không có giá trị");
-  }
-}
-
 function formatDateOfBirth(dateString) {
   if (typeof dateString !== "string") {
     return "";
   }
   const [day, month, year] = dateString.split("/");
   return `${year}-${month}-${day}`;
-}
-
-function parseString(str) {
-  const matches = str.match(/Lớp\s*:\s*(\w+)_(\w+\d+\.\d+\.\d+)_/);
-  if (!matches) return null;
-
-  const tenmonhoc = matches[1];
-  const tenlop = matches[2];
-  const khoa = tenlop.replace(/(\d|\.)+/g, "");
-
-  return { tenmonhoc, tenlop, khoa };
 }
 
 export const generateRange = (start, end) => {

@@ -35,6 +35,12 @@ const ManageScore = () => {
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
 
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedCourse, setSelectedCourse] = useState();
+
   // state data
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
@@ -46,6 +52,7 @@ const ManageScore = () => {
   const [classScoreId, setClassScoreId] = useState(null);
   const [courceScoreId, setCourceScoreId] = useState(null);
 
+  // xử lý khi click import
   const handleImportButtonClick = useCallback(async () => {
     let DataStudents = [];
     let DataPoint = [];
@@ -71,13 +78,13 @@ const ManageScore = () => {
     };
 
     const response = await apiImportScore(dataManageScore);
-    console.log("res: ", response);
     if (response.status === 200) {
       toast.success(response.message);
       setFileName(null);
     } else toast.error(response.message);
   }, [dataPreview, fileName]);
 
+  // xử lý dữ liệu file import
   const handlePreviewData = useCallback(
     async (fileValue) => {
       let dataMain = await readFileData(
@@ -107,7 +114,21 @@ const ManageScore = () => {
       id: 2,
       button: (
         <Button
-          handleOnclick={() => setShowModal(true)}
+          handleOnclick={() => {
+            if (!selectedSchoolYear) {
+              toast.error("Vui lòng chọn năm học trước khi import");
+            } else if (!selectedSemester) {
+              toast.error("Vui lòng chọn học kỳ trước khi import");
+            } else if (!facultyId) {
+              toast.error("Vui lòng chọn khoa trước khi import");
+            } else if (!classScoreId) {
+              toast.error("Vui lòng chọn lớp trước khi import");
+            } else if (!courceScoreId) {
+              toast.error("Vui lòng chọn môn học trước khi import");
+            } else {
+              setShowModal(true);
+            }
+          }}
           style={"py-[7px] text-white rounded-md "}
           icon={<CgImport />}
         >
@@ -115,6 +136,23 @@ const ManageScore = () => {
         </Button>
       ),
     },
+  ];
+
+  const schoolYear = [
+    { key: 1, schoolYear: "2022" },
+    { key: 2, schoolYear: "2023" },
+    { key: 3, schoolYear: "2024" },
+    { key: 4, schoolYear: "2025" },
+    { key: 5, schoolYear: "2026" },
+    { key: 6, schoolYear: "2027" },
+    { key: 7, schoolYear: "2028" },
+    { key: 8, schoolYear: "2029" },
+    { key: 9, schoolYear: "2030" },
+  ];
+
+  const semester = [
+    { key: 1, semester: 1 },
+    { key: 2, semester: 2 },
   ];
 
   // api select option khoa
@@ -174,6 +212,25 @@ const ManageScore = () => {
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
               style={`w-full`}
+              name={"Chọn năm học"}
+              data={schoolYear}
+              displayField={"schoolYear"}
+              onChange={(event) => {
+                setSelectedSchoolYear(event.target.value);
+              }}
+            />
+            <SelectOption
+              style={`w-full`}
+              name={"Chọn học kỳ"}
+              data={semester}
+              displayField={"semester"}
+              onChange={(event) => {
+                setSelectedSemester(event.target.value);
+              }}
+            />
+
+            <SelectOption
+              style={`w-full`}
               name={"Chọn khoa"}
               data={faculties}
               displayField={"FacultyName"}
@@ -183,7 +240,8 @@ const ManageScore = () => {
                 setCourses([]);
               }}
             />
-
+          </div>
+          <div className="flex items-center gap-3 ">
             <SelectOption
               style={`w-full`}
               name={"Chọn lớp"}
@@ -204,11 +262,9 @@ const ManageScore = () => {
                 setCourceScoreId(event.target.value);
               }}
             />
-          </div>
-          <div className="flex items-center gap-3 self-end">
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
-              style={`flex max-h-[40px] w-[214px]`}
+              style={`flex max-h-[40px] w-[684px]`}
               name={"Mã sinh viên"}
             />
             <Button>Search</Button>
@@ -237,7 +293,7 @@ const ManageScore = () => {
         <Modal
           show={showModal}
           setShow={setShowModal}
-          title={"Data Import Score"}
+          title={"Import dữ liệu bảng điểm"}
           disableOkBtn={dataPreview.length < 1}
           onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}

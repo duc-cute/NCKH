@@ -1,5 +1,3 @@
-/** @format */
-
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -217,38 +215,6 @@ const ManageCategory = () => {
     {
       id: 1,
       button: (
-        <SelectOption
-          style={`w-[150px]`}
-          name={"Chọn năm học"}
-          data={faculties}
-          displayField={"FacultyName"}
-          onChange={(event) => {
-            setFacultyId(event.target.value);
-            setClassScores([]);
-            setCourses([]);
-          }}
-        />
-      ),
-    },
-    {
-      id: 1,
-      button: (
-        <SelectOption
-          style={`w-[300px]`}
-          name={"Tìm kiếm theo khoa"}
-          data={faculties}
-          displayField={"FacultyName"}
-          onChange={(event) => {
-            setFacultyId(event.target.value);
-            setClassScores([]);
-            setCourses([]);
-          }}
-        />
-      ),
-    },
-    {
-      id: 2,
-      button: (
         <Button
           style={"py-[7px] text-white rounded-md "}
           icon={<AiOutlineCloudUpload />}
@@ -258,7 +224,7 @@ const ManageCategory = () => {
       ),
     },
     {
-      id: 3,
+      id: 2,
       button: (
         <Button style={"py-[7px] text-white rounded-md "} icon={<CgImport />}>
           Import
@@ -272,6 +238,19 @@ const ManageCategory = () => {
       <div className=" h-[1000px]">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center pt-5 justify-end">
+            <div>
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Tìm kiếm theo khoa"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
+            </div>
             <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<SlCalender />}
@@ -300,7 +279,7 @@ const ManageCategory = () => {
               Chọn khoa, Lớp
             </Button>
 
-            {/* <Button
+            <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<MdSubject />}
               handleOnclick={() => {
@@ -311,11 +290,9 @@ const ManageCategory = () => {
                 setTitleCategory("Danh mục học phần");
               }}
             >
-              Chọn học phần
-            </Button> */}
+              Chọn khối kiến thức
+            </Button>
           </div>
-
-          <div className="flex gap-3 items-center pt-5 "></div>
         </div>
 
         <div className="mx-4 mt-4 ">

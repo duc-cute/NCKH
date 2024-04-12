@@ -32,30 +32,7 @@ const CategorySubject = () => {
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
           <SelectOption
-            style={`w-[183px]`}
-            name={"Chọn năm học"}
-            data={faculties}
-            displayField={"FacultyName"}
-            onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
-            }}
-          />
-
-          <SelectOption
-            style={`w-[550px]`}
-            name={"Chọn học kỳ"}
-            data={classScores}
-            displayField={"NameClass"}
-            onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
-            }}
-          />
-
-          <SelectOption
-            style={`w-[183px]`}
+            style={`w-[400px]`}
             name={"Chọn khoa"}
             data={faculties}
             displayField={"FacultyName"}
@@ -65,10 +42,9 @@ const CategorySubject = () => {
               setCourses([]);
             }}
           />
-
           <SelectOption
-            style={`w-[550px]`}
-            name={"Chọn lớp"}
+            style={`w-[400px]`}
+            name={"Chọn khối kiến thức ngành"}
             data={classScores}
             displayField={"NameClass"}
             onChange={(event) => {
@@ -80,51 +56,16 @@ const CategorySubject = () => {
 
         <div className="flex gap-3">
           <InputField
-            placeholder={"Nhập mã học phần ..."}
-            style={`flex max-h-[40px] w-[400px]`}
-            name={"Mã sinh viên"}
-          />
-
-          <SelectOption
-            style={`w-[400px]`}
-            name={"Chọn mã học phần"}
-            data={courses}
-            displayField={"NameCourse"}
-            onChange={(event) => {
-              setCourceScoreId(event.target.value);
-            }}
-          />
-          <InputField
-            placeholder={"Nhập tên học phần ..."}
+            placeholder={"Nhập thêm khoa ..."}
             style={`flex max-h-[40px] w-[400px]`}
             name={""}
+            paddingRight={"90px"}
           />
 
-          <SelectOption
-            style={`w-[400px]`}
-            name={"Chọn tên học phần"}
-            data={courses}
-            displayField={"NameCourse"}
-            onChange={(event) => {
-              setCourceScoreId(event.target.value);
-            }}
-          />
-        </div>
-        <div className="flex gap-3">
           <InputField
-            placeholder={"Nhập số tín chỉ ..."}
+            placeholder={"Nhập khối kiến thức ngành ..."}
             style={`flex max-h-[40px] w-[400px]`}
             name={""}
-          />
-
-          <SelectOption
-            style={`w-[400px]`}
-            name={"Chọn số tín chỉ"}
-            data={courses}
-            displayField={"NameCourse"}
-            onChange={(event) => {
-              setCourceScoreId(event.target.value);
-            }}
           />
         </div>
       </div>

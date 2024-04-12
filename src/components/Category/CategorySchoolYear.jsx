@@ -71,13 +71,6 @@ const CategorySchoolYear = () => {
     <>
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
-          <InputField
-            placeholder={"Nhập thêm năm học ..."}
-            style={`flex max-h-[40px] w-[400px]`}
-            name={""}
-            paddingRight={"90px"}
-          />
-
           <SelectOption
             style={`w-[400px]`}
             name={"Chọn năm học"}
@@ -89,9 +82,7 @@ const CategorySchoolYear = () => {
               setCourses([]);
             }}
           />
-        </div>
 
-        <div className="flex gap-3">
           <SelectOption
             style={`w-[400px]`}
             name={"Xem học kỳ"}
@@ -102,6 +93,16 @@ const CategorySchoolYear = () => {
               setCourses([]);
             }}
           />
+        </div>
+
+        <div className="flex gap-3">
+          <InputField
+            placeholder={"Nhập thêm năm học ..."}
+            style={`flex max-h-[40px] w-[400px]`}
+            name={""}
+            paddingRight={"90px"}
+          />
+
           <InputField
             placeholder={"Nhập thêm học kỳ ..."}
             style={`flex max-h-[40px] w-[400px]`}

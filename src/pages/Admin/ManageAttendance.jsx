@@ -33,8 +33,16 @@ const {
 } = icons;
 
 const ManageAttendance = () => {
+  // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedCourse, setSelectedCourse] = useState();
+
+  // state modal
   const [showModal, setShowModal] = useState(false);
+
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
@@ -50,11 +58,7 @@ const ManageAttendance = () => {
   const [classScoreId, setClassScoreId] = useState(null);
   const [courceScoreId, setCourceScoreId] = useState(null);
 
-  const handleChangeSchoolYear = (e) => {
-    setSelectedSchoolYear(e.target.value);
-  };
-  console.log("data", dataPreview);
-
+  // hàm xử lý import dữ liệu
   const handleImportButtonClick = useCallback(async () => {
     const response = await apiImportAttendance(dataImport);
     if (response.status === 200) {
@@ -64,9 +68,17 @@ const ManageAttendance = () => {
     } else toast.error(response.message);
   }, [dataPreview, fileName]);
 
+  // hàm xử lý xem trước dữ liệu
   const handlePreviewData = useCallback(
     (fileValue) => {
-      readFileDataAttendance(fileValue, selectedSchoolYear)
+      readFileDataAttendance(
+        fileValue,
+        selectedSchoolYear,
+        selectedSemester,
+        selectedFaculty,
+        selectedClass,
+        selectedCourse
+      )
         .then((dataMain) => {
           setDataImport(dataMain);
           console.log("data", dataMain);
@@ -95,10 +107,17 @@ const ManageAttendance = () => {
           setDataPreview(dataFormat);
         })
         .catch((error) => {
-          console.error("Error while previewing data:", error);
+          console.error("Lỗi khi xem trước dữ liệu:", error);
         });
     },
-    [dataPreview, selectedSchoolYear]
+    [
+      dataPreview,
+      selectedSchoolYear,
+      selectedSemester,
+      selectedFaculty,
+      selectedClass,
+      selectedCourse,
+    ]
   );
 
   // api select option khoa
@@ -174,28 +193,25 @@ const ManageAttendance = () => {
   }, [facultyId, classScoreId, courceScoreId]);
 
   const schoolYear = [
-    { key: 1, course: "Học kỳ 1 Năm học 2022-2023" },
-    { key: 2, course: "Học kỳ 2 Năm học 2022-2023" },
-    { key: 3, course: "Học kỳ 1 Năm học 2023-2024" },
-    { key: 4, course: "Học kỳ 2 Năm học 2023-2024" },
-    { key: 5, course: "Học kỳ 1 Năm học 2024-2025" },
-    { key: 6, course: "Học kỳ 2 Năm học 2024-2025" },
+    { key: 1, schoolYear: "2022" },
+    { key: 2, schoolYear: "2023" },
+    { key: 3, schoolYear: "2024" },
+    { key: 4, schoolYear: "2025" },
+    { key: 5, schoolYear: "2026" },
+    { key: 6, schoolYear: "2027" },
+    { key: 7, schoolYear: "2028" },
+    { key: 8, schoolYear: "2029" },
+    { key: 9, schoolYear: "2030" },
+  ];
+
+  const semester = [
+    { key: 1, semester: 1 },
+    { key: 2, semester: 2 },
   ];
 
   const groupButton = [
     {
-      id: 2,
-      button: (
-        <SelectOption
-          name="Chọn học kỳ và năm học"
-          data={schoolYear}
-          displayField={"course"}
-          onChange={handleChangeSchoolYear}
-        />
-      ),
-    },
-    {
-      id: 3,
+      id: 1,
       button: (
         <Button
           style={"py-[7px] text-white rounded-md "}
@@ -206,19 +222,21 @@ const ManageAttendance = () => {
       ),
     },
     {
-      id: 4,
+      id: 2,
       button: (
         <Button
           handleOnclick={() => {
-            // if (!facultyId || !classScoreId || !courceScoreId) {
-            //   alert("Vui lòng chọn khoa, lớp và môn học trước khi import");
-            //   return;
-            // }
-
-            if (selectedSchoolYear == null) {
-              alert("Vui lòng chọn khoá học và năm học trước khi import");
+            if (!selectedSchoolYear) {
+              toast.error("Vui lòng chọn năm học trước khi import");
+            } else if (!selectedSemester) {
+              toast.error("Vui lòng chọn học kỳ trước khi import");
+            } else if (!facultyId) {
+              toast.error("Vui lòng chọn khoa trước khi import");
+            } else if (!classScoreId) {
+              toast.error("Vui lòng chọn lớp trước khi import");
+            } else if (!courceScoreId) {
+              toast.error("Vui lòng chọn môn học trước khi import");
             } else {
-              console.log(selectedSchoolYear);
               setShowModal(true);
             }
           }}
@@ -238,24 +256,55 @@ const ManageAttendance = () => {
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
               style={`w-full`}
-              name={"Chọn khoa"}
-              data={faculties}
-              displayField={"FacultyName"}
+              name={"Chọn năm học"}
+              data={schoolYear}
+              displayField={"schoolYear"}
               onChange={(event) => {
-                setFacultyId(event.target.value);
-                setClassScores([]);
-                setCourses([]);
+                setSelectedSchoolYear(event.target.value);
+              }}
+            />
+            <SelectOption
+              style={`w-full`}
+              name={"Chọn học kỳ"}
+              data={semester}
+              displayField={"semester"}
+              onChange={(event) => {
+                setSelectedSemester(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
+              name={"Chọn khoa"}
+              data={faculties}
+              displayField={"FacultyName"}
+              valueKey={"FacultyName"}
+              onChange={(event) => {
+                setFacultyId(event.target.value);
+                setClassScores([]);
+                setCourses([]);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedFaculty(selectedValue);
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 ">
+            <SelectOption
+              style={`w-full`}
               name={"Chọn lớp"}
               data={classScores}
               displayField={"NameClass"}
+              valueKey={"NameClass"}
               onChange={(event) => {
                 setClassScoreId(event.target.value);
                 setCourses([]);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedClass(selectedValue);
               }}
             />
 
@@ -264,16 +313,19 @@ const ManageAttendance = () => {
               name={"Chọn học phần"}
               data={courses}
               displayField={"NameCourse"}
+              valueKey={"NameCourse"}
               onChange={(event) => {
                 setCourceScoreId(event.target.value);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedCourse(selectedValue);
               }}
             />
-          </div>
 
-          <div className="flex items-center gap-3 self-end">
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
-              style={`flex max-h-[40px] w-[214px]`}
+              style={`flex max-h-[40px] w-[683px]`}
               name={"Mã sinh viên"}
             />
 
@@ -295,7 +347,7 @@ const ManageAttendance = () => {
         <Modal
           show={showModal}
           setShow={setShowModal}
-          title={"Data Import Score"}
+          title={"Import dữ liệu điểm danh"}
           disableOkBtn={dataPreview.length < 1}
           onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}

@@ -22,6 +22,7 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { MdSubject } from "react-icons/md";
+import { IoIosCreate } from "react-icons/io";
 const icons = {
   BsFillPeopleFill,
   GiArchiveResearch,
@@ -49,6 +50,7 @@ const icons = {
   FaRegCalendarAlt,
   SlCalender,
   MdSubject,
+  IoIosCreate,
 };
 
 export default icons;

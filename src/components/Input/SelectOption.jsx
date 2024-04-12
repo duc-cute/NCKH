@@ -2,21 +2,30 @@
 
 import React from "react";
 
-const SelectOption = ({ name, data, onChange, displayField, style }) => {
+const SelectOption = ({
+  name,
+  data,
+  onChange,
+  displayField,
+  style,
+  valueKey,
+}) => {
   return (
-      <select
-      className={
-        `bg-gray-50 border max-h-[40px] border-gray-300 text-gray-900 text-sm rounded-lg
-        focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block p-2.5 ${style}`
-      }
-      onChange={onChange} 
+    <select
+      className={`bg-gray-50 border max-h-[40px] border-gray-300 text-gray-900 text-sm rounded-lg
+        focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block p-2.5 w-full `}
+      onChange={onChange}
       defaultValue=""
     >
       <option disabled value="">
         {name}
       </option>
       {data?.map((item, index) => (
-        <option key={`${item.id}-${index}`} value={item.ID}>
+        <option
+          key={`${item.id}-${index}`}
+          value={item.ID}
+          data-value={item[valueKey]}
+        >
           {item[displayField]}
         </option>
       ))}

@@ -71,13 +71,6 @@ const CategoryDepartment = () => {
     <>
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
-          <InputField
-            placeholder={"Nhập thêm khoa ..."}
-            style={`flex max-h-[40px] w-[400px]`}
-            name={""}
-            paddingRight={"90px"}
-          />
-
           <SelectOption
             style={`w-[400px]`}
             name={"Chọn khoa"}
@@ -89,9 +82,6 @@ const CategoryDepartment = () => {
               setCourses([]);
             }}
           />
-        </div>
-
-        <div className="flex gap-3">
           <SelectOption
             style={`w-[400px]`}
             name={"Chọn lớp"}
@@ -102,6 +92,16 @@ const CategoryDepartment = () => {
               setCourses([]);
             }}
           />
+        </div>
+
+        <div className="flex gap-3">
+          <InputField
+            placeholder={"Nhập thêm khoa ..."}
+            style={`flex max-h-[40px] w-[400px]`}
+            name={""}
+            paddingRight={"90px"}
+          />
+
           <InputField
             placeholder={"Nhập thêm lớp ..."}
             style={`flex max-h-[40px] w-[400px]`}
