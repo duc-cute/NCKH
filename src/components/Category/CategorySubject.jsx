@@ -27,12 +27,31 @@ const CategorySubject = () => {
   const [courceScoreId, setCourceScoreId] = useState(null);
   const [courses, setCourses] = useState([]);
 
+  const [specializeds, setSpecialized] = useState(null);
+
+  const specialized = [
+    { key: 1, specialized: "Kiến thức đại cương" },
+    { key: 2, specialized: "Kiến thức chuyên ngành" },
+    { key: 3, specialized: "Hệ thống thông tin" },
+    { key: 4, specialized: "Thực tập, tôt nghiệp" },
+  ];
+
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/point/select-all-faculty";
+      const facultie = await apiAllFaculties(url);
+      setFaculties(facultie?.data);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
           <SelectOption
-            style={`w-[400px]`}
+            style={`w-[300px]`}
             name={"Chọn khoa"}
             data={faculties}
             displayField={"FacultyName"}
@@ -45,11 +64,10 @@ const CategorySubject = () => {
           <SelectOption
             style={`w-[400px]`}
             name={"Chọn khối kiến thức ngành"}
-            data={classScores}
-            displayField={"NameClass"}
+            data={specialized}
+            displayField={"specialized"}
             onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
+              setSpecialized(event.target.value);
             }}
           />
         </div>

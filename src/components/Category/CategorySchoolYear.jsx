@@ -27,6 +27,9 @@ const CategorySchoolYear = () => {
   const [courceScoreId, setCourceScoreId] = useState(null);
   const [courses, setCourses] = useState([]);
 
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +70,23 @@ const CategorySchoolYear = () => {
     if (facultyId && classScoreId && courceScoreId) fetchData();
   }, [facultyId, classScoreId, courceScoreId]);
 
+  const fakeSchoolYear = [
+    { key: 1, fakeSchoolYear: "2022" },
+    { key: 2, fakeSchoolYear: "2023" },
+    { key: 3, fakeSchoolYear: "2024" },
+    { key: 4, fakeSchoolYear: "2025" },
+    { key: 5, fakeSchoolYear: "2026" },
+    { key: 6, fakeSchoolYear: "2027" },
+    { key: 7, fakeSchoolYear: "2028" },
+    { key: 8, fakeSchoolYear: "2029" },
+    { key: 9, fakeSchoolYear: "2030" },
+  ];
+
+  const semester = [
+    { key: 1, semester: 1 },
+    { key: 2, semester: 2 },
+  ];
+
   return (
     <>
       <div className="flex flex-col gap-3 ">
@@ -74,23 +94,20 @@ const CategorySchoolYear = () => {
           <SelectOption
             style={`w-[400px]`}
             name={"Chọn năm học"}
-            data={faculties}
-            displayField={"FacultyName"}
+            data={fakeSchoolYear}
+            displayField={"fakeSchoolYear"}
             onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
+              setSelectedSchoolYear(event.target.value);
             }}
           />
 
           <SelectOption
             style={`w-[400px]`}
             name={"Xem học kỳ"}
-            data={classScores}
-            displayField={"NameClass"}
+            data={semester}
+            displayField={"semester"}
             onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
+              setSelectedSemester(event.target.value);
             }}
           />
         </div>

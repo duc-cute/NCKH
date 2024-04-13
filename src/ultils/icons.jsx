@@ -23,6 +23,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { MdSubject } from "react-icons/md";
 import { IoIosCreate } from "react-icons/io";
+import { BiCategory } from "react-icons/bi";
 const icons = {
   BsFillPeopleFill,
   GiArchiveResearch,
@@ -51,6 +52,7 @@ const icons = {
   SlCalender,
   MdSubject,
   IoIosCreate,
+  BiCategory,
 };
 
 export default icons;

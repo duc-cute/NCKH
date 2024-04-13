@@ -74,16 +74,6 @@ const ManageCategory = () => {
       key: "hk",
       sort: true,
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <FiTrash2 color="red" />
-          <LuPencilLine color="#1677ff" />
-        </div>
-      ),
-    },
   ];
 
   const data = [
@@ -94,7 +84,7 @@ const ManageCategory = () => {
       num: 5,
       hocki: "Học kỳ 1",
       khoa: "Công nghệ thông tin",
-      year: "2022-2023",
+      year: "2023",
     },
     {
       key: "2",
@@ -103,7 +93,7 @@ const ManageCategory = () => {
       num: 2,
       hocki: "Học kỳ 1",
       khoa: "Công nghệ thông tin",
-      year: "2022-2023",
+      year: "2022",
     },
     {
       key: "3",
@@ -112,7 +102,7 @@ const ManageCategory = () => {
       num: 3,
       hocki: "Học kỳ 1",
       khoa: "Công nghệ thông tin",
-      year: "2022-2023",
+      year: "2024",
     },
     {
       key: "4",
@@ -121,7 +111,7 @@ const ManageCategory = () => {
       num: 4,
       hocki: "Học kỳ 1",
       khoa: "Công nghệ thông tin",
-      year: "2022-2023",
+      year: "2022",
     },
   ];
 

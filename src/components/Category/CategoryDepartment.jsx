@@ -72,7 +72,7 @@ const CategoryDepartment = () => {
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
           <SelectOption
-            style={`w-[400px]`}
+            style={`w-[300px]`}
             name={"Chọn khoa"}
             data={faculties}
             displayField={"FacultyName"}
@@ -83,7 +83,7 @@ const CategoryDepartment = () => {
             }}
           />
           <SelectOption
-            style={`w-[400px]`}
+            style={`w-full`}
             name={"Chọn lớp"}
             data={classScores}
             displayField={"NameClass"}

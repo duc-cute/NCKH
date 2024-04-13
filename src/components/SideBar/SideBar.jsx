@@ -12,6 +12,7 @@ const {
   GiArchiveResearch,
   LuLayoutDashboard,
   RiAdminFill,
+  BiCategory,
 } = icons;
 const menus = [
   {
@@ -48,50 +49,51 @@ const menus = [
         path: path.MANAGE_STUDENT_TUITION,
         title: <Link to={path.MANAGE_STUDENT_TUITION}>Học phí</Link>,
       },
-      {
-        id: 2.5,
-        path: path.MANAGE_CATEGORY,
-        title: <Link to={path.MANAGE_CATEGORY}>Danh mục</Link>,
-      },
     ],
   },
   {
     id: 3,
+    path: path.MANAGE_CATEGORY,
+    title: <Link to={path.MANAGE_CATEGORY}>Quản lý danh mục</Link>,
+    icon: <BiCategory />,
+  },
+  {
+    id: 4,
     path: path.MANAGE_COURSE,
     title: <Link to={path.MANAGE_COURSE}>Chương trình đào tạo</Link>,
     icon: <GiArchiveResearch />,
   },
   {
-    id: 4,
+    id: 5,
     path: path.MANAGE_SCHEDULE,
     title: <Link to={path.MANAGE_SCHEDULE}>Quản lý lịch học</Link>,
     icon: <AiOutlineSchedule />,
   },
   {
-    id: 5,
+    id: 6,
     path: path.MANAGE_BLOG,
     title: <Link to={path.MANAGE_BLOG}>Quản lý Blogs</Link>,
     icon: <FaBlog />,
   },
   {
-    id: 6,
+    id: 7,
     path: path.MANAGE_MAIL,
     title: <Link to={path.MANAGE_MAIL}>Quản lý Mail</Link>,
     icon: <AiOutlineMessage />,
   },
   {
-    id: 7,
+    id: 8,
     title: <label>Quản trị</label>,
     icon: <RiAdminFill />,
 
     subtitle: [
       {
-        id: 7.1,
+        id: 8.1,
         path: path.ADMIN_ROLE,
         title: <Link to={path.ADMIN_ROLE}>Vai trò</Link>,
       },
       {
-        id: 7.2,
+        id: 8.2,
         path: path.ADMIN_ACCOUNT,
         title: <Link to={path.ADMIN_ACCOUNT}>Tài khoản</Link>,
       },
@@ -137,7 +139,7 @@ const SideBar = () => {
                 ? "bg-[#1677ff] mx-1 rounded-md text-white"
                 : "text-[#ffffffa6]"
             } transition-all duration-200 ease-out ${
-              el.subtitle && el.id === showSubmenu ? "mb-[200px]" : "mb-0"
+              el.subtitle && el.id === showSubmenu ? "mb-[160px]" : "mb-0"
             } `}
           >
             <div
