@@ -16,6 +16,7 @@ export const headerDataScore = [
   "scoreModule",
   "Note",
 ];
+
 export const cellScorePositions = ["A8", "A9", "A10", "D10", "I8", "I9", "I10"];
 
 export const columnsStudent = [

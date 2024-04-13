@@ -64,18 +64,21 @@ const ManageScore = () => {
         DataPoint.push({ ...ortherData });
       }
     });
+
     // // trả data cần lấy
     const dataManageScore = {
-      Course: dataPreview.dataDescription[0],
+      Course: selectedCourse,
       Teacher: dataPreview.dataDescription[1],
-      Faculity: dataPreview.dataDescription[3],
-      Class: dataPreview.dataDescription[2],
+      Faculity: selectedFaculty,
+      Class: selectedClass,
       TotalHours: +dataPreview.dataDescription[4],
       NumberOfCredits: +dataPreview.dataDescription[5],
       FinalExamDate: dataPreview.dataDescription[6],
       DataStudents: DataStudents,
       DataPoint: DataPoint,
     };
+
+    console.log(dataManageScore);
 
     const response = await apiImportScore(dataManageScore);
     if (response.status === 200) {
@@ -234,10 +237,15 @@ const ManageScore = () => {
               name={"Chọn khoa"}
               data={faculties}
               displayField={"FacultyName"}
+              valueKey={"FacultyName"}
               onChange={(event) => {
                 setFacultyId(event.target.value);
                 setClassScores([]);
                 setCourses([]);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedFaculty(selectedValue);
               }}
             />
           </div>
@@ -247,9 +255,14 @@ const ManageScore = () => {
               name={"Chọn lớp"}
               data={classScores}
               displayField={"NameClass"}
+              valueKey={"NameClass"}
               onChange={(event) => {
                 setClassScoreId(event.target.value);
                 setCourses([]);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedClass(selectedValue);
               }}
             />
 
@@ -258,10 +271,16 @@ const ManageScore = () => {
               name={"Chọn học phần"}
               data={courses}
               displayField={"NameCourse"}
+              valueKey={"NameCourse"}
               onChange={(event) => {
                 setCourceScoreId(event.target.value);
+                const selectedOption =
+                  event.target.options[event.target.selectedIndex];
+                const selectedValue = selectedOption.getAttribute("data-value");
+                setSelectedCourse(selectedValue);
               }}
             />
+
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
               style={`flex max-h-[40px] w-[684px]`}
