@@ -10,5 +10,6 @@ export { default as ManageAttendance } from "./ManageAttendance";
 export { default as ManageMail } from "./ManageMail";
 export { default as Role } from "./Role";
 export { default as Account } from "./Account";
-export {default as ManageTuition} from "./ManageTuition";
-export {default as ManageCategory} from "./ManageCategory";
+// export { default as ManageTuition } from "./ManageTuition";
+export { default as ManageCategory } from "./ManageCategory";
+export { default as StudentWarning } from "./StudentWarning";

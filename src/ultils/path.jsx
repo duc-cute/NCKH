@@ -19,12 +19,12 @@ const path = {
   MANAGE_STUDENT_CRUD: "manage-student",
   MANAGE_STUDENT_SCORE: "manage-score",
   MANAGE_STUDENT_ATTENDANCE: "manage-attendance",
-  MANAGE_STUDENT_TUITION: "manage-tuition",
   MANAGE_COURSE: "manage-course",
   MANAGE_SCHEDULE: "manage-schedule",
   MANAGE_BLOG: "manage-blog",
   MANAGE_MAIL: "manage-mail",
   MANAGE_CATEGORY: "manage-category",
+  STUDENT_WARNING: "student-warning",
 };
 
 export default path;

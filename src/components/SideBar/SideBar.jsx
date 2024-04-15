@@ -43,57 +43,57 @@ const menus = [
         path: path.MANAGE_STUDENT_ATTENDANCE,
         title: <Link to={path.MANAGE_STUDENT_ATTENDANCE}>Điểm danh</Link>,
       },
-
-      {
-        id: 2.4,
-        path: path.MANAGE_STUDENT_TUITION,
-        title: <Link to={path.MANAGE_STUDENT_TUITION}>Học phí</Link>,
-      },
     ],
   },
   {
     id: 3,
+    path: path.STUDENT_WARNING,
+    title: <Link to={path.STUDENT_WARNING}>Cảnh báo sinh viên</Link>,
+    icon: <BiCategory />,
+  },
+  {
+    id: 4,
     path: path.MANAGE_CATEGORY,
     title: <Link to={path.MANAGE_CATEGORY}>Quản lý danh mục</Link>,
     icon: <BiCategory />,
   },
   {
-    id: 4,
+    id: 5,
     path: path.MANAGE_COURSE,
     title: <Link to={path.MANAGE_COURSE}>Chương trình đào tạo</Link>,
     icon: <GiArchiveResearch />,
   },
   {
-    id: 5,
+    id: 6,
     path: path.MANAGE_SCHEDULE,
     title: <Link to={path.MANAGE_SCHEDULE}>Quản lý lịch học</Link>,
     icon: <AiOutlineSchedule />,
   },
   {
-    id: 6,
+    id: 7,
     path: path.MANAGE_BLOG,
     title: <Link to={path.MANAGE_BLOG}>Quản lý Blogs</Link>,
     icon: <FaBlog />,
   },
   {
-    id: 7,
+    id: 8,
     path: path.MANAGE_MAIL,
     title: <Link to={path.MANAGE_MAIL}>Quản lý Mail</Link>,
     icon: <AiOutlineMessage />,
   },
   {
-    id: 8,
+    id: 9,
     title: <label>Quản trị</label>,
     icon: <RiAdminFill />,
 
     subtitle: [
       {
-        id: 8.1,
+        id: 9.1,
         path: path.ADMIN_ROLE,
         title: <Link to={path.ADMIN_ROLE}>Vai trò</Link>,
       },
       {
-        id: 8.2,
+        id: 9.2,
         path: path.ADMIN_ACCOUNT,
         title: <Link to={path.ADMIN_ACCOUNT}>Tài khoản</Link>,
       },
@@ -139,7 +139,7 @@ const SideBar = () => {
                 ? "bg-[#1677ff] mx-1 rounded-md text-white"
                 : "text-[#ffffffa6]"
             } transition-all duration-200 ease-out ${
-              el.subtitle && el.id === showSubmenu ? "mb-[160px]" : "mb-0"
+              el.subtitle && el.id === showSubmenu ? "mb-[120px]" : "mb-0"
             } `}
           >
             <div

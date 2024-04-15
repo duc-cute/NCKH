@@ -8,13 +8,13 @@ import {
   ManageCourse,
   ManageSchedule,
   ManageStudent,
-  ManageTuition,
   ManageMail,
   Role,
   Account,
   ManageScore,
   ManageCategory,
   ManageAttendance,
+  StudentWarning,
 } from "./pages/Admin";
 import path from "./ultils/path";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -57,6 +57,10 @@ const router = createBrowserRouter([
         element: <ManageCourse />,
       },
       {
+        path: path.STUDENT_WARNING,
+        element: <StudentWarning />,
+      },
+      {
         path: path.MANAGE_STUDENT_SCORE,
         element: <ManageScore />,
       },
@@ -72,10 +76,10 @@ const router = createBrowserRouter([
         path: path.MANAGE_CATEGORY,
         element: <ManageCategory />,
       },
-      {
-        path: path.MANAGE_STUDENT_TUITION,
-        element: <ManageTuition />,
-      },
+      // {
+      //   path: path.MANAGE_STUDENT_TUITION,
+      //   element: <ManageTuition />,
+      // },
       {
         path: path.MANAGE_SCHEDULE,
         element: <ManageSchedule />,
