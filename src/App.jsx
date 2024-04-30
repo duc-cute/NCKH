@@ -1,5 +1,5 @@
 /** @format */
-import { Layout, Modal, NotFound } from "./components";
+import { Layout, LayoutStudent, Modal, NotFound } from "./components";
 import { Blog, Profile, Study } from "./pages/Student";
 import { Register, Login } from "./pages/Public";
 import {
@@ -23,7 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 const router = createBrowserRouter([
   {
     path: path.HOME,
-    element: <Layout />,
+    element: <LayoutStudent />,
     errorElement: <NotFound />,
 
     children: [

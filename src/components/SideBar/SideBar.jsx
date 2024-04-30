@@ -126,8 +126,8 @@ const SideBar = () => {
           src={logo}
           alt="logo"
         />
-        <h2 className="font-semibold font-serif w-[150px] break-words text-center text-[14px] leading-5">
-          TRƯỜNG ĐẠI HỌC CÔNG NGHỆ ĐÔNG Á
+        <h2 className="font-semibold font-serif w-[150px] break-words text-center text-[14px] leading-5 uppercase">
+          Phần mềm hỗ trợ cố vấn học tập
         </h2>
       </div>
       <ul className="mt-6 flex flex-col gap-[10px] select-none">

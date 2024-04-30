@@ -38,7 +38,9 @@ const Login = () => {
             },
           })
         );
-        navigate(`/${path.ADMIN}/${path.MANAGE_STUDENT_CRUD}`);
+
+        // navigate(`/${path.ADMIN}/${path.MANAGE_STUDENT_CRUD}`);
+        navigate(`${path.HOME}`);
       } else swal.fire("Oops!", res?.mesage, "error");
     }
   }, [payload]);

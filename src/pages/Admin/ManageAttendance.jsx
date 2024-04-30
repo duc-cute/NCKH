@@ -165,8 +165,9 @@ const ManageAttendance = () => {
       if (res.status === 200)
         dataFormat = res.data.DataAttendance.map((data) => {
           const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
-          let End = Attendance[Attendance.length - 1].Day;
-          let Start = Attendance[0].Day;
+          console.log("tt", Attendance[Attendance.length - 1]);
+          let End = Attendance[Attendance.length - 1]?.Day;
+          let Start = Attendance[0]?.Day;
           let totalPercentDateStudy = Attendance.reduce(
             (acc, curr) => {
               if (curr.AttendanceStatus !== "") acc++;
@@ -191,6 +192,7 @@ const ManageAttendance = () => {
     };
     if (facultyId && classScoreId && courceScoreId) fetchData();
   }, [facultyId, classScoreId, courceScoreId]);
+  console.log("data", dataSelect);
 
   const schoolYear = [
     { key: 1, schoolYear: "2022" },

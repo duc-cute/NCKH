@@ -5,7 +5,7 @@ const path = {
   REGISTER: "register",
 
   // User
-  HOME: "",
+  HOME: "/",
   BLOG: "blog",
   PROFILE: "profile",
   STUDY: "study",
