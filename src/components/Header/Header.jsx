@@ -10,7 +10,6 @@ import { useState } from "react";
 const Header = () => {
   const { current, isLoggedIn } = useSelector((state) => state.user);
   const [showDropDown, setShowDropDown] = useState(false);
-  console.log("cur", current);
   return (
     <div className="flex justify-between h-header py-2 px-10">
       <div className="flex gap-3 items-center">

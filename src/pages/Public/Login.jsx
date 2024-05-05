@@ -38,9 +38,8 @@ const Login = () => {
             },
           })
         );
-
-        // navigate(`/${path.ADMIN}/${path.MANAGE_STUDENT_CRUD}`);
-        navigate(`${path.HOME}`);
+        if (res?.role === "Admin") navigate(`/${path.ADMIN}`);
+        else if (res?.role === "User") navigate(`${path.HOME}`);
       } else swal.fire("Oops!", res?.mesage, "error");
     }
   }, [payload]);
