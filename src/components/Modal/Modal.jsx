@@ -23,7 +23,7 @@ const Modal = ({
         <div className=" flex items-center justify-center min-w-[60%] max-w-[80%] h-[95%] ">
           <div className=" w-full relative bg-white rounded-lg shadow ">
             <div className="flex items-center justify-between p-4  border-b border-solid border-[#e5e7eb] rounded-t ">
-              <div className="text-xl font-semibold text-gray-900 ">
+              <div className="text-xl font-semibold text-gray-900 font-main">
                 {title}
               </div>
               <button

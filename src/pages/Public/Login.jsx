@@ -24,7 +24,6 @@ const Login = () => {
     const invalids = validate(payload, setInvalidField);
     if (invalids === 0) {
       const res = await apiLogin({ Email: email, Password: password });
-      console.log("re", res);
       if (res?.status === 200) {
         dispatch(
           login({
@@ -35,6 +34,7 @@ const Login = () => {
               username: res.UserName,
               avatar: res?.Avatar,
               fullname: res.FullName,
+              role: res?.role,
             },
           })
         );

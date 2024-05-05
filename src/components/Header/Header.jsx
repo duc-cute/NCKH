@@ -3,7 +3,14 @@ import icons from "../../ultils/icons";
 import user from "../../assets/images/boyImage.jpg";
 const { FaUserAlt, BsFillCaretDownFill } = icons;
 import logo from "../../assets/images/logo.png";
+import { useSelector } from "react-redux";
+import Dropdown from "../Dropdown/Dropdown";
+import { listDropDownStudent } from "../../ultils/constant";
+import { useState } from "react";
 const Header = () => {
+  const { current, isLoggedIn } = useSelector((state) => state.user);
+  const [showDropDown, setShowDropDown] = useState(false);
+  console.log("cur", current);
   return (
     <div className="flex justify-between h-header py-2 px-10">
       <div className="flex gap-3 items-center">
@@ -14,10 +21,14 @@ const Header = () => {
         />
         <div className="text-[24px] text-main font-semibold">
           <h2 className="uppercase font-serif">
-            Phần mềm hỗ trợ cố vấn học tập
+            {current?.role === "User"
+              ? "Phần mềm hỗ trợ cố sinh viên"
+              : "Phần mềm hỗ trợ cố vấn học tập"}
           </h2>
           <p className="text-[12px] mt-2 font-serif uppercase">
-            Software to support learning consulting
+            {current?.role === "User"
+              ? "Software to support student"
+              : "Software to support learning consulting"}
           </p>
         </div>
       </div>
@@ -39,7 +50,16 @@ const Header = () => {
           />
         </svg>
 
-        <span className="text-[16px] text-main font-serif">Admin</span>
+        <div
+          className="text-[16px] relative text-main font-serif cursor-pointer select-none"
+          onClick={() => setShowDropDown((state) => !state)}
+        >
+          {current?.fullname}
+
+          <div className="absolute top-0 mt-8 right-0">
+            <Dropdown listDrop={listDropDownStudent} show={showDropDown} />
+          </div>
+        </div>
         <span className="text-main">
           <BsFillCaretDownFill size={12} />
         </span>

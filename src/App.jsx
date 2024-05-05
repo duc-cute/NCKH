@@ -1,6 +1,6 @@
 /** @format */
 import { Layout, LayoutStudent, Modal, NotFound } from "./components";
-import { Blog, Profile, Study } from "./pages/Student";
+import { Blog, DocumentStudy, Profile, Schedule, Study } from "./pages/Student";
 import { Register, Login } from "./pages/Public";
 import {
   DashBoash,
@@ -35,6 +35,18 @@ const router = createBrowserRouter([
       {
         path: path.STUDY,
         element: <Study />,
+      },
+      {
+        path: path.STUDENT_WARNING,
+        element: <StudentWarning />,
+      },
+      {
+        path: path.DOCUMENTSTUDY,
+        element: <DocumentStudy />,
+      },
+      {
+        path: path.SCHEDULE,
+        element: <Schedule />,
       },
     ],
   },

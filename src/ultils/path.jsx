@@ -7,8 +7,11 @@ const path = {
   // User
   HOME: "/",
   BLOG: "blog",
-  PROFILE: "profile",
+  // PROFILE: "/",
   STUDY: "study",
+  SCHEDULE: "schedule",
+  STUDYWARNING: "study-warning",
+  DOCUMENTSTUDY: "document-study",
   // ....
   //
   ADMIN: "admin",

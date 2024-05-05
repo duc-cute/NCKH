@@ -1,6 +1,7 @@
 /** @format */
 
 import { RadioAttendance, Tag } from "../components";
+import path from "./path";
 
 export const headerDataScore = [
   "stt",
@@ -112,4 +113,22 @@ export const levelColor = [
   "text-[#faad14]",
   "text-[#581c87]",
   "text-[#ff4d4f]",
+];
+export const listDropDownStudent = [
+  {
+    title: "Cá nhân",
+    path: path.HOME,
+  },
+  {
+    title: "Lịch học",
+    path: path.SCHEDULE,
+  },
+  {
+    title: "Cảnh báo học tập",
+    path: path.STUDENT_WARNING,
+  },
+  {
+    title: "Tài liệu học tập",
+    path: path.DOCUMENTSTUDY,
+  },
 ];
