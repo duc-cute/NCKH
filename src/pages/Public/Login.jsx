@@ -82,6 +82,7 @@ const Login = () => {
                     placeholder="********"
                     style={"font-lato flex flex-col gap-1"}
                     label="password"
+                    type="password"
                   />
                 </div>
                 <Button

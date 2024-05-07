@@ -24,6 +24,11 @@ import { SlCalender } from "react-icons/sl";
 import { MdSubject } from "react-icons/md";
 import { IoIosCreate } from "react-icons/io";
 import { BiCategory } from "react-icons/bi";
+import { FaChartColumn } from "react-icons/fa6";
+import { FaChartPie } from "react-icons/fa";
+import { IoManSharp } from "react-icons/io5";
+import { AiOutlineControl } from "react-icons/ai";
+
 const icons = {
   BsFillPeopleFill,
   GiArchiveResearch,
@@ -53,6 +58,10 @@ const icons = {
   MdSubject,
   IoIosCreate,
   BiCategory,
+  FaChartColumn,
+  FaChartPie,
+  IoManSharp,
+  AiOutlineControl,
 };
 
 export default icons;

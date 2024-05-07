@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "1.9.3",
     "axios": "^1.6.3",
+    "d3": "^7.9.0",
     "moment": "^2.29.4",
     "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
