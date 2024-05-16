@@ -9,7 +9,7 @@ import {
   InputForm,
   SelectLib,
   CategoryDepartment,
-  CategorySchoolYear,
+  CategoryClass,
   CategorySubject,
 } from "../../components";
 
@@ -42,102 +42,13 @@ const {
   FaRegCalendarAlt,
   SlCalender,
   MdSubject,
+  FaArrowCircleRight,
+  SiStudyverse,
+  MdOutlineClass,
+  IoIosCreate,
 } = icons;
 
 const ManageCategory = () => {
-  const columns = [
-    {
-      title: "Mã học phần",
-      key: "mhp",
-      sort: true,
-    },
-    { title: "Tên học phần", key: "name", sort: true },
-    { title: "Năm học", key: "year" },
-    { title: "Học kì", key: "hocki" },
-    { title: "Khoa", key: "khoa" },
-    { title: "Số tín chỉ", key: "num" },
-  ];
-
-  const columns2 = [
-    {
-      title: "stt",
-      key: "id",
-      sort: true,
-    },
-    {
-      title: "Năm học",
-      key: "schoolYear",
-      sort: true,
-    },
-    {
-      title: "Học kỳ",
-      key: "hk",
-      sort: true,
-    },
-  ];
-
-  const data = [
-    {
-      key: "1",
-      mhp: "IT001",
-      name: "Lập trình cơ bản",
-      num: 5,
-      hocki: "Học kỳ 1",
-      khoa: "Công nghệ thông tin",
-      year: "2023",
-    },
-    {
-      key: "2",
-      mhp: "IT002",
-      name: "Kiểm thử phần mềm",
-      num: 2,
-      hocki: "Học kỳ 1",
-      khoa: "Công nghệ thông tin",
-      year: "2022",
-    },
-    {
-      key: "3",
-      mhp: "IT003",
-      name: "Cơ sở dữ liệu",
-      num: 3,
-      hocki: "Học kỳ 1",
-      khoa: "Công nghệ thông tin",
-      year: "2024",
-    },
-    {
-      key: "4",
-      mhp: "IT004",
-      name: "Kĩ thuật đồ hoạ",
-      num: 4,
-      hocki: "Học kỳ 1",
-      khoa: "Công nghệ thông tin",
-      year: "2022",
-    },
-  ];
-
-  const data2 = [
-    {
-      id: "1",
-      schoolYear: "2022-2023",
-      hk: "Học kỳ 1",
-    },
-    {
-      id: "2",
-      schoolYear: "2022-2023",
-      hk: "Học kỳ 2",
-    },
-    {
-      id: "3",
-      schoolYear: "2023-2024",
-      hk: "Học kỳ 1",
-    },
-    {
-      id: "4",
-      schoolYear: "2023-2024",
-      hk: "Học kỳ 2",
-    },
-  ];
-
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
   const [facultyId, setFacultyId] = useState(null);
@@ -225,74 +136,142 @@ const ManageCategory = () => {
 
   return (
     <>
-      <div className=" h-[1000px]">
+      <div className=" h-screen">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
-          <div className="flex gap-3 items-center pt-5 justify-end">
-            <div>
-              <SelectOption
-                style={`w-[300px]`}
-                name={"Tìm kiếm theo khoa"}
-                data={faculties}
-                displayField={"FacultyName"}
-                onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
-                }}
-              />
+          <div className="flex gap-3 items-center pt-5 justify-start">
+            <div className=" font-bold text-[20px] ml-1">
+              Tổng quan danh mục
             </div>
-            <Button
-              style={"py-[7px] text-white rounded-md "}
-              icon={<SlCalender />}
-              handleOnclick={() => {
-                setShowDes(true);
-                setSchoolYear(true);
-                setDepartment(false);
-                setSubject(false);
-                setTitleCategory("Danh mục năm học, học kỳ");
-              }}
-            >
-              Chọn năm học, học kỳ
-            </Button>
-
-            <Button
-              style={"py-[7px] text-white rounded-md "}
-              icon={<SiGoogleclassroom />}
-              handleOnclick={() => {
-                setShowDes(true);
-                setDepartment(true);
-                setSchoolYear(false);
-                setSubject(false);
-                setTitleCategory("Danh mục khoa, Lớp");
-              }}
-            >
-              Chọn khoa, Lớp
-            </Button>
-
-            <Button
-              style={"py-[7px] text-white rounded-md "}
-              icon={<MdSubject />}
-              handleOnclick={() => {
-                setShowDes(true);
-                setSubject(true);
-                setSchoolYear(false);
-                setDepartment(false);
-                setTitleCategory("Danh mục học phần");
-              }}
-            >
-              Chọn khối kiến thức
-            </Button>
+            <div>
+              <IoIosCreate size={"18px"} />
+            </div>
           </div>
         </div>
 
-        <div className="mx-4 mt-4 ">
-          <Table
-            title="Danh sách học phần theo từng khoa"
-            columns={columns}
-            data={data}
-            groupButton={groupButton}
-          />
+        <div className="flex w-full justify-center">
+          <div className="flex flex-wrap gap-8 justify-start mt-6 w-[92%]">
+            {/* <div className="relative cursor-default">
+              <div className="bg-[#f39c12] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
+                <div className="font-bold text-[28px]">total 10</div>
+                <div className="text-[18px] my-5">Danh mục năm học</div>
+              </div>
+              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#da8c0f] hover:bg-[#906f3a] rounded-[8px] cursor-pointer p-2 w-full justify-center">
+                <div className="flex gap-2 ">
+                  <div>Chi tiết</div>
+                  <div>
+                    <FaArrowCircleRight />
+                  </div>
+                </div>
+              </div>
+              <div className=" absolute top-2 right-2">
+                <SlCalender color="#da8b10" size={"60px"} />
+              </div>
+            </div> */}
+
+            {/* <div className="relative cursor-default">
+              <div className="bg-[#04a559] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
+                <div className="font-bold text-[28px]">total 2</div>
+                <div className="text-[18px] my-5">Danh mục học kỳ</div>
+              </div>
+              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#318a60] hover:bg-[#448265] rounded-[8px] cursor-pointer p-2 w-full justify-center">
+                <div className="flex gap-2 ">
+                  <div>Chi tiết</div>
+                  <div>
+                    <FaArrowCircleRight />
+                  </div>
+                </div>
+              </div>
+              <div className=" absolute top-2 right-2">
+                <SiStudyverse color="#318a60" size={"60px"} />
+              </div>
+            </div> */}
+
+            <div className="relative cursor-default">
+              <div className="bg-[#00c0ef] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
+                <div className="font-bold text-[28px]">total 18</div>
+                <div className="text-[18px] my-5">Danh mục khoa</div>
+              </div>
+              <div
+                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#327d90]
+               hover:bg-[#346875] rounded-[8px] cursor-pointer p-2 w-full justify-center"
+                onClick={() => {
+                  setShowDes(true);
+                  setSchoolYear(false);
+                  setDepartment(true);
+                  setSubject(false);
+                  setTitleCategory("Danh mục khoa");
+                }}
+              >
+                <div className="flex gap-2 ">
+                  <div>Chi tiết</div>
+                  <div>
+                    <FaArrowCircleRight />
+                  </div>
+                </div>
+              </div>
+              <div className=" absolute top-2 right-2">
+                <MdOutlineClass color="#327d90" size={"60px"} />
+              </div>
+            </div>
+
+            <div className="relative cursor-default">
+              <div className="bg-[#dd4b39] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
+                <div className="font-bold text-[28px]">total 70</div>
+                <div className="text-[18px] my-5">Danh mục lớp</div>
+              </div>
+              <div
+                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#a84336] hover:bg-[#743b34]
+               rounded-[8px] cursor-pointer p-2 w-full justify-center"
+                onClick={() => {
+                  setShowDes(true);
+                  setSchoolYear(true);
+                  setDepartment(false);
+                  setSubject(false);
+                  setTitleCategory("Danh mục lớp học");
+                }}
+              >
+                <div className="flex gap-2 ">
+                  <div>Chi tiết</div>
+                  <div>
+                    <FaArrowCircleRight />
+                  </div>
+                </div>
+              </div>
+              <div className=" absolute top-2 right-2">
+                <SiGoogleclassroom color="#a84336" size={"60px"} />
+              </div>
+            </div>
+
+            <div className="relative cursor-default">
+              <div className="bg-[#8e44ad] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
+                <div className="font-bold text-[28px]">total 10</div>
+                <div className="text-[18px] my-5">Danh mục môn học</div>
+              </div>
+              <div
+                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#71368a] hover:bg-[#603075]
+               rounded-[8px] cursor-pointer p-2 w-full justify-center"
+                onClick={() => {
+                  setShowDes(true);
+                  setSchoolYear(false);
+                  setDepartment(false);
+                  setSubject(true);
+                  setTitleCategory("Danh mục môn học chia theo chuyên ngành");
+                }}
+              >
+                <div className="flex gap-2 ">
+                  <div>Chi tiết</div>
+                  <div>
+                    <FaArrowCircleRight />
+                  </div>
+                </div>
+              </div>
+              <div className=" absolute top-2 right-2">
+                <MdSubject color="#71368a" size={"60px"} />
+              </div>
+            </div>
+          </div>
         </div>
+
         {showDes && (
           <Drawer
             title={titleCategory}
@@ -300,39 +279,9 @@ const ManageCategory = () => {
             style={showDes ? "block gap-x-5 gap-y-3" : "hidden"}
           >
             <div className="drawer-department">
-              {schoolYear && <CategorySchoolYear />}
+              {schoolYear && <CategoryClass />}
               {department && <CategoryDepartment />}
               {subject && <CategorySubject />}
-
-              <div className="flex gap-3 mt-12 justify-end">
-                <Button
-                  style={"py-[7px] text-white rounded-md "}
-                  icon={<MdOutlineSend />}
-                >
-                  Thêm mới
-                </Button>
-                <Button
-                  style={"py-[7px] text-white rounded-md "}
-                  icon={<GrUpdate />}
-                >
-                  Cập nhật
-                </Button>
-                <Button
-                  style={"py-[7px] text-white rounded-md "}
-                  icon={<FiTrash2 />}
-                >
-                  Xoá
-                </Button>
-                <Button style={"bg-white text-black"}>Clear</Button>
-              </div>
-
-              <div className="mt-12">
-                <Table
-                  title="Danh sách học phần theo từng khoa"
-                  columns={columns2}
-                  data={data2}
-                />
-              </div>
             </div>
           </Drawer>
         )}

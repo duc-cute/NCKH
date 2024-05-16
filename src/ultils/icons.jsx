@@ -28,6 +28,9 @@ import { FaChartColumn } from "react-icons/fa6";
 import { FaChartPie } from "react-icons/fa";
 import { IoManSharp } from "react-icons/io5";
 import { AiOutlineControl } from "react-icons/ai";
+import { FaArrowCircleRight } from "react-icons/fa";
+import { SiStudyverse } from "react-icons/si";
+import { MdOutlineClass } from "react-icons/md";
 
 const icons = {
   BsFillPeopleFill,
@@ -62,6 +65,9 @@ const icons = {
   FaChartPie,
   IoManSharp,
   AiOutlineControl,
+  FaArrowCircleRight,
+  SiStudyverse,
+  MdOutlineClass,
 };
 
 export default icons;

@@ -12,7 +12,6 @@ import {
   InputForm,
   SelectLib,
   CategoryDepartment,
-  CategorySchoolYear,
   CategorySubject,
 } from "../../components";
 
@@ -311,9 +310,6 @@ const DashBoash = () => {
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-      .style("position", "absolute")
       .style("background-color", "white")
       .style("border", "solid")
       .style("border-width", "1px")
@@ -377,6 +373,17 @@ const DashBoash = () => {
                 </div>
                 <SelectOption
                   style={`w-[300px]`}
+                  name={"Chọn khóa"}
+                  data={faculties}
+                  displayField={"FacultyName"}
+                  onChange={(event) => {
+                    setFacultyId(event.target.value);
+                    setClassScores([]);
+                    setCourses([]);
+                  }}
+                />
+                <SelectOption
+                  style={`w-[300px]`}
                   name={"Chọn khoa"}
                   data={faculties}
                   displayField={"FacultyName"}
@@ -415,6 +422,17 @@ const DashBoash = () => {
                 <div className="absolute top-[-7px] bg-slate-50 left-[80px]">
                   Theo dõi lớp
                 </div>
+                <SelectOption
+                  style={`w-[300px]`}
+                  name={"Chọn khóa"}
+                  data={faculties}
+                  displayField={"FacultyName"}
+                  onChange={(event) => {
+                    setFacultyId(event.target.value);
+                    setClassScores([]);
+                    setCourses([]);
+                  }}
+                />
                 <SelectOption
                   style={`w-[300px]`}
                   name={"Chọn khoa"}

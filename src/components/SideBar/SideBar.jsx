@@ -48,7 +48,7 @@ const menus = [
   {
     id: 3,
     path: path.STUDENT_WARNING,
-    title: <Link to={path.STUDENT_WARNING}>Cảnh báo sinh viên</Link>,
+    title: <Link to={path.STUDENT_WARNING}>Thiết lập cảnh báo</Link>,
     icon: <BiCategory />,
   },
   {
@@ -126,9 +126,9 @@ const SideBar = () => {
           src={logo}
           alt="logo"
         />
-        <h2 className="font-semibold font-serif w-[150px] break-words text-center text-[14px] leading-5 uppercase">
+        {/* <h2 className="font-semibold font-serif w-[150px] break-words text-center text-[14px] leading-5 uppercase">
           Phần mềm hỗ trợ cố vấn học tập
-        </h2>
+        </h2> */}
       </div>
       <ul className="mt-6 flex flex-col gap-[10px] select-none">
         {menus.map((el) => (

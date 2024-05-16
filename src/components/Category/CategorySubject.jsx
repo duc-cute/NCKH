@@ -11,6 +11,15 @@ import {
 } from "../../components";
 
 import icons from "../../ultils/icons";
+
+const {
+  MdOutlineSend,
+  AiOutlineCloudUpload,
+  CgImport,
+  FiTrash2,
+  LuPencilLine,
+} = icons;
+
 import {
   apiAllFaculties,
   apiClassById,
@@ -27,15 +36,6 @@ const CategorySubject = () => {
   const [courceScoreId, setCourceScoreId] = useState(null);
   const [courses, setCourses] = useState([]);
 
-  const [specializeds, setSpecialized] = useState(null);
-
-  const specialized = [
-    { key: 1, specialized: "Kiến thức đại cương" },
-    { key: 2, specialized: "Kiến thức chuyên ngành" },
-    { key: 3, specialized: "Hệ thống thông tin" },
-    { key: 4, specialized: "Thực tập, tôt nghiệp" },
-  ];
-
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +46,59 @@ const CategorySubject = () => {
     fetchData();
   }, []);
 
+  const columns = [
+    {
+      title: "stt",
+      key: "id",
+      sort: true,
+    },
+    {
+      title: "Tên khoa",
+      key: "department",
+      sort: true,
+    },
+    {
+      title: "Tên nhóm chuyên ngành",
+      key: "subject",
+      sort: true,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (item) => (
+        <div className="flex items-center gap-3 cursor-pointer">
+          <FiTrash2 color="red" />
+          <LuPencilLine color="#1677ff" />
+        </div>
+      ),
+    },
+  ];
+
+  const data = [
+    {
+      id: "1",
+      department: "Công nghệ thông tin",
+      subject: "Kiến thức đại cương",
+    },
+    {
+      id: "2",
+      department: "Công nghệ thông tin",
+      subject: "Kiến thức chuyên ngành",
+    },
+    {
+      id: "3",
+      department: "Công nghệ thông tin",
+      subject: "Công nghệ thông tin",
+    },
+    {
+      id: "4",
+      department: "Công nghệ thông tin",
+      subject: "Thực tập, tôt nghiệp",
+    },
+  ];
+
   return (
-    <div>
+    <>
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
           <SelectOption
@@ -57,37 +108,51 @@ const CategorySubject = () => {
             displayField={"FacultyName"}
             onChange={(event) => {
               setFacultyId(event.target.value);
-              setClassScores([]);
               setCourses([]);
             }}
           />
-          <SelectOption
-            style={`w-[400px]`}
-            name={"Chọn khối kiến thức ngành"}
-            data={specialized}
-            displayField={"specialized"}
-            onChange={(event) => {
-              setSpecialized(event.target.value);
-            }}
-          />
-        </div>
-
-        <div className="flex gap-3">
           <InputField
-            placeholder={"Nhập thêm khoa ..."}
-            style={`flex max-h-[40px] w-[400px]`}
+            placeholder={"Nhập nhóm chuyên ngành ..."}
+            style={`flex max-h-[40px] w-[800px]`}
             name={""}
             paddingRight={"90px"}
           />
 
+          <Button
+            style={"py-[9px] text-white rounded-md "}
+            icon={<MdOutlineSend />}
+          >
+            Nhập
+          </Button>
+
+          <Button
+            style={"py-[9px] text-white rounded-md "}
+            icon={<AiOutlineCloudUpload />}
+          >
+            Export
+          </Button>
+
+          <Button style={"py-[9px] text-white rounded-md "} icon={<CgImport />}>
+            Import
+          </Button>
+        </div>
+
+        <div className="flex mt-3 gap-4">
           <InputField
-            placeholder={"Nhập khối kiến thức ngành ..."}
-            style={`flex max-h-[40px] w-[400px]`}
+            placeholder={"Tìm kiếm tên nhóm chuyên ngành ..."}
+            style={`flex max-h-[40px] w-[696px]`}
             name={""}
+            paddingRight={"90px"}
           />
+
+          <Button style={"py-[9px] text-white rounded-md "}>Tìm kiếm</Button>
+        </div>
+
+        <div className="mt-12">
+          <Table title="Danh sách khoa" columns={columns} data={data} />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

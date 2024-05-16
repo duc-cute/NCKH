@@ -9,9 +9,6 @@ import {
   Tag,
   InputForm,
   SelectLib,
-  CategoryDepartment,
-  CategorySchoolYear,
-  CategorySubject,
   Modal,
   DragFile,
 } from "../../components";
@@ -248,6 +245,17 @@ const ManageCourse = () => {
       <div className=" h-[1000px]">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center pt-5 justify-end">
+            <SelectOption
+              style={`w-full`}
+              name={"Chọn khóa"}
+              data={faculties}
+              displayField={"FacultyName"}
+              onChange={(event) => {
+                setFacultyId(event.target.value);
+                setClassScores([]);
+                setCourses([]);
+              }}
+            />
             <SelectOption
               style={`w-full`}
               name={"Chọn khoa"}

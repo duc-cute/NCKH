@@ -8,105 +8,100 @@ import {
   Tag,
   InputForm,
   SelectLib,
-} from "../../components";
+} from "..";
 
 import icons from "../../ultils/icons";
-import {
-  apiAllFaculties,
-  apiClassById,
-  apiCoursesById,
-  apiDataPoint,
-  apiImportScore,
-} from "../../apis";
+
+const {
+  MdOutlineSend,
+  AiOutlineCloudUpload,
+  CgImport,
+  FiTrash2,
+  LuPencilLine,
+} = icons;
+
+import { apiDataPoint } from "../../apis";
 
 const CategoryDepartment = () => {
-  const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [courceScoreId, setCourceScoreId] = useState(null);
-  const [courses, setCourses] = useState([]);
+  const columns = [
+    {
+      title: "stt",
+      key: "id",
+      sort: true,
+    },
+    {
+      title: "Tên khoa",
+      key: "department",
+      sort: true,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (item) => (
+        <div className="flex items-center gap-3 cursor-pointer">
+          <FiTrash2 color="red" />
+          <LuPencilLine color="#1677ff" />
+        </div>
+      ),
+    },
+  ];
 
-  // api select option khoa
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
-    };
-    fetchData();
-  }, []);
-
-  // api select option lớp
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-class-by-id";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
-    };
-    if (facultyId) fetchData();
-  }, [facultyId]);
-
-  // api data point student
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-point-by-id-class-id-faculty-id-course";
-      const res = await apiDataPoint(
-        url,
-        facultyId,
-        classScoreId,
-        courceScoreId
-      );
-      console.log(res);
-      if (res.status === 200)
-        setDataSelect({
-          dataStudents: res.dataStudents,
-          dataTeacher: res.dataTeacher[0],
-        });
-    };
-    if (facultyId && classScoreId && courceScoreId) fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
+  const data = [
+    {
+      id: "1",
+      department: "Công nghệ thông tin",
+      hk: "Học kỳ 1",
+    },
+    {
+      id: "2",
+      department: "Công nghệ ô tô",
+      hk: "Học kỳ 2",
+    },
+    {
+      id: "3",
+      department: "Quản trị kinh doanh",
+      hk: "Học kỳ 1",
+    },
+    {
+      id: "4",
+      department: "Du lịch khách sạn",
+      hk: "Học kỳ 2",
+    },
+  ];
 
   return (
     <>
       <div className="flex flex-col gap-3 ">
+        <div className="flex gap-3"></div>
+
         <div className="flex gap-3">
-          <SelectOption
-            style={`w-[300px]`}
-            name={"Chọn khoa"}
-            data={faculties}
-            displayField={"FacultyName"}
-            onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
-            }}
+          <InputField
+            placeholder={"Nhập tên khoa ..."}
+            style={`flex max-h-[37px] w-[500px]`}
+            name={"Mã sinh viên"}
           />
-          <SelectOption
-            style={`w-full`}
-            name={"Chọn lớp"}
-            data={classScores}
-            displayField={"NameClass"}
-            onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
-            }}
-          />
+
+          <Button
+            style={"py-[7px] text-white rounded-md "}
+            icon={<MdOutlineSend />}
+          >
+            Nhập
+          </Button>
+
+          <Button
+            style={"py-[7px] text-white rounded-md "}
+            icon={<AiOutlineCloudUpload />}
+          >
+            Export
+          </Button>
+
+          <Button style={"py-[7px] text-white rounded-md "} icon={<CgImport />}>
+            Import
+          </Button>
         </div>
 
-        <div className="flex gap-3">
-          <InputField
-            placeholder={"Nhập thêm khoa ..."}
-            style={`flex max-h-[40px] w-[400px]`}
-            name={""}
-            paddingRight={"90px"}
-          />
-
-          <InputField
-            placeholder={"Nhập thêm lớp ..."}
-            style={`flex max-h-[40px] w-[400px]`}
-            name={""}
-          />
+        <div className="mt-12">
+          <Table title="Danh sách khoa" columns={columns} data={data} />
         </div>
       </div>
     </>

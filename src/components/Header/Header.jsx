@@ -13,11 +13,11 @@ const Header = () => {
   return (
     <div className="flex justify-between h-header py-2 px-10">
       <div className="flex gap-3 items-center">
-        <img
+        {/* <img
           className="w-[64px] h-[64px] object-contain"
           src={logo}
           alt="logo"
-        />
+        /> */}
         <div className="text-[24px] text-main font-semibold">
           <h2 className="uppercase font-serif">
             {current?.role === "User"

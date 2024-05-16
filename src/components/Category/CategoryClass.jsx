@@ -8,9 +8,18 @@ import {
   Tag,
   InputForm,
   SelectLib,
-} from "../../components";
+} from "..";
 
 import icons from "../../ultils/icons";
+
+const {
+  MdOutlineSend,
+  AiOutlineCloudUpload,
+  CgImport,
+  FiTrash2,
+  LuPencilLine,
+} = icons;
+
 import {
   apiAllFaculties,
   apiClassById,
@@ -21,7 +30,6 @@ import {
 
 const CategorySchoolYear = () => {
   const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
   const [facultyId, setFacultyId] = useState(null);
   const [classScoreId, setClassScoreId] = useState(null);
   const [courceScoreId, setCourceScoreId] = useState(null);
@@ -70,21 +78,55 @@ const CategorySchoolYear = () => {
     if (facultyId && classScoreId && courceScoreId) fetchData();
   }, [facultyId, classScoreId, courceScoreId]);
 
-  const fakeSchoolYear = [
-    { key: 1, fakeSchoolYear: "2022" },
-    { key: 2, fakeSchoolYear: "2023" },
-    { key: 3, fakeSchoolYear: "2024" },
-    { key: 4, fakeSchoolYear: "2025" },
-    { key: 5, fakeSchoolYear: "2026" },
-    { key: 6, fakeSchoolYear: "2027" },
-    { key: 7, fakeSchoolYear: "2028" },
-    { key: 8, fakeSchoolYear: "2029" },
-    { key: 9, fakeSchoolYear: "2030" },
+  const columns = [
+    {
+      title: "stt",
+      key: "id",
+      sort: true,
+    },
+    {
+      title: "Tên khoa",
+      key: "department",
+      sort: true,
+    },
+    {
+      title: "Tên lớp",
+      key: "className",
+      sort: true,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (item) => (
+        <div className="flex items-center gap-3 cursor-pointer">
+          <FiTrash2 color="red" />
+          <LuPencilLine color="#1677ff" />
+        </div>
+      ),
+    },
   ];
 
-  const semester = [
-    { key: 1, semester: 1 },
-    { key: 2, semester: 2 },
+  const data = [
+    {
+      id: "1",
+      department: "Công nghệ thông tin",
+      className: "DCCNTT10.1.3",
+    },
+    {
+      id: "2",
+      department: "Công nghệ ô tô",
+      className: "DCCNTT10.1.4",
+    },
+    {
+      id: "3",
+      department: "Quản trị kinh doanh",
+      className: "DCCNTT10.1.5",
+    },
+    {
+      id: "4",
+      department: "Du lịch khách sạn",
+      className: "DCCNTT10.1.6",
+    },
   ];
 
   return (
@@ -92,39 +134,54 @@ const CategorySchoolYear = () => {
       <div className="flex flex-col gap-3 ">
         <div className="flex gap-3">
           <SelectOption
-            style={`w-[400px]`}
-            name={"Chọn năm học"}
-            data={fakeSchoolYear}
-            displayField={"fakeSchoolYear"}
+            style={`w-[300px]`}
+            name={"Chọn khoa"}
+            data={faculties}
+            displayField={"FacultyName"}
             onChange={(event) => {
-              setSelectedSchoolYear(event.target.value);
+              setFacultyId(event.target.value);
+              setCourses([]);
             }}
           />
-
-          <SelectOption
-            style={`w-[400px]`}
-            name={"Xem học kỳ"}
-            data={semester}
-            displayField={"semester"}
-            onChange={(event) => {
-              setSelectedSemester(event.target.value);
-            }}
-          />
-        </div>
-
-        <div className="flex gap-3">
           <InputField
-            placeholder={"Nhập thêm năm học ..."}
-            style={`flex max-h-[40px] w-[400px]`}
+            placeholder={"Nhập tên lớp học ..."}
+            style={`flex max-h-[40px] w-[800px]`}
             name={""}
             paddingRight={"90px"}
           />
 
+          <Button
+            style={"py-[9px] text-white rounded-md "}
+            icon={<MdOutlineSend />}
+          >
+            Nhập
+          </Button>
+
+          <Button
+            style={"py-[9px] text-white rounded-md "}
+            icon={<AiOutlineCloudUpload />}
+          >
+            Export
+          </Button>
+
+          <Button style={"py-[9px] text-white rounded-md "} icon={<CgImport />}>
+            Import
+          </Button>
+        </div>
+
+        <div className="flex mt-3 gap-4">
           <InputField
-            placeholder={"Nhập thêm học kỳ ..."}
-            style={`flex max-h-[40px] w-[400px]`}
+            placeholder={"Tìm kiếm lớp học ..."}
+            style={`flex max-h-[40px] w-[696px]`}
             name={""}
+            paddingRight={"90px"}
           />
+
+          <Button style={"py-[9px] text-white rounded-md "}>Tìm kiếm</Button>
+        </div>
+
+        <div className="mt-12">
+          <Table title="Danh sách khoa" columns={columns} data={data} />
         </div>
       </div>
     </>

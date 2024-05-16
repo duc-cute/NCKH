@@ -256,6 +256,18 @@ const ManageStudent = () => {
         <div className="flex gap-3 items-center justify-between pt-5 ">
           <SelectOption
             style={`w-full`}
+            name={"Chọn khóa"}
+            data={faculties}
+            displayField={"FacultyName"}
+            onChange={(event) => {
+              setFacultyId(event.target.value);
+              setClassScores([]);
+              setCourses([]);
+            }}
+          />
+
+          <SelectOption
+            style={`w-full`}
             name={"Chọn khoa"}
             data={faculties}
             displayField={"FacultyName"}

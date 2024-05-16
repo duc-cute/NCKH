@@ -195,15 +195,15 @@ const ManageAttendance = () => {
   console.log("data", dataSelect);
 
   const schoolYear = [
-    { key: 1, schoolYear: "2022" },
-    { key: 2, schoolYear: "2023" },
-    { key: 3, schoolYear: "2024" },
-    { key: 4, schoolYear: "2025" },
-    { key: 5, schoolYear: "2026" },
-    { key: 6, schoolYear: "2027" },
-    { key: 7, schoolYear: "2028" },
-    { key: 8, schoolYear: "2029" },
-    { key: 9, schoolYear: "2030" },
+    { key: 1, schoolYear: "k6" },
+    { key: 2, schoolYear: "k7" },
+    { key: 3, schoolYear: "k8" },
+    { key: 4, schoolYear: "k9" },
+    { key: 5, schoolYear: "k10" },
+    { key: 6, schoolYear: "k11" },
+    { key: 7, schoolYear: "k12" },
+    { key: 8, schoolYear: "k13" },
+    { key: 9, schoolYear: "k14" },
   ];
 
   const semester = [
@@ -229,13 +229,13 @@ const ManageAttendance = () => {
         <Button
           handleOnclick={() => {
             if (!selectedSchoolYear) {
-              toast.error("Vui lòng chọn năm học trước khi import");
-            } else if (!selectedSemester) {
-              toast.error("Vui lòng chọn học kỳ trước khi import");
+              toast.error("Vui lòng chọn khóa trước khi import");
             } else if (!facultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
             } else if (!classScoreId) {
               toast.error("Vui lòng chọn lớp trước khi import");
+            } else if (!selectedSemester) {
+              toast.error("Vui lòng chọn học kỳ trước khi import");
             } else if (!courceScoreId) {
               toast.error("Vui lòng chọn môn học trước khi import");
             } else {
@@ -258,20 +258,11 @@ const ManageAttendance = () => {
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
               style={`w-full`}
-              name={"Chọn năm học"}
+              name={"Chọn khóa"}
               data={schoolYear}
               displayField={"schoolYear"}
               onChange={(event) => {
                 setSelectedSchoolYear(event.target.value);
-              }}
-            />
-            <SelectOption
-              style={`w-full`}
-              name={"Chọn học kỳ"}
-              data={semester}
-              displayField={"semester"}
-              onChange={(event) => {
-                setSelectedSemester(event.target.value);
               }}
             />
 
@@ -291,9 +282,7 @@ const ManageAttendance = () => {
                 setSelectedFaculty(selectedValue);
               }}
             />
-          </div>
 
-          <div className="flex items-center gap-3 ">
             <SelectOption
               style={`w-full`}
               name={"Chọn lớp"}
@@ -307,6 +296,18 @@ const ManageAttendance = () => {
                   event.target.options[event.target.selectedIndex];
                 const selectedValue = selectedOption.getAttribute("data-value");
                 setSelectedClass(selectedValue);
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 ">
+            <SelectOption
+              style={`w-full`}
+              name={"Chọn học kỳ"}
+              data={semester}
+              displayField={"semester"}
+              onChange={(event) => {
+                setSelectedSemester(event.target.value);
               }}
             />
 
