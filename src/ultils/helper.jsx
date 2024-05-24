@@ -3,7 +3,6 @@ import * as XLSX from "xlsx";
 
 export const validate = (payload, setInvalidFields) => {
   let invalid = 0;
-  // console.log("payload", payload);
   const formatPayload = Object.entries(payload);
   for (let arr of formatPayload) {
     if (arr[1].trim() === "") {
@@ -129,10 +128,10 @@ export const readFileData = (file, cellPositions, header, range) => {
 
 export const readFileDataAttendance = (
   file,
-  selectedSchoolYear,
+  selectedSchoolYearId,
+  selectedFacultyId,
+  classScoreId,
   selectedSemester,
-  selectedFaculty,
-  selectedClass,
   selectedCourse
 ) => {
   return new Promise((resolve, reject) => {
@@ -221,14 +220,12 @@ export const readFileDataAttendance = (
           }
         );
 
-        console.log(attendanceStudentCustom);
-
         const dataResponve = {
-          Faculty: selectedFaculty,
-          Class: selectedClass,
-          Course: selectedCourse,
+          KeyId: selectedSchoolYearId,
+          FacultyId: selectedFacultyId,
+          ClassId: classScoreId,
           Semester: selectedSemester,
-          SchoolYear: selectedSchoolYear,
+          Course: selectedCourse,
           DataAttendance: attendanceStudentCustom,
         };
 

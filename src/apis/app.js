@@ -1,17 +1,20 @@
-/** @format */
-/** @format */
-
 import axios from "../axios";
 
-export const apiAllFaculties = (url) =>
-  axios({
+export const apiAllKey = (url) => 
+  axios({ 
     url: `/${url}`,
+     method: "get"
+  });
+
+export const apiAllFaculties =  (url, id) =>
+   axios({
+    url: `/${url}/?key=${id}`,
     method: "get",
   });
 
 export const apiClassById = (url, id) =>
   axios({
-    url: `/${url}/${id}`,
+    url: `/${url}/?IDFaculty=${id}`,
     method: "get",
   });
 

@@ -17,46 +17,43 @@ import {
   apiClassById,
   apiCoursesById,
   apiDataPoint,
+  apiAllKey,
 } from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
 import { toast } from "react-toastify";
 import { columnsAttendance } from "../../ultils/constant";
-
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  CgImport,
-  TiPlus,
-  FiTrash2,
-  LuPencilLine,
-} = icons;
+const { AiOutlineCloudUpload, CgImport } = icons;
 
 const ManageAttendance = () => {
   // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
-  const [selectedSemester, setSelectedSemester] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedClass, setSelectedClass] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
   const [selectedCourse, setSelectedCourse] = useState();
+
+  // state id
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [classScoreId, setClassScoreId] = useState();
+  const [courceScoreId, setCourceScoreId] = useState();
+
+  console.log(classScoreId);
 
   // state modal
   const [showModal, setShowModal] = useState(false);
-
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
+
+  console.log("dataPreview", dataPreview);
 
   // state data
   const [faculties, setFaculties] = useState([]);
   const [classScores, setClassScores] = useState([]);
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
-
-  // state id: id khoa, lớp, môn học
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [courceScoreId, setCourceScoreId] = useState(null);
 
   // hàm xử lý import dữ liệu
   const handleImportButtonClick = useCallback(async () => {
@@ -68,15 +65,14 @@ const ManageAttendance = () => {
     } else toast.error(response.message);
   }, [dataPreview, fileName]);
 
-  // hàm xử lý xem trước dữ liệu
   const handlePreviewData = useCallback(
     (fileValue) => {
       readFileDataAttendance(
         fileValue,
-        selectedSchoolYear,
+        selectedSchoolYearId,
+        selectedFacultyId,
+        classScoreId,
         selectedSemester,
-        selectedFaculty,
-        selectedClass,
         selectedCourse
       )
         .then((dataMain) => {
@@ -114,31 +110,41 @@ const ManageAttendance = () => {
       dataPreview,
       selectedSchoolYear,
       selectedSemester,
-      selectedFaculty,
-      selectedClass,
+      selectedFacultyId,
+      classScoreId,
       selectedCourse,
     ]
   );
 
+  // api select option khóa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-years-by-faculty";
+      const schoolYear = await apiAllKey(url);
+      setSelectedSchoolYear(schoolYear?.data);
+    };
+    fetchData();
+  }, []);
+
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/attendance/all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
+      const url = "v1/common/select-all-faculty";
+      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      setSelectedFaculty(facultie?.data);
     };
     fetchData();
-  }, [dataImport]);
+  }, [selectedSchoolYearId]);
 
   // api select option lớp
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/attendance/class-by-id-faculty";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
+      const url = "v1/class/select-class-by-faculty";
+      const classScore = await apiClassById(url, selectedFacultyId);
+      setSelectedClass(classScore?.data);
     };
-    if (facultyId) fetchData();
-  }, [facultyId]);
+    fetchData();
+  }, [selectedFacultyId]);
 
   // api select option môn học
   useEffect(() => {
@@ -157,7 +163,7 @@ const ManageAttendance = () => {
       const url = "v1/attendance/select-attendance";
       const res = await apiDataPoint(
         url,
-        facultyId,
+        selectedFacultyId,
         classScoreId,
         courceScoreId
       );
@@ -190,26 +196,8 @@ const ManageAttendance = () => {
         dataStudents: dataFormat,
       });
     };
-    if (facultyId && classScoreId && courceScoreId) fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
-  console.log("data", dataSelect);
-
-  const schoolYear = [
-    { key: 1, schoolYear: "k6" },
-    { key: 2, schoolYear: "k7" },
-    { key: 3, schoolYear: "k8" },
-    { key: 4, schoolYear: "k9" },
-    { key: 5, schoolYear: "k10" },
-    { key: 6, schoolYear: "k11" },
-    { key: 7, schoolYear: "k12" },
-    { key: 8, schoolYear: "k13" },
-    { key: 9, schoolYear: "k14" },
-  ];
-
-  const semester = [
-    { key: 1, semester: 1 },
-    { key: 2, semester: 2 },
-  ];
+    if (selectedFacultyId && classScoreId && courceScoreId) fetchData();
+  }, [selectedFacultyId, classScoreId, courceScoreId]);
 
   const groupButton = [
     {
@@ -230,14 +218,8 @@ const ManageAttendance = () => {
           handleOnclick={() => {
             if (!selectedSchoolYear) {
               toast.error("Vui lòng chọn khóa trước khi import");
-            } else if (!facultyId) {
+            } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
-            } else if (!classScoreId) {
-              toast.error("Vui lòng chọn lớp trước khi import");
-            } else if (!selectedSemester) {
-              toast.error("Vui lòng chọn học kỳ trước khi import");
-            } else if (!courceScoreId) {
-              toast.error("Vui lòng chọn môn học trước khi import");
             } else {
               setShowModal(true);
             }
@@ -259,43 +241,45 @@ const ManageAttendance = () => {
             <SelectOption
               style={`w-full`}
               name={"Chọn khóa"}
-              data={schoolYear}
-              displayField={"schoolYear"}
+              data={
+                selectedSchoolYear
+                  ? selectedSchoolYear.map((item) => {
+                      return { name: item };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setSelectedSchoolYear(event.target.value);
+                setSelectedSchoolYearId(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
               name={"Chọn khoa"}
-              data={faculties}
-              displayField={"FacultyName"}
-              valueKey={"FacultyName"}
+              data={
+                selectedFaculty
+                  ? selectedFaculty.map((item) => {
+                      return { id: item.ID, name: item.FacultyName };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setFacultyId(event.target.value);
-                setClassScores([]);
-                setCourses([]);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedFaculty(selectedValue);
+                setSelectedFacultyId(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
               name={"Chọn lớp"}
-              data={classScores}
-              displayField={"NameClass"}
-              valueKey={"NameClass"}
+              data={
+                selectedClass
+                  ? selectedClass.map((item) => {
+                      return { id: item.ID, name: item.NameClass };
+                    })
+                  : []
+              }
               onChange={(event) => {
                 setClassScoreId(event.target.value);
-                setCourses([]);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedClass(selectedValue);
               }}
             />
           </div>
@@ -304,26 +288,18 @@ const ManageAttendance = () => {
             <SelectOption
               style={`w-full`}
               name={"Chọn học kỳ"}
-              data={semester}
+              // data={semester}
               displayField={"semester"}
               onChange={(event) => {
-                setSelectedSemester(event.target.value);
+                // setSelectedSemester(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
               name={"Chọn học phần"}
-              data={courses}
-              displayField={"NameCourse"}
-              valueKey={"NameCourse"}
-              onChange={(event) => {
-                setCourceScoreId(event.target.value);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedCourse(selectedValue);
-              }}
+              // data={courses}
+              onChange={(event) => {}}
             />
 
             <InputField

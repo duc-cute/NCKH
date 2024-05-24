@@ -241,34 +241,6 @@ const ManageCategory = () => {
                 <SiGoogleclassroom color="#a84336" size={"60px"} />
               </div>
             </div>
-
-            <div className="relative cursor-default">
-              <div className="bg-[#8e44ad] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 10</div>
-                <div className="text-[18px] my-5">Danh mục môn học</div>
-              </div>
-              <div
-                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#71368a] hover:bg-[#603075]
-               rounded-[8px] cursor-pointer p-2 w-full justify-center"
-                onClick={() => {
-                  setShowDes(true);
-                  setSchoolYear(false);
-                  setDepartment(false);
-                  setSubject(true);
-                  setTitleCategory("Danh mục môn học chia theo chuyên ngành");
-                }}
-              >
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
-                  </div>
-                </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <MdSubject color="#71368a" size={"60px"} />
-              </div>
-            </div>
           </div>
         </div>
 

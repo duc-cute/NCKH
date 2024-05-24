@@ -1,15 +1,6 @@
-/** @format */
-
 import React from "react";
 
-const SelectOption = ({
-  name,
-  data,
-  onChange,
-  displayField,
-  style,
-  valueKey,
-}) => {
+const SelectOption = ({ name, data, onChange, style }) => {
   return (
     <select
       className={`bg-gray-50 border max-h-[40px] border-gray-300 text-gray-900 text-sm rounded-lg
@@ -21,12 +12,8 @@ const SelectOption = ({
         {name}
       </option>
       {data?.map((item, index) => (
-        <option
-          key={`${item.id}-${index}`}
-          value={item.ID}
-          data-value={item[valueKey]}
-        >
-          {item[displayField]}
+        <option key={index} value={item.id}>
+          {item.name}
         </option>
       ))}
     </select>

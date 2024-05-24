@@ -11,7 +11,7 @@ export const apiImportScore = (data) =>
 
 export const apiImportAttendance = (data) =>
   axios({
-    url: "/v1/attendance/import-attendance",
+    url: "/v1/attendance/import-attendance", 
     method: "post",
     data,
   });
