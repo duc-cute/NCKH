@@ -1,9 +1,7 @@
-import React from "react";
-
 const InputField = ({
   nameKey,
   value,
-  setValue,
+  onChange,
   style,
   inValid,
   setInvalid,
@@ -23,9 +21,7 @@ const InputField = ({
         required
         placeholder={placeholder}
         value={value}
-        onChange={(e) =>
-          setValue((prev) => ({ ...prev, [nameKey]: e.target.value }))
-        }
+        onChange={onChange}
         onFocus={() => setInvalid && setInvalid([])}
       />
       <div className="mt-2">

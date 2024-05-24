@@ -189,6 +189,23 @@ const ManageStudent = () => {
           setValue={setValue}
           placeholder={
             <span className="text-sm text-[#808080] font-normal">
+              Chọn mức cảnh báo
+            </span>
+          }
+          isClearable={true}
+        />
+      ),
+    },
+    {
+      id: 1,
+      button: (
+        <SelectLib
+          options={listStudentWarning}
+          register={register}
+          id={"listStudent"}
+          setValue={setValue}
+          placeholder={
+            <span className="text-sm text-[#808080] font-normal">
               Chọn Danh Sách Sinh Viên
             </span>
           }

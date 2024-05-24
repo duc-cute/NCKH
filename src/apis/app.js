@@ -29,3 +29,18 @@ export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
     url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
     method: "get",
   });
+
+export const apiAddFaculties = (url, data) =>
+  axios({
+    url: `/${url}`,
+    method: "post",
+    data,
+  });
+
+export const apiAddClass = (url, data) =>
+    axios({
+      url: `/${url}`,
+      method: "post",
+      data,
+  });
+  

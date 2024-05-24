@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 const Drawer = ({ children, title, style, onClose }) => {
   return (
     <>
-      <div className="fixed top-0 font-main right-0 z-40 h-screen  overflow-y-auto transition-transform  bg-white w-[60%] ">
+      <div className="fixed top-0 font-main right-0 z-40 h-screen  overflow-y-auto transition-transform  bg-white w-[66%] ">
         <div className="px-6 py-4 flex items-center border-solid border-b-[1px]  border-[#0505050f] ">
           <Button
             handleOnclick={() => onClose()}

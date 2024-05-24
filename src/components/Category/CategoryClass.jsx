@@ -20,63 +20,51 @@ const {
   LuPencilLine,
 } = icons;
 
-import {
-  apiAllFaculties,
-  apiClassById,
-  apiCoursesById,
-  apiDataPoint,
-  apiImportScore,
-} from "../../apis";
+import { apiAllKey, apiAllFaculties, apiAddClass } from "../../apis";
+import { toast } from "react-toastify";
 
 const CategorySchoolYear = () => {
-  const [faculties, setFaculties] = useState([]);
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [courceScoreId, setCourceScoreId] = useState(null);
-  const [courses, setCourses] = useState([]);
-
+  const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
-  const [selectedSemester, setSelectedSemester] = useState();
 
-  // api select option khoa
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+
+  const [classValue, setClassValue] = useState("");
+
+  // api select option khóa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
+      const url = "v1/common/select-years-by-faculty";
+      const schoolYear = await apiAllKey(url);
+      setSelectedSchoolYear(schoolYear?.data);
     };
     fetchData();
   }, []);
 
-  // api select option lớp
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-class-by-id";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
+      const url = "v1/common/select-all-faculty";
+      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      setSelectedFaculty(facultie?.data);
     };
-    if (facultyId) fetchData();
-  }, [facultyId]);
+    fetchData();
+  }, [selectedSchoolYearId]);
 
-  // api data point student
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-point-by-id-class-id-faculty-id-course";
-      const res = await apiDataPoint(
-        url,
-        facultyId,
-        classScoreId,
-        courceScoreId
-      );
-      console.log(res);
-      if (res.status === 200)
-        setDataSelect({
-          dataStudents: res.dataStudents,
-          dataTeacher: res.dataTeacher[0],
-        });
+  const addClass = async () => {
+    const url = "v1/class/add-class-by-faculty";
+    const data = {
+      NameClass: classValue,
+      IDFaculty: selectedFacultyId,
     };
-    if (facultyId && classScoreId && courceScoreId) fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
+
+    const response = await apiAddClass(url, data);
+    if (response.status === 200) {
+      toast.success("Thêm lớp thành công");
+    } else {
+      toast.error("Message sent failed");
+    }
+  };
 
   const columns = [
     {
@@ -132,56 +120,102 @@ const CategorySchoolYear = () => {
   return (
     <>
       <div className="flex flex-col gap-3 ">
-        <div className="flex gap-3">
-          <SelectOption
-            style={`w-[300px]`}
-            name={"Chọn khoa"}
-            data={faculties}
-            displayField={"FacultyName"}
-            onChange={(event) => {
-              setFacultyId(event.target.value);
-              setCourses([]);
-            }}
-          />
-          <InputField
-            placeholder={"Nhập tên lớp học ..."}
-            style={`flex max-h-[40px] w-[800px]`}
-            name={""}
-            paddingRight={"90px"}
-          />
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-3">
+            <SelectOption
+              name={"Chọn khóa"}
+              data={
+                selectedSchoolYear
+                  ? selectedSchoolYear.map((item) => {
+                      return { name: item };
+                    })
+                  : []
+              }
+              onChange={(event) => {
+                setSelectedSchoolYearId(event.target.value);
+              }}
+            />
 
-          <Button
-            style={"py-[9px] text-white rounded-md "}
-            icon={<MdOutlineSend />}
-          >
-            Nhập
-          </Button>
+            <SelectOption
+              style={`w-full`}
+              name={"Chọn khoa"}
+              data={
+                selectedFaculty
+                  ? selectedFaculty.map((item) => {
+                      return { id: item.ID, name: item.FacultyName };
+                    })
+                  : []
+              }
+              onChange={(event) => {
+                setSelectedFacultyId(event.target.value);
+              }}
+            />
 
-          <Button
-            style={"py-[9px] text-white rounded-md "}
-            icon={<AiOutlineCloudUpload />}
-          >
-            Export
-          </Button>
+            <InputField
+              placeholder={"Nhập tên lớp học ..."}
+              style={`flex max-h-[40px] w-[800px]`}
+              name={""}
+              value={classValue}
+              paddingRight={"90px"}
+              onChange={(e) => {
+                setClassValue(e.target.value);
+              }}
+            />
+          </div>
 
-          <Button style={"py-[9px] text-white rounded-md "} icon={<CgImport />}>
-            Import
-          </Button>
-        </div>
+          <div className="flex gap-3 justify-end mt-2">
+            <Button
+              style={"bg-white text-black"}
+              handleOnclick={() => {
+                setClassValue("");
+              }}
+            >
+              Clear
+            </Button>
 
-        <div className="flex mt-3 gap-4">
-          <InputField
-            placeholder={"Tìm kiếm lớp học ..."}
-            style={`flex max-h-[40px] w-[696px]`}
-            name={""}
-            paddingRight={"90px"}
-          />
+            <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<MdOutlineSend />}
+              handleOnclick={() => {
+                if (!selectedSchoolYearId) {
+                  toast.error("Vui lòng chọn khóa !");
+                  return;
+                }
 
-          <Button style={"py-[9px] text-white rounded-md "}>Tìm kiếm</Button>
+                if (!selectedFacultyId) {
+                  toast.error("Vui lòng chọn khoa !");
+                  return;
+                }
+
+                if (!classValue) {
+                  toast.error("Vui lòng nhập tên lớp !");
+                  return;
+                }
+
+                addClass();
+              }}
+            >
+              Nhập
+            </Button>
+
+            <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<AiOutlineCloudUpload />}
+            >
+              Export
+            </Button>
+
+            <Button
+              style={"py-[7px] text-white rounded-md "}
+              icon={<CgImport />}
+            >
+              Import
+            </Button>
+          </div>
         </div>
 
         <div className="mt-12">
-          <Table title="Danh sách khoa" columns={columns} data={data} />
+          <Table title="Danh sách lớp" columns={columns} data={data} />
         </div>
       </div>
     </>
