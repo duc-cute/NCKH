@@ -18,16 +18,25 @@ const {
   CgImport,
   FiTrash2,
   LuPencilLine,
+  GrUpdate,
 } = icons;
 
-import { apiAllKey, apiAddFaculties, apiSelectInfoFaculties } from "../../apis";
+import {
+  apiAllKey,
+  apiAddFaculties,
+  apiSelectInfoFaculties,
+  apiDeleteFaculties,
+  apiUpdateFaculties,
+} from "../../apis";
+
 import { toast } from "react-toastify";
 
 const CategoryDepartment = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
-
   const [facultyData, setFacultyData] = useState();
+
+  const [facultyDataId, setFacultyDataId] = useState();
 
   // state input
   const [facultyValue, setFacultyValue] = useState("");
@@ -47,15 +56,29 @@ const CategoryDepartment = () => {
   }, []);
 
   // api lấy thông tin khoa
+  const fetchDataGetFaculty = async () => {
+    const url = "v1/faculty/select-all-faculty";
+    const data = await apiSelectInfoFaculties(url);
+
+    let facultyDataCustom = [];
+
+    if (data && data.data) {
+      facultyDataCustom = data.data.map((item) => {
+        return {
+          ...item,
+          Founding: item.Founding ? item.Founding.split("T")[0] : null,
+        };
+      });
+    }
+
+    setFacultyData(facultyDataCustom);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/faculty/select-all-faculty";
-      const data = await apiSelectInfoFaculties(url);
-      setFacultyData(data?.data);
-    };
-    fetchData();
+    fetchDataGetFaculty();
   }, []);
 
+  // api thêm khoa
   const addFaculty = async () => {
     const url = "v1/faculty/add";
     const data = {
@@ -70,80 +93,134 @@ const CategoryDepartment = () => {
     const response = await apiAddFaculties(url, data);
     if (response.status === 200) {
       toast.success("Thêm khoa thành công");
+      fetchDataGetFaculty();
     } else {
       toast.error("Message sent failed");
     }
   };
 
+  // api xóa khoa
+  const handleDelete = async (record) => {
+    const url = "v1/faculty/delete";
+    const response = await apiDeleteFaculties(url, record?.ID);
+    console.log("response", response);
+    if (response.status === 200) {
+      toast.success("Xóa khoa thành công");
+      fetchDataGetFaculty();
+    } else {
+      toast.error("Xóa khoa thất bại, khoa chứa lớp không thể xóa");
+    }
+  };
+
+  const handleEdit = async (record) => {
+    setFacultyValue(record.FacultyName || "");
+    setFoundingValue(record.Founding || "");
+    setDescribeValue(record.Describe || "");
+    setEmailValue(record.Email || "");
+    setPhoneNumberValue(record.PhoneNumber || "");
+    setFacultyDataId(record.ID);
+  };
+
+  const handleUpdate = async () => {
+    const url = "v1/faculty/update";
+
+    const data = {
+      facultyName: facultyValue,
+      founding: foundingValue,
+      desc: describeValue,
+      email: emailValue,
+      phoneNumber: phoneNumberValue,
+      idFaculty: facultyDataId,
+    };
+
+    console.log("data", data);
+
+    if (!facultyDataId) {
+      toast.error("Vui lòng chọn khoa cần cập nhật");
+      return;
+    }
+
+    const response = await apiUpdateFaculties(url, data);
+    if (response.status === 200) {
+      toast.success("Cập nhật khoa thành công");
+      fetchDataGetFaculty();
+    } else {
+      toast.error("Cập nhật khoa thất bại");
+    }
+  };
+
   const columns = [
     {
-      title: "stt",
-      key: "id",
+      title: "id",
+      key: "ID",
       sort: true,
     },
     {
       title: "Tên khoa",
-      key: "department",
+      key: "FacultyName",
       sort: true,
     },
     {
       title: "Ngày thành lập",
-      key: "ngaythanhlap",
+      key: "Founding",
       sort: true,
     },
     {
       title: "Email",
-      key: "email",
+      key: "Email",
       sort: true,
     },
     {
       title: "Số điện thoại",
-      key: "sdt",
+      key: "PhoneNumber",
       sort: true,
     },
     {
       title: "Mô tả",
-      key: "mota",
+      key: "Describe",
       sort: true,
     },
     {
       title: "Action",
       key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <FiTrash2 color="red" />
-          <LuPencilLine color="#1677ff" />
-        </div>
-      ),
+      render: (text, record) => {
+        return (
+          <div className="flex items-center gap-3 cursor-pointer">
+            <FiTrash2 color="red" onClick={() => handleDelete(record)} />
+            <LuPencilLine color="#1677ff" onClick={() => handleEdit(record)} />
+          </div>
+        );
+      },
     },
   ];
 
-  const data = [
-    {
-      id: "1",
-      department: "Công nghệ thông tin",
-      ngaythanhlap: "2021-10-10",
-      email: "cntt@eaut.edu.vn",
-      sdt: "1900123123",
-      mota: "",
-    },
-    {
-      id: "2",
-      department: "Công nghệ ô tô",
-      ngaythanhlap: "2021-10-10",
-      email: "cntt@eaut.edu.vn",
-      sdt: "1900123123",
-      mota: "",
-    },
-    {
-      id: "3",
-      department: "Quản trị kinh doanh",
-      ngaythanhlap: "2021-10-10",
-      email: "cntt@eaut.edu.vn",
-      sdt: "1900123123",
-      mota: "",
-    },
-  ];
+  // data fake khi chưa có api
+  // const data = [
+  //   {
+  //     id: "1",
+  //     department: "Công nghệ thông tin",
+  //     ngaythanhlap: "2021-10-10",
+  //     email: "cntt@eaut.edu.vn",
+  //     sdt: "1900123123",
+  //     mota: "",
+  //   },
+  //   {
+  //     id: "2",
+  //     department: "Công nghệ ô tô",
+  //     ngaythanhlap: "2021-10-10",
+  //     email: "cntt@eaut.edu.vn",
+  //     sdt: "1900123123",
+  //     mota: "",
+  //   },
+  //   {
+  //     id: "3",
+  //     department: "Quản trị kinh doanh",
+  //     ngaythanhlap: "2021-10-10",
+  //     email: "cntt@eaut.edu.vn",
+  //     sdt: "1900123123",
+  //     mota: "",
+  //   },
+  // ];
 
   return (
     <>
@@ -244,7 +321,6 @@ const CategoryDepartment = () => {
                 if (
                   !facultyValue ||
                   !foundingValue ||
-                  !describeValue ||
                   !emailValue ||
                   !phoneNumberValue
                 ) {
@@ -273,6 +349,14 @@ const CategoryDepartment = () => {
 
             <Button
               style={"py-[7px] text-white rounded-md "}
+              icon={<GrUpdate />}
+              handleOnclick={handleUpdate}
+            >
+              Cập nhật
+            </Button>
+
+            <Button
+              style={"py-[7px] text-white rounded-md "}
               icon={<AiOutlineCloudUpload />}
             >
               Export
@@ -288,7 +372,13 @@ const CategoryDepartment = () => {
         </div>
 
         <div className="mt-12">
-          <Table title="Danh sách khoa" columns={columns} data={data} />
+          {facultyData && (
+            <Table
+              title="Danh sách khoa"
+              columns={columns}
+              data={facultyData}
+            />
+          )}
         </div>
       </div>
     </>

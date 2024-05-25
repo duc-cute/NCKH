@@ -15,6 +15,7 @@ const Table = ({
   maxH,
   limit,
 }) => {
+  console.log("data", data);
   const [displayData, setDisplayData] = useState(null);
   const [params] = useSearchParams();
   const limits = limit || +import.meta.env.VITE_PROD_LIMIT;
@@ -33,11 +34,8 @@ const Table = ({
   useEffect(() => {
     if (data) {
       setDisplayData(data.slice(offset, offset + limits));
-
-      // const queries = Object.fromEntries([...params]);
     }
   }, [params, data]);
-  // console.log("displayData", displayData);
 
   return (
     <>

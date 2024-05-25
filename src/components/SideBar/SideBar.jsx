@@ -13,6 +13,7 @@ const {
   LuLayoutDashboard,
   RiAdminFill,
   BiCategory,
+  IoSettingsOutline,
 } = icons;
 const menus = [
   {
@@ -49,7 +50,7 @@ const menus = [
     id: 3,
     path: path.STUDENT_WARNING,
     title: <Link to={path.STUDENT_WARNING}>Thiết lập cảnh báo</Link>,
-    icon: <BiCategory />,
+    icon: <IoSettingsOutline />,
   },
   {
     id: 4,

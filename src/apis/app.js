@@ -53,3 +53,18 @@ export const apiSelectInfoFaculties = (url) =>
       url: `/${url}`,
       method: "get",
   });
+
+  // xóa khoa
+export const apiDeleteFaculties = (url, idFaculty) =>
+    axios({
+      url: `/${url}/${idFaculty}`,
+      method: "delete",
+  });
+
+  // cập nhật khoa
+export const apiUpdateFaculties = (url, data) =>
+    axios({
+      url: `/${url}`,
+      method: "put",
+      data
+  });
