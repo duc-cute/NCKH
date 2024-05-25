@@ -64,7 +64,9 @@ const Login = () => {
                   <InputField
                     nameKey="email"
                     value={payload.email}
-                    setValue={setPayload}
+                    onChange={(e) =>
+                      setPayload({ ...payload, email: e.target.value })
+                    }
                     inValid={invalidField}
                     setInvalid={setInvalidField}
                     placeholder="name@eaut.edu.vn"
@@ -76,7 +78,9 @@ const Login = () => {
                   <InputField
                     nameKey="password"
                     value={payload.password}
-                    setValue={setPayload}
+                    onChange={(e) =>
+                      setPayload({ ...payload, password: e.target.value })
+                    }
                     inValid={invalidField}
                     setInvalid={setInvalidField}
                     placeholder="********"

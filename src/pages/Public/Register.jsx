@@ -56,7 +56,9 @@ const Register = () => {
                   nameKey="fullname"
                   placeholder="Full Name"
                   value={payload.fullname}
-                  setValue={setPayload}
+                  onChange={(e) =>
+                    setPayload({ ...payload, fullname: e.target.value })
+                  }
                   inValid={invalid}
                   setInvalid={setInvalid}
                   label="Full Name"
@@ -65,36 +67,44 @@ const Register = () => {
                   nameKey="email"
                   placeholder="Email"
                   value={payload.email}
-                  setValue={setPayload}
+                  onChange={(e) =>
+                    setPayload({ ...payload, email: e.target.value })
+                  }
                   inValid={invalid}
                   setInvalid={setInvalid}
                   label="Email"
                 />
                 <InputField
-                  nameKey={"username"}
+                  nameKey="username"
                   placeholder="username"
                   value={payload.username}
+                  onChange={(e) =>
+                    setPayload({ ...payload, username: e.target.value })
+                  }
                   inValid={invalid}
-                  setValue={setPayload}
                   setInvalid={setInvalid}
                   label="User Name"
                 />
                 <InputField
-                  nameKey={"password"}
+                  nameKey="password"
                   placeholder="Password"
                   value={payload.password}
+                  onChange={(e) =>
+                    setPayload({ ...payload, password: e.target.value })
+                  }
                   inValid={invalid}
-                  setValue={setPayload}
                   setInvalid={setInvalid}
                   label="Password"
                   type="password"
                 />
                 <InputField
-                  nameKey={"confirmPassword"}
+                  nameKey="confirmPassword"
                   placeholder="Confirm Password"
                   value={payload.confirmPassword}
+                  onChange={(e) =>
+                    setPayload({ ...payload, confirmPassword: e.target.value })
+                  }
                   inValid={invalid}
-                  setValue={setPayload}
                   setInvalid={setInvalid}
                   label="Confirm Password"
                   type="password"

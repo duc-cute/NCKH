@@ -191,26 +191,28 @@ const ManageCategory = () => {
                 <div className="font-bold text-[28px]">total 18</div>
                 <div className="text-[18px] my-5">Danh mục khoa</div>
               </div>
-              <div
-                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#327d90]
+              <div className=" cursor-pointer">
+                <div
+                  className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#327d90]
                hover:bg-[#346875] rounded-[8px] cursor-pointer p-2 w-full justify-center"
-                onClick={() => {
-                  setShowDes(true);
-                  setSchoolYear(false);
-                  setDepartment(true);
-                  setSubject(false);
-                  setTitleCategory("Danh mục khoa");
-                }}
-              >
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
+                  onClick={() => {
+                    setShowDes(true);
+                    setSchoolYear(false);
+                    setDepartment(true);
+                    setSubject(false);
+                    setTitleCategory("Danh mục khoa");
+                  }}
+                >
+                  <div className="flex gap-2 ">
+                    <div>Chi tiết</div>
+                    <div>
+                      <FaArrowCircleRight />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <MdOutlineClass color="#327d90" size={"60px"} />
+                <div className=" absolute top-2 right-2">
+                  <MdOutlineClass color="#327d90" size={"60px"} />
+                </div>
               </div>
             </div>
 
@@ -219,21 +221,23 @@ const ManageCategory = () => {
                 <div className="font-bold text-[28px]">total 70</div>
                 <div className="text-[18px] my-5">Danh mục lớp</div>
               </div>
-              <div
-                className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#a84336] hover:bg-[#743b34]
+              <div className=" cursor-pointer">
+                <div
+                  className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#a84336] hover:bg-[#743b34]
                rounded-[8px] cursor-pointer p-2 w-full justify-center"
-                onClick={() => {
-                  setShowDes(true);
-                  setSchoolYear(true);
-                  setDepartment(false);
-                  setSubject(false);
-                  setTitleCategory("Danh mục lớp học");
-                }}
-              >
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
+                  onClick={() => {
+                    setShowDes(true);
+                    setSchoolYear(true);
+                    setDepartment(false);
+                    setSubject(false);
+                    setTitleCategory("Danh mục lớp học");
+                  }}
+                >
+                  <div className="flex gap-2 ">
+                    <div>Chi tiết</div>
+                    <div>
+                      <FaArrowCircleRight />
+                    </div>
                   </div>
                 </div>
               </div>

@@ -24,12 +24,14 @@ export const apiCoursesById = (url, id) =>
     method: "get",
   });
 
+  // lấy điểm
 export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
   axios({
     url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
     method: "get",
   });
 
+  // thêm khoa
 export const apiAddFaculties = (url, data) =>
   axios({
     url: `/${url}`,
@@ -37,6 +39,7 @@ export const apiAddFaculties = (url, data) =>
     data,
   });
 
+  // thêm lớp
 export const apiAddClass = (url, data) =>
     axios({
       url: `/${url}`,
@@ -44,3 +47,9 @@ export const apiAddClass = (url, data) =>
       data,
   });
   
+  // lấy thông tin khoa
+export const apiSelectInfoFaculties = (url) =>
+    axios({
+      url: `/${url}`,
+      method: "get",
+  });

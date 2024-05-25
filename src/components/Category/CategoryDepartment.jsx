@@ -20,12 +20,14 @@ const {
   LuPencilLine,
 } = icons;
 
-import { apiAllKey, apiAddFaculties } from "../../apis";
+import { apiAllKey, apiAddFaculties, apiSelectInfoFaculties } from "../../apis";
 import { toast } from "react-toastify";
 
 const CategoryDepartment = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+
+  const [facultyData, setFacultyData] = useState();
 
   // state input
   const [facultyValue, setFacultyValue] = useState("");
@@ -40,6 +42,16 @@ const CategoryDepartment = () => {
       const url = "v1/common/select-years-by-faculty";
       const schoolYear = await apiAllKey(url);
       setSelectedSchoolYear(schoolYear?.data);
+    };
+    fetchData();
+  }, []);
+
+  // api lấy thông tin khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/faculty/select-all-faculty";
+      const data = await apiSelectInfoFaculties(url);
+      setFacultyData(data?.data);
     };
     fetchData();
   }, []);
