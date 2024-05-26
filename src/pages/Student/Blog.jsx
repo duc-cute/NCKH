@@ -121,9 +121,9 @@ const Blog = () => {
       <div className="py-2 px-10 slider-container mt-10">
         {listBlogs?.length > 0 &&
           listBlogs?.map((blog, ind) => (
-            <div className="mt-3" key={ind}>
+            <Fragment key={ind}>
               <BlogList header={blog?.header} listItem={blog?.listItem} />
-            </div>
+            </Fragment>
           ))}
       </div>
     </section>
