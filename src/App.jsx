@@ -20,6 +20,8 @@ import path from "./ultils/path";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 const router = createBrowserRouter([
   {
     path: path.HOME,
@@ -47,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: path.SCHEDULE,
         element: <Schedule />,
+      },
+      {
+        path: path.BLOG,
+        element: <Blog />,
       },
     ],
   },

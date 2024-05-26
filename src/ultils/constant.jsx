@@ -125,10 +125,24 @@ export const listDropDownStudent = [
   },
   {
     title: "Cảnh báo học tập",
-    path: path.STUDENT_WARNING,
+    path: path.STUDYWARNING,
   },
   {
     title: "Tài liệu học tập",
     path: path.DOCUMENTSTUDY,
   },
+  {
+    title: "Bài viết về trường",
+    path: path.BLOG,
+  },
 ];
+export const settingsSlider = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 3000,
+  arrows: false,
+};

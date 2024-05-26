@@ -11,6 +11,7 @@ const path = {
   STUDY: "study",
   SCHEDULE: "schedule",
   STUDYWARNING: "study-warning",
+  BLOG: "blog",
   DOCUMENTSTUDY: "document-study",
   // ....
   //

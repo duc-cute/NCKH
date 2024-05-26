@@ -27,3 +27,4 @@ export { default as CategoryDepartment } from "./Category/CategoryDepartment";
 export { default as CategoryClass } from "./Category/CategoryClass";
 export { default as CategorySubject } from "./Category/CategorySubject";
 export { default as Dropdown } from "./Dropdown/Dropdown";
+export { default as CustomSlider } from "./Slider/CustomSlider";

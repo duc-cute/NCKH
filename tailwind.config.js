@@ -25,10 +25,13 @@ module.exports = {
       },
       backgroundColor: {
         main: "#001529",
+        primary: "#446084",
+
         overlay: "#00000033",
       },
       colors: {
         main: "#4f7db3",
+        primary: "#446084",
       },
     },
   },

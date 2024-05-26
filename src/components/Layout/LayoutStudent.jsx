@@ -10,7 +10,7 @@ const LayoutStudent = () => {
   return (
     <main>
       <Header />
-      <div className="w-full bg-[#f5f5f5] pt-5">
+      <div className="w-full">
         <Outlet />
       </div>
     </main>
