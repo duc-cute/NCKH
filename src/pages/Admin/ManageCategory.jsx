@@ -150,42 +150,6 @@ const ManageCategory = () => {
 
         <div className="flex w-full justify-center">
           <div className="flex flex-wrap gap-8 justify-start mt-6 w-[92%]">
-            {/* <div className="relative cursor-default">
-              <div className="bg-[#f39c12] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 10</div>
-                <div className="text-[18px] my-5">Danh mục năm học</div>
-              </div>
-              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#da8c0f] hover:bg-[#906f3a] rounded-[8px] cursor-pointer p-2 w-full justify-center">
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
-                  </div>
-                </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <SlCalender color="#da8b10" size={"60px"} />
-              </div>
-            </div> */}
-
-            {/* <div className="relative cursor-default">
-              <div className="bg-[#04a559] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 2</div>
-                <div className="text-[18px] my-5">Danh mục học kỳ</div>
-              </div>
-              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#318a60] hover:bg-[#448265] rounded-[8px] cursor-pointer p-2 w-full justify-center">
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
-                  </div>
-                </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <SiStudyverse color="#318a60" size={"60px"} />
-              </div>
-            </div> */}
-
             <div className="relative cursor-default">
               <div className="bg-[#00c0ef] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
                 <div className="font-bold text-[28px]">total 18</div>
@@ -210,7 +174,7 @@ const ManageCategory = () => {
                     </div>
                   </div>
                 </div>
-                <div className=" absolute top-2 right-2">
+                <div className=" absolute top-2 right-2 cursor-pointer">
                   <MdOutlineClass color="#327d90" size={"60px"} />
                 </div>
               </div>

@@ -15,7 +15,6 @@ const Table = ({
   maxH,
   limit,
 }) => {
-  console.log("data", data);
   const [displayData, setDisplayData] = useState(null);
   const [params] = useSearchParams();
   const limits = limit || +import.meta.env.VITE_PROD_LIMIT;

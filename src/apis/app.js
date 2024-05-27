@@ -39,12 +39,34 @@ export const apiAddFaculties = (url, data) =>
     data,
   });
 
+  // cập nhật lớp
+export const apiUpdateClass = (url, data) =>
+  axios({
+    url: `/${url}`,
+    method: "put",
+    data
+});
+
   // thêm lớp
 export const apiAddClass = (url, data) =>
     axios({
       url: `/${url}`,
       method: "post",
       data,
+  });
+
+  // lấy thông tin lớp
+export const apiSelectInfoClass = (url, keyId, facultyId) =>
+  axios({
+    url: `/${url}?key=${keyId}&faculty=${facultyId}`,
+    method: "get",
+});
+
+  // xóa lớp
+export const apiDeleteClass = (url, IDClass) =>
+    axios({
+      url: `/${url}/${IDClass}`,
+      method: "delete",
   });
   
   // lấy thông tin khoa
@@ -68,3 +90,12 @@ export const apiUpdateFaculties = (url, data) =>
       method: "put",
       data
   });
+
+// import khoa
+export const apiImportFaculty = (data) =>
+    axios({
+      url: "/v1/faculty/import-faculty", 
+      method: "post",
+      data,
+  });
+  

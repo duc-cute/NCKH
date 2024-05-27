@@ -18,18 +18,36 @@ const {
   CgImport,
   FiTrash2,
   LuPencilLine,
+  GrUpdate,
 } = icons;
 
-import { apiAllKey, apiAllFaculties, apiAddClass } from "../../apis";
+import {
+  apiAllKey,
+  apiAllFaculties,
+  apiAddClass,
+  apiSelectInfoClass,
+  apiDeleteClass,
+  apiUpdateClass,
+} from "../../apis";
+
 import { toast } from "react-toastify";
 
 const CategorySchoolYear = () => {
+  // state option
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
 
+  // state id
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [selectedClassId, setSelectedClassId] = useState();
 
+  // state data
+  const [classData, setClassData] = useState();
+
+  console.log("classData", classData);
+
+  // state input
   const [classValue, setClassValue] = useState("");
 
   // api select option khóa
@@ -42,6 +60,7 @@ const CategorySchoolYear = () => {
     fetchData();
   }, []);
 
+  // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
       const url = "v1/common/select-all-faculty";
@@ -51,6 +70,7 @@ const CategorySchoolYear = () => {
     fetchData();
   }, [selectedSchoolYearId]);
 
+  // api add class
   const addClass = async () => {
     const url = "v1/class/add-class-by-faculty";
     const data = {
@@ -61,61 +81,104 @@ const CategorySchoolYear = () => {
     const response = await apiAddClass(url, data);
     if (response.status === 200) {
       toast.success("Thêm lớp thành công");
+      fetchDataGetClass();
     } else {
       toast.error("Message sent failed");
     }
   };
 
+  // api lấy thông tin lớp
+  const fetchDataGetClass = async () => {
+    const url = "v1/common/select-class-by-faculty-and-key";
+    const data = await apiSelectInfoClass(
+      url,
+      selectedSchoolYear,
+      selectedFacultyId
+    );
+    setClassData(data?.data);
+  };
+
+  useEffect(() => {
+    fetchDataGetClass();
+    console.log("selectedSchoolYearId", selectedSchoolYearId);
+  }, [selectedSchoolYearId, selectedFacultyId]);
+
+  // api cập nhật lớp
+  const handleUpdate = async () => {
+    const url = "v1/class/update-class";
+
+    const data = {
+      IDClass: selectedClassId,
+      NameClass: classValue,
+      IDFaculty: selectedFacultyId,
+    };
+
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn lớp cần cập nhật");
+      return;
+    }
+
+    const response = await apiUpdateClass(url, data);
+    if (response.status === 200) {
+      toast.success("Cập nhật lớp thành công");
+      fetchDataGetClass();
+    } else {
+      toast.error("Cập nhật lớp thất bại");
+    }
+  };
+
+  // api xóa lớp
+  const handleDelete = async (record) => {
+    const url = "v1/class/delete-class-by-id";
+    const response = await apiDeleteClass(url, record?.ID);
+    if (response.status === 200) {
+      toast.success("Xóa lớp thành công !");
+      fetchDataGetClass();
+    } else {
+      toast.error("Xóa lớp thất bại, lớp tồn tại sinh viên !");
+    }
+  };
+
+  // clear input
+  const handleEdit = (record) => {
+    setSelectedClassId(record.ID);
+    setClassValue(record.NameClass || "");
+  };
+
   const columns = [
     {
-      title: "stt",
-      key: "id",
-      sort: true,
-    },
-    {
-      title: "Tên khoa",
-      key: "department",
-      sort: true,
-    },
-    {
       title: "Tên lớp",
-      key: "className",
+      key: "NameClass",
       sort: true,
     },
     {
       title: "Action",
       key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <FiTrash2 color="red" />
-          <LuPencilLine color="#1677ff" />
-        </div>
-      ),
+      render: (text, record) => {
+        return (
+          <div className="flex items-center gap-3 cursor-pointer">
+            <FiTrash2 color="red" onClick={() => handleDelete(record)} />
+            <LuPencilLine color="#1677ff" onClick={() => handleEdit(record)} />
+          </div>
+        );
+      },
     },
   ];
 
-  const data = [
-    {
-      id: "1",
-      department: "Công nghệ thông tin",
-      className: "DCCNTT10.1.3",
-    },
-    {
-      id: "2",
-      department: "Công nghệ ô tô",
-      className: "DCCNTT10.1.4",
-    },
-    {
-      id: "3",
-      department: "Quản trị kinh doanh",
-      className: "DCCNTT10.1.5",
-    },
-    {
-      id: "4",
-      department: "Du lịch khách sạn",
-      className: "DCCNTT10.1.6",
-    },
-  ];
+  // const dataClass = [
+  //   {
+  //     NameClass: "DCCNTT10.1.3",
+  //   },
+  //   {
+  //     NameClass: "DCCNTT10.1.4",
+  //   },
+  //   {
+  //     NameClass: "DCCNTT10.1.5",
+  //   },
+  //   {
+  //     NameClass: "DCCNTT10.1.6",
+  //   },
+  // ];
 
   return (
     <>
@@ -200,6 +263,14 @@ const CategorySchoolYear = () => {
 
             <Button
               style={"py-[7px] text-white rounded-md "}
+              icon={<GrUpdate />}
+              handleOnclick={handleUpdate}
+            >
+              Cập nhật
+            </Button>
+
+            <Button
+              style={"py-[7px] text-white rounded-md "}
               icon={<AiOutlineCloudUpload />}
             >
               Export
@@ -215,7 +286,7 @@ const CategorySchoolYear = () => {
         </div>
 
         <div className="mt-12">
-          <Table title="Danh sách lớp" columns={columns} data={data} />
+          <Table title="Danh sách lớp" columns={columns} data={classData} />
         </div>
       </div>
     </>

@@ -144,7 +144,7 @@ const ManageAttendance = () => {
       setSelectedClass(classScore?.data);
     };
     fetchData();
-  }, [selectedFacultyId]);
+  }, [selectedFacultyId, selectedSchoolYear]);
 
   // api select option môn học
   useEffect(() => {
