@@ -68,6 +68,15 @@ export const apiDeleteClass = (url, IDClass) =>
       url: `/${url}/${IDClass}`,
       method: "delete",
   });
+
+// import khoa
+export const apiImportClass = (data) =>
+  axios({
+    url: "/v1/class/import-class", 
+    method: "post",
+    data,
+});
+
   
   // lấy thông tin khoa
 export const apiSelectInfoFaculties = (url) =>

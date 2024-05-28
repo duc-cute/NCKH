@@ -28,6 +28,7 @@ import {
   apiSelectInfoClass,
   apiDeleteClass,
   apiUpdateClass,
+  apiImportClass,
 } from "../../apis";
 
 import { toast } from "react-toastify";
@@ -78,6 +79,8 @@ const CategorySchoolYear = () => {
       IDFaculty: selectedFacultyId,
     };
 
+    console.log("data", data);
+
     const response = await apiAddClass(url, data);
     if (response.status === 200) {
       toast.success("Thêm lớp thành công");
@@ -92,7 +95,7 @@ const CategorySchoolYear = () => {
     const url = "v1/common/select-class-by-faculty-and-key";
     const data = await apiSelectInfoClass(
       url,
-      selectedSchoolYear,
+      selectedSchoolYearId,
       selectedFacultyId
     );
     setClassData(data?.data);
@@ -100,7 +103,6 @@ const CategorySchoolYear = () => {
 
   useEffect(() => {
     fetchDataGetClass();
-    console.log("selectedSchoolYearId", selectedSchoolYearId);
   }, [selectedSchoolYearId, selectedFacultyId]);
 
   // api cập nhật lớp
