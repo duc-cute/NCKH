@@ -1,16 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  Button,
-  Drawer,
-  InputField,
-  SelectOption,
-  Table,
-  Tag,
-  InputForm,
-  SelectLib,
-  Modal,
-  DragFile,
-} from "..";
+import { Button, InputField, SelectOption, Table, Modal, DragFile } from "..";
 
 import icons from "../../ultils/icons";
 
@@ -34,7 +23,7 @@ import {
 
 import { toast } from "react-toastify";
 
-import { readFileDataFaculty } from "../../ultils/helper";
+import { readFileDataImport } from "../../ultils/helper";
 
 const CategoryDepartment = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -67,7 +56,7 @@ const CategoryDepartment = () => {
 
   const handlePreviewData = useCallback(
     (fileValue) => {
-      readFileDataFaculty(fileValue)
+      readFileDataImport(fileValue)
         .then((dataMain) => {
           let dataFormat = Array.isArray(dataMain.dataMain)
             ? dataMain.dataMain.map((data) => {
@@ -88,7 +77,7 @@ const CategoryDepartment = () => {
           setDataPreview(dataFormat);
         })
         .catch((error) => {
-          console.error("Lỗi khi xem trước dữ liệu:", error);
+          toast.error("File không đúng định dạng !");
         });
     },
     [dataPreview]
@@ -238,33 +227,33 @@ const CategoryDepartment = () => {
     },
   ];
 
-  // data fake khi chưa có api
-  // const data = [
-  //   {
-  //     id: "1",
-  //     department: "Công nghệ thông tin",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  //   {
-  //     id: "2",
-  //     department: "Công nghệ ô tô",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  //   {
-  //     id: "3",
-  //     department: "Quản trị kinh doanh",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  // ];
+  const columnsPreview = [
+    {
+      title: "Tên khoa",
+      key: "FacultyName",
+      sort: true,
+    },
+    {
+      title: "Ngày thành lập",
+      key: "Founding",
+      sort: true,
+    },
+    {
+      title: "Email",
+      key: "Email",
+      sort: true,
+    },
+    {
+      title: "Số điện thoại",
+      key: "PhoneNumber",
+      sort: true,
+    },
+    {
+      title: "Mô tả",
+      key: "Describe",
+      sort: true,
+    },
+  ];
 
   return (
     <>
@@ -438,7 +427,7 @@ const CategoryDepartment = () => {
         >
           <DragFile
             data={dataPreview}
-            columns={columns}
+            columns={columnsPreview}
             onChange={handlePreviewData}
             fileName={fileName}
             setFileName={setFileName}

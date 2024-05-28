@@ -1,14 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Drawer,
-  InputField,
-  SelectOption,
-  Table,
-  Tag,
-  InputForm,
-  SelectLib,
-} from "..";
+import React, { useEffect, useState, useCallback } from "react";
+import { Button, InputField, SelectOption, Table, Modal, DragFile } from "..";
 
 import icons from "../../ultils/icons";
 
@@ -33,6 +24,8 @@ import {
 
 import { toast } from "react-toastify";
 
+import { readFileDataImport } from "../../ultils/helper";
+
 const CategorySchoolYear = () => {
   // state option
   const [selectedFaculty, setSelectedFaculty] = useState();
@@ -48,8 +41,77 @@ const CategorySchoolYear = () => {
 
   console.log("classData", classData);
 
+  // state modal
+  const [showModal, setShowModal] = useState(false);
+  const [fileName, setFileName] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
+  const [dataImport, setDataImport] = useState({});
+
   // state input
   const [classValue, setClassValue] = useState("");
+
+  // handle import
+  const handleImportButtonClick = useCallback(async () => {
+    const response = await apiImportClass(dataImport);
+    if (response.status === 200) {
+      toast.success("Import dữ liệu thành công !");
+      setFileName(null);
+      setDataPreview([]);
+    } else toast.error("Import dữ liệu thất bại !");
+  }, [dataPreview, fileName]);
+
+  const handlePreviewData = useCallback(
+    (fileValue) => {
+      readFileDataImport(fileValue)
+        .then((dataMain) => {
+          let dataFormat = Array.isArray(dataMain.dataMain)
+            ? dataMain.dataMain.map((data) => {
+                return {
+                  NameFaculty: data["Tên khoa"],
+                  NameClass: data["Tên lớp"],
+                };
+              })
+            : [];
+
+          setDataPreview(dataFormat);
+
+          let dataObject = {};
+          let lastFacultyName = null;
+
+          if (Array.isArray(dataMain.dataMain)) {
+            dataMain.dataMain.forEach((item) => {
+              const facultyName = item["Tên khoa"] || lastFacultyName;
+              const className = item["Tên lớp"];
+
+              if (facultyName) {
+                lastFacultyName = facultyName;
+
+                if (!dataObject[facultyName]) {
+                  dataObject[facultyName] = [];
+                }
+
+                if (!dataObject[facultyName].includes(className)) {
+                  dataObject[facultyName].push(className);
+                }
+              }
+            });
+          }
+
+          let dataImport = Object.entries(dataObject).map(
+            ([title, dataClass]) => ({
+              title: `Khoa ${title}`,
+              dataClass,
+            })
+          );
+
+          setDataImport(dataImport);
+        })
+        .catch((error) => {
+          toast.error("File không đúng định dạng !");
+        });
+    },
+    [dataPreview]
+  );
 
   // api select option khóa
   useEffect(() => {
@@ -79,14 +141,12 @@ const CategorySchoolYear = () => {
       IDFaculty: selectedFacultyId,
     };
 
-    console.log("data", data);
-
     const response = await apiAddClass(url, data);
     if (response.status === 200) {
       toast.success("Thêm lớp thành công");
       fetchDataGetClass();
     } else {
-      toast.error("Message sent failed");
+      toast.error("Lớp trùng lặp không thể thêm !");
     }
   };
 
@@ -167,20 +227,18 @@ const CategorySchoolYear = () => {
     },
   ];
 
-  // const dataClass = [
-  //   {
-  //     NameClass: "DCCNTT10.1.3",
-  //   },
-  //   {
-  //     NameClass: "DCCNTT10.1.4",
-  //   },
-  //   {
-  //     NameClass: "DCCNTT10.1.5",
-  //   },
-  //   {
-  //     NameClass: "DCCNTT10.1.6",
-  //   },
-  // ];
+  const columnPreview = [
+    {
+      title: "Tên khoa",
+      key: "NameFaculty",
+      sort: true,
+    },
+    {
+      title: "Tên lớp",
+      key: "NameClass",
+      sort: true,
+    },
+  ];
 
   return (
     <>
@@ -281,6 +339,9 @@ const CategorySchoolYear = () => {
             <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<CgImport />}
+              handleOnclick={() => {
+                setShowModal(true);
+              }}
             >
               Import
             </Button>
@@ -291,6 +352,29 @@ const CategorySchoolYear = () => {
           <Table title="Danh sách lớp" columns={columns} data={classData} />
         </div>
       </div>
+      {showModal && (
+        <Modal
+          show={showModal}
+          setShow={setShowModal}
+          title={"Import dữ liệu lớp học"}
+          disableOkBtn={dataPreview?.length < 1}
+          onClickBtnOk={handleImportButtonClick}
+          textOk={"Import"}
+          onClickBtnCancel={() => {
+            setShowModal(false);
+            setFileName(null);
+            setDataPreview([]);
+          }}
+        >
+          <DragFile
+            data={dataPreview}
+            columns={columnPreview}
+            onChange={handlePreviewData}
+            fileName={fileName}
+            setFileName={setFileName}
+          />
+        </Modal>
+      )}
     </>
   );
 };

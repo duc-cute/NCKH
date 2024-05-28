@@ -126,7 +126,7 @@ export const readFileData = (file, cellPositions, header, range) => {
   });
 };
 
-export const readFileDataFaculty = (file) => {
+export const readFileDataImport = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     let dataMain = [];
@@ -138,17 +138,17 @@ export const readFileDataFaculty = (file) => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
-        const knownHeaders = [
-          "stt",
-          "FacultyName",
-          "Founding",
-          "Email",
-          "PhoneNumber",
-          "Describe",
-        ];
+        // const knownHeaders = [
+        //   "stt",
+        //   "FacultyName",
+        //   "Founding",
+        //   "Email",
+        //   "PhoneNumber",
+        //   "Describe",
+        // ];
 
         dataMain = XLSX.utils.sheet_to_json(worksheet, {
-          knownHeaders,
+          // knownHeaders,
           cellText: true,
         });
         resolve({ dataMain });

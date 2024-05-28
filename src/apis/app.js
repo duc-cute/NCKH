@@ -24,22 +24,14 @@ export const apiCoursesById = (url, id) =>
     method: "get",
   });
 
-  // lấy điểm
+// lấy điểm
 export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
   axios({
     url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
     method: "get",
   });
 
-  // thêm khoa
-export const apiAddFaculties = (url, data) =>
-  axios({
-    url: `/${url}`,
-    method: "post",
-    data,
-  });
-
-  // cập nhật lớp
+// cập nhật lớp
 export const apiUpdateClass = (url, data) =>
   axios({
     url: `/${url}`,
@@ -47,7 +39,7 @@ export const apiUpdateClass = (url, data) =>
     data
 });
 
-  // thêm lớp
+// thêm lớp
 export const apiAddClass = (url, data) =>
     axios({
       url: `/${url}`,
@@ -55,21 +47,21 @@ export const apiAddClass = (url, data) =>
       data,
   });
 
-  // lấy thông tin lớp
+// lấy thông tin lớp
 export const apiSelectInfoClass = (url, keyId, facultyId) =>
   axios({
     url: `/${url}?key=${keyId}&faculty=${facultyId}`,
     method: "get",
 });
 
-  // xóa lớp
+// xóa lớp
 export const apiDeleteClass = (url, IDClass) =>
     axios({
       url: `/${url}/${IDClass}`,
       method: "delete",
   });
 
-// import khoa
+// import class
 export const apiImportClass = (data) =>
   axios({
     url: "/v1/class/import-class", 
@@ -77,6 +69,20 @@ export const apiImportClass = (data) =>
     data,
 });
 
+// đếm số lượng class
+export const apiCountClass = () =>
+  axios({
+    url: "/v1/class/count-class", 
+    method: "get",
+});
+
+// thêm khoa
+export const apiAddFaculties = (url, data) =>
+    axios({
+      url: `/${url}`,
+      method: "post",
+      data,
+  });
   
   // lấy thông tin khoa
 export const apiSelectInfoFaculties = (url) =>
@@ -107,4 +113,12 @@ export const apiImportFaculty = (data) =>
       method: "post",
       data,
   });
+
+// đếm số lượng khoa
+export const apiCountFaculty = () =>
+  axios({
+    url: "/v1/faculty/count-faculty", 
+    method: "get",
+});
+
   
