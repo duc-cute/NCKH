@@ -16,8 +16,6 @@ const ManageCategory = () => {
   const [countClass, setCountClass] = useState();
   const [countFaculty, setCountFaculty] = useState();
 
-  console.log(countClass, countFaculty);
-
   useEffect(() => {
     const fetchData = async () => {
       const res = await apiCountFaculty();

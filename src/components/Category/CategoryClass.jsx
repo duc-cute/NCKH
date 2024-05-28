@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, InputField, SelectOption, Table, Modal, DragFile } from "..";
-
 import icons from "../../ultils/icons";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const {
   MdOutlineSend,
@@ -112,6 +113,55 @@ const CategorySchoolYear = () => {
     },
     [dataPreview]
   );
+
+  // export data
+  const handleExportData = useCallback(async () => {
+    if (!classData || classData.length === 0) {
+      toast.error("Không có dữ liệu để xuất !");
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet 1");
+
+    // Tạo hàng đầu tiên (header) viết in đậm
+    const header = ["STT", "NameClass"];
+    header.forEach((key, index) => {
+      worksheet.getCell(1, index + 1).value = key;
+      worksheet.getCell(1, index + 1).font = { bold: true };
+    });
+
+    // Thêm dữ liệu vào các hàng tiếp theo
+    classData.forEach((obj, rowIndex) => {
+      worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1; // STT
+      worksheet.getCell(rowIndex + 2, 2).value = obj.NameClass;
+    });
+
+    // Tạo border cho tất cả các ô và điều chỉnh độ rộng của các cột
+    const maxColumnNumber = header.length;
+    const maxRowNumber = classData.length + 1;
+
+    for (let rowNumber = 1; rowNumber <= maxRowNumber; rowNumber++) {
+      for (let colNumber = 1; colNumber <= maxColumnNumber; colNumber++) {
+        const cell = worksheet.getCell(rowNumber, colNumber);
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        };
+        // Điều chỉnh độ rộng của cột
+        if (colNumber === 1) {
+          worksheet.getColumn(colNumber).width = 5;
+        } else {
+          worksheet.getColumn(colNumber).width = 20;
+        }
+      }
+    }
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "danhmuclop.xlsx");
+  }, [classData]);
 
   // api select option khóa
   useEffect(() => {
@@ -332,6 +382,7 @@ const CategorySchoolYear = () => {
             <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<AiOutlineCloudUpload />}
+              handleOnclick={handleExportData}
             >
               Export
             </Button>
