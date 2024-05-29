@@ -84,7 +84,7 @@ export const apiAddFaculties = (url, data) =>
       data,
   });
   
-  // lấy thông tin khoa
+// lấy thông tin khoa
 export const apiSelectInfoFaculties = (url) =>
     axios({
       url: `/${url}`,
@@ -121,4 +121,9 @@ export const apiCountFaculty = () =>
     method: "get",
 });
 
-  
+// lấy thông tin kỳ
+export const apiSelectInfoSemester = (key) =>
+    axios({
+      url: `v1/common/select-semester-by-key?key=${key}`,
+      method: "get",
+  });

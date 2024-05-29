@@ -15,11 +15,12 @@ import {
 } from "../../components";
 
 import {
+  apiAllKey,
   apiAllFaculties,
-  apiClassById,
-  apiCoursesById,
+  apiSelectInfoClass,
   apiDataPoint,
   apiImportScore,
+  apiSelectInfoSemester,
 } from "../../apis";
 
 import { readFileData } from "../../ultils/helper";
@@ -35,22 +36,22 @@ const ManageScore = () => {
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
 
-  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
-  const [selectedSemester, setSelectedSemester] = useState();
-  const [selectedFaculty, setSelectedFaculty] = useState();
-  const [selectedClass, setSelectedClass] = useState();
-  const [selectedCourse, setSelectedCourse] = useState();
-
   // state data
-  const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
 
-  // state id: id khoa, lớp, môn học
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [courceScoreId, setCourceScoreId] = useState(null);
+  // chọn năm học, học kỳ, khoa, lớp, môn học
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [selectedClassId, setSelectedClassId] = useState();
+
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedCourse, setSelectedCourse] = useState();
+
+  const [inputMsv, setInputMsv] = useState();
 
   // xử lý khi click import
   const handleImportButtonClick = useCallback(async () => {
@@ -101,6 +102,49 @@ const ManageScore = () => {
     [dataPreview]
   );
 
+  // api select option khóa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-years-by-faculty";
+      const schoolYear = await apiAllKey(url);
+      setSelectedSchoolYear(schoolYear?.data);
+    };
+    fetchData();
+  }, []);
+
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-all-faculty";
+      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      setSelectedFaculty(facultie?.data);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
+
+  // api select option lớp
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-class-by-faculty-and-key";
+      const classScore = await apiSelectInfoClass(
+        url,
+        selectedSchoolYearId,
+        selectedFacultyId
+      );
+      setSelectedClass(classScore?.data);
+    };
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId]);
+
+  // api select option kỳ
+  useEffect(() => {
+    const fetchData = async () => {
+      const semester = await apiSelectInfoSemester(selectedSchoolYearId);
+      setSelectedSemester(semester?.data.listKy);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
+
   const groupButton = [
     {
       id: 1,
@@ -118,16 +162,10 @@ const ManageScore = () => {
       button: (
         <Button
           handleOnclick={() => {
-            if (!selectedSchoolYear) {
+            if (!selectedSchoolYearId) {
               toast.error("Vui lòng chọn khóa trước khi import");
-            } else if (!facultyId) {
+            } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
-            } else if (!classScoreId) {
-              toast.error("Vui lòng chọn lớp trước khi import");
-            } else if (!selectedSemester) {
-              toast.error("Vui lòng chọn học kỳ trước khi import");
-            } else if (!courceScoreId) {
-              toast.error("Vui lòng chọn môn học trước khi import");
             } else {
               setShowModal(true);
             }
@@ -158,112 +196,66 @@ const ManageScore = () => {
     { key: 2, semester: 2 },
   ];
 
-  // api select option khoa
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
-    };
-    fetchData();
-  }, []);
-
-  // api select option lớp
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-class-by-id";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
-    };
-    if (facultyId) fetchData();
-  }, [facultyId]);
-
-  // api select option môn học
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-courses-by-id-class";
-      const course = await apiCoursesById(url, classScoreId);
-      setCourses(course?.data);
-    };
-    if (classScoreId) fetchData();
-  }, [classScoreId]);
-
-  // api data point student
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-point-by-id-class-id-faculty-id-course";
-      const res = await apiDataPoint(
-        url,
-        facultyId,
-        classScoreId,
-        courceScoreId
-      );
-      console.log(res);
-      if (res.status === 200)
-        setDataSelect({
-          dataStudents: res.dataStudents,
-          dataTeacher: res.dataTeacher[0],
-        });
-    };
-    if (facultyId && classScoreId && courceScoreId) fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
-
   return (
     <>
       <div className=" h-[1000px]">
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
-              style={`w-full`}
               name={"Chọn khóa"}
-              data={schoolYear}
-              displayField={"schoolYear"}
+              data={
+                selectedSchoolYear
+                  ? selectedSchoolYear.map((item) => {
+                      return { name: item };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setSelectedSchoolYear(event.target.value);
+                setSelectedSchoolYearId(event.target.value);
               }}
             />
+
             <SelectOption
               style={`w-full`}
               name={"Chọn khoa"}
-              data={faculties}
-              displayField={"FacultyName"}
-              valueKey={"FacultyName"}
+              data={
+                selectedFaculty
+                  ? selectedFaculty.map((item) => {
+                      return { id: item.ID, name: item.FacultyName };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setFacultyId(event.target.value);
-                setClassScores([]);
-                setCourses([]);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedFaculty(selectedValue);
+                setSelectedFacultyId(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
               name={"Chọn lớp"}
-              data={classScores}
-              displayField={"NameClass"}
-              valueKey={"NameClass"}
+              data={
+                selectedClass
+                  ? selectedClass.map((item) => {
+                      return { id: item.ID, name: item.NameClass };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setClassScoreId(event.target.value);
-                setCourses([]);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedClass(selectedValue);
+                setSelectedClassId(event.target.value);
               }}
             />
           </div>
           <div className="flex items-center gap-3 ">
             <SelectOption
               style={`w-full`}
-              name={"Chọn học kỳ"}
-              data={semester}
-              displayField={"semester"}
-              onChange={(event) => {
-                setSelectedSemester(event.target.value);
-              }}
+              name={"Chọn kỳ học"}
+              data={
+                selectedSemester
+                  ? selectedSemester.map((item) => {
+                      return { id: item.ID, name: item };
+                    })
+                  : []
+              }
             />
 
             <SelectOption
@@ -285,9 +277,20 @@ const ManageScore = () => {
               placeholder={"Nhập mã sinh viên ..."}
               style={`flex max-h-[40px] w-[684px]`}
               name={"Mã sinh viên"}
+              value={inputMsv}
+              onChange={(e) => {
+                setInputMsv(e.target.value);
+              }}
             />
             <Button>Search</Button>
-            <Button style={"bg-white text-black"}>Clear</Button>
+            <Button
+              style={"bg-white text-black"}
+              handleOnclick={() => {
+                setInputMsv("");
+              }}
+            >
+              Clear
+            </Button>
           </div>
         </div>
 

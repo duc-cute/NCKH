@@ -40,8 +40,6 @@ const CategorySchoolYear = () => {
   // state data
   const [classData, setClassData] = useState();
 
-  console.log("classData", classData);
-
   // state modal
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState(null);

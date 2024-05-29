@@ -15,3 +15,12 @@ export const apiImportAttendance = (data) =>
     method: "post",
     data,
   });
+
+
+// import student
+export const apiImportStudent = (data) =>
+  axios({
+    url: "/v1/student/import-student", 
+    method: "post",
+    data,
+});

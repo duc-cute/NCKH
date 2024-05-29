@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Drawer,
@@ -10,23 +10,29 @@ import {
   Tag,
   InputForm,
   SelectLib,
+  Modal,
+  DragFile,
 } from "../../components";
 import icons from "../../ultils/icons";
-import { apiAllFaculties, apiClassById } from "../../apis";
+import {
+  apiAllKey,
+  apiAllFaculties,
+  apiSelectInfoClass,
+  apiImportStudent,
+} from "../../apis";
 import { useForm } from "react-hook-form";
 import {
   levelColor,
   listStatusWarning,
   listStudentWarning,
+  warningLevel,
 } from "../../ultils/constant";
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  CgImport,
-  TiPlus,
-  FiTrash2,
-  LuPencilLine,
-} = icons;
+const { AiOutlineCloudUpload, AiOutlineSend, CgImport } = icons;
+
+import { readFileDataImport } from "../../ultils/helper";
+
+import { toast } from "react-toastify";
+
 const data = [
   {
     key: "1",
@@ -95,13 +101,23 @@ const data = [
 ];
 
 const ManageStudent = () => {
-  const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [selectedClassId, setSelectedClassId] = useState();
 
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [showDes, setShowDes] = useState(false);
+  // state modal
+  const [showModal, setShowModal] = useState(false);
+  const [fileName, setFileName] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
+  const [dataImport, setDataImport] = useState({});
+
+  const [inputMsv, setInputMsv] = useState("");
+
   const [chooseWarning, setChooseWarning] = useState(null);
+
   const {
     register,
     setValue,
@@ -137,45 +153,45 @@ const ManageStudent = () => {
       key: "msv",
       sort: true,
       render: (msv, item) => (
-        <span
-          onClick={() => setShowDes(true)}
-          className={`cursor-pointer ${
-            item?.level ? levelColor[item.level - 1] : ""
-          }`}
-        >
+        <span className={` ${item?.level ? levelColor[item.level - 1] : ""}`}>
           {msv}
         </span>
       ),
     },
-    { title: "Họ tên", key: "name", sort: true },
-    { title: "Lớp", key: "class" },
-    { title: "Email", key: "email" },
-    { title: "Số điện thoại", key: "phone" },
-    {
-      title: "Số Tín chỉ nợ",
-      key: "notPass",
-      sort: true,
-      render: (number) => (
-        <span className="flex items-center justify-center">{number}</span>
-      ),
-    },
-    {
-      title: "Số Kì học phí nợ",
-      key: "statusFee",
-      render: (number) => (
-        <span className="flex items-center justify-center">{number}</span>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <FiTrash2 color="red" />
-          <LuPencilLine color="#1677ff" />
-        </div>
-      ),
-    },
+    { title: "Họ tên", key: "name" },
+    { title: "Ngày sinh", key: "class" },
+    { title: "Giới tính", key: "email" },
+    { title: "Dân tộc", key: "phone" },
+    { title: "Quê quán", key: "class" },
+    { title: "Nơi thường trú", key: "email" },
+    { title: "Email", key: "phone" },
+    { title: "Số điện thoại", key: "class" },
+    { title: "Người giám hộ 1", key: "email" },
+    { title: "Quan hệ GH 1", key: "phone" },
+    { title: "SDT GH 1", key: "phone" },
+    { title: "Người giám hộ 2", key: "email" },
+    { title: "Quan hệ GH 2", key: "phone" },
+    { title: "SDT GH 2", key: "phone" },
+  ];
+
+  const columnsPreview = [
+    { title: "Tên khoa", key: "TenKhoa" },
+    { title: "Tên lớp", key: "TenLop" },
+    { title: "msv", key: "Msv" },
+    { title: "Họ tên", key: "HoTen" },
+    { title: "Ngày sinh", key: "NgaySinh" },
+    { title: "Giới tính", key: "GioiTinh" },
+    { title: "Dân tộc", key: "DanToc" },
+    { title: "Quê quán", key: "QueQuan" },
+    { title: "Nơi thường trú", key: "NTT" },
+    { title: "Email", key: "Email" },
+    { title: "Số điện thoại", key: "SDT" },
+    { title: "Người giám hộ 1", key: "NguoiThan1.TenNT" },
+    { title: "Quan hệ GH 1", key: "NguoiThan1.QuanHe" },
+    { title: "SDT GH 1", key: "NguoiThan1.SDT" },
+    { title: "Người giám hộ 2", key: "NguoiThan2.TenNT" },
+    { title: "Quan hệ GH 2", key: "NguoiThan2.QuanHe" },
+    { title: "SDT GH 2", key: "NguoiThan2.SDT" },
   ];
 
   const groupButton = [
@@ -183,7 +199,7 @@ const ManageStudent = () => {
       id: 1,
       button: (
         <SelectLib
-          options={listStudentWarning}
+          options={warningLevel}
           register={register}
           id={"listStudent"}
           setValue={setValue}
@@ -197,7 +213,7 @@ const ManageStudent = () => {
       ),
     },
     {
-      id: 1,
+      id: 2,
       button: (
         <SelectLib
           options={listStudentWarning}
@@ -214,7 +230,7 @@ const ManageStudent = () => {
       ),
     },
     {
-      id: 2,
+      id: 3,
       button: (
         <Button
           style={"py-[7px] text-white rounded-md "}
@@ -225,16 +241,22 @@ const ManageStudent = () => {
       ),
     },
     {
-      id: 3,
+      id: 4,
       button: (
-        <Button style={"py-[7px] text-white rounded-md "} icon={<CgImport />}>
+        <Button
+          style={"py-[7px] text-white rounded-md "}
+          icon={<CgImport />}
+          handleOnclick={() => {
+            setShowModal(true);
+          }}
+        >
           Import
         </Button>
       ),
     },
 
     {
-      id: 4,
+      id: 5,
       button: (
         <Button
           dropdown={true}
@@ -247,72 +269,175 @@ const ManageStudent = () => {
       ),
     },
   ];
-  // api select option khoa
+
+  // handle import
+  const handleImportButtonClick = useCallback(async () => {
+    const response = await apiImportStudent(dataImport);
+    if (response.status === 200) {
+      toast.success("Import dữ liệu thành công !");
+      setFileName(null);
+      setDataPreview([]);
+    } else toast.error("Import dữ liệu thất bại !");
+  }, [dataPreview, fileName]);
+
+  const handlePreviewData = useCallback(
+    (fileValue) => {
+      readFileDataImport(fileValue)
+        .then((dataMain) => {
+          let dataFormat = Array.isArray(dataMain.dataMain)
+            ? dataMain.dataMain.map((data) => {
+                let date = new Date("1899-12-30");
+                date.setDate(date.getDate() + data["Ngày sinh"]);
+                return {
+                  TenKhoa: data["Khoa"],
+                  TenLop: data["Lớp"],
+                  Msv: String(data["msv"]),
+                  HoTen: data["Họ và tên"],
+                  NgaySinh: date.toISOString().slice(0, 10),
+                  GioiTinh: data["Giới tính"],
+                  DanToc: data["Dân tộc"],
+                  QueQuan: data["Quê quán"],
+                  NTT: data["Nơi thường trú"],
+                  Email: data["Email"],
+                  SDT: data["sdt sv"],
+                  NguoiThan: [
+                    {
+                      TenNT: data["Người giám hộ 1"],
+                      QuanHe: data["Vai trò gh 1"],
+                      SDT: data["sdt gh 1"],
+                    },
+                    {
+                      TenNT: data["Người giám hộ 2"],
+                      QuanHe: data["Vai trò gh 2"],
+                      SDT: data["sdt gh 2"],
+                    },
+                  ],
+                };
+              })
+            : [];
+
+          const processedData = dataFormat.map((item) => {
+            const { NguoiThan, ...otherProps } = item;
+            const flattenedItem = { ...otherProps };
+
+            NguoiThan.forEach((nt, index) => {
+              flattenedItem[`NguoiThan${index + 1}.TenNT`] = nt.TenNT;
+              flattenedItem[`NguoiThan${index + 1}.QuanHe`] = nt.QuanHe;
+              flattenedItem[`NguoiThan${index + 1}.SDT`] = nt.SDT;
+            });
+
+            return flattenedItem;
+          });
+
+          setDataImport(dataFormat);
+          setDataPreview(processedData);
+        })
+        .catch((error) => {
+          toast.error("File không đúng định dạng !");
+        });
+    },
+    [dataPreview]
+  );
+
+  // api select option khóa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
+      const url = "v1/common/select-years-by-faculty";
+      const schoolYear = await apiAllKey(url);
+      setSelectedSchoolYear(schoolYear?.data);
     };
     fetchData();
   }, []);
 
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-all-faculty";
+      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      setSelectedFaculty(facultie?.data);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
+
   // api select option lớp
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-class-by-id";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
+      const url = "v1/common/select-class-by-faculty-and-key";
+      const classScore = await apiSelectInfoClass(
+        url,
+        selectedSchoolYearId,
+        selectedFacultyId
+      );
+      setSelectedClass(classScore?.data);
     };
-    if (facultyId) fetchData();
-  }, [facultyId]);
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId]);
 
   return (
     <div className=" h-[1000px]">
       <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
         <div className="flex gap-3 items-center justify-between pt-5 ">
           <SelectOption
-            style={`w-full`}
             name={"Chọn khóa"}
-            data={faculties}
-            displayField={"FacultyName"}
+            data={
+              selectedSchoolYear
+                ? selectedSchoolYear.map((item) => {
+                    return { name: item };
+                  })
+                : []
+            }
             onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
+              setSelectedSchoolYearId(event.target.value);
             }}
           />
 
           <SelectOption
             style={`w-full`}
             name={"Chọn khoa"}
-            data={faculties}
-            displayField={"FacultyName"}
+            data={
+              selectedFaculty
+                ? selectedFaculty.map((item) => {
+                    return { id: item.ID, name: item.FacultyName };
+                  })
+                : []
+            }
             onChange={(event) => {
-              setFacultyId(event.target.value);
-              setClassScores([]);
-              setCourses([]);
+              setSelectedFacultyId(event.target.value);
             }}
           />
 
           <SelectOption
             style={`w-full`}
             name={"Chọn lớp"}
-            data={classScores}
-            displayField={"NameClass"}
+            data={
+              selectedClass
+                ? selectedClass.map((item) => {
+                    return { id: item.ID, name: item.NameClass };
+                  })
+                : []
+            }
             onChange={(event) => {
-              setClassScoreId(event.target.value);
-              setCourses([]);
+              setSelectedClassId(event.target.value);
             }}
           />
+
           <div className="flex items-center gap-3 self-end">
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
               style={`flex max-h-[40px] w-[240px]`}
               name={"Mã sinh viên"}
+              value={inputMsv}
+              onChange={(e) => setInputMsv(e.target.value)}
             />
             <Button>Search</Button>
-            <Button style={"bg-white text-black"}>Clear</Button>
+            <Button
+              style={"bg-white text-black"}
+              handleOnclick={() => {
+                setInputMsv("");
+              }}
+            >
+              Clear
+            </Button>
           </div>
         </div>
       </div>
@@ -324,73 +449,28 @@ const ManageStudent = () => {
           groupButton={groupButton}
         />
       </div>
-      {showDes && (
-        <Drawer
-          style={"grid grid-cols-2 gap-x-5 gap-y-3"}
-          title={"Info description student"}
-          onClose={() => setShowDes(false)}
+      {showModal && (
+        <Modal
+          show={showModal}
+          setShow={setShowModal}
+          title={"Import dữ liệu sinh viên"}
+          disableOkBtn={dataPreview?.length < 1}
+          onClickBtnOk={handleImportButtonClick}
+          textOk={"Import"}
+          onClickBtnCancel={() => {
+            setShowModal(false);
+            setFileName(null);
+            setDataPreview([]);
+          }}
         >
-          <InputForm
-            id={"msv"}
-            label={"Mã sinh viên"}
-            register={register}
-            errors={errors}
+          <DragFile
+            data={dataPreview}
+            columns={columnsPreview}
+            onChange={handlePreviewData}
+            fileName={fileName}
+            setFileName={setFileName}
           />
-          <InputForm
-            id={"name"}
-            label={"Name"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"email"}
-            label={"Email"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"class"}
-            label={"Lớp"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"address"}
-            label={"Địa chỉ"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"phone"}
-            label={"Số điện thoại"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"dateOfBirth"}
-            label={"Ngày sinh"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"phoneOfRelatives"}
-            label={"SDT người thân"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"tuitionDebt"}
-            label={"Nợ Học phí"}
-            register={register}
-            errors={errors}
-          />
-          <InputForm
-            id={"creditsDebt"}
-            label={"Nợ tín chỉ"}
-            register={register}
-            errors={errors}
-          />
-        </Drawer>
+        </Modal>
       )}
     </div>
   );

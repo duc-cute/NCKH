@@ -95,8 +95,14 @@ export const columnsAttendance = [
   { title: "Ghi chú", key: "Comment" },
 ];
 
+export const warningLevel = [
+  { id: 1, label: "Mức 1" },
+  { id: 2, label: "Mức 2" },
+  { id: 3, label: "Mức 3" },
+];
+
 export const listStudentWarning = [
-  { id: 1, label: "Nợ học phí" },
+  { id: 1, label: "Đang bị cảnh báo" },
   { id: 2, label: "Nợ môn" },
   { id: 3, label: "Có ý định bỏ học" },
 ];
