@@ -19,12 +19,12 @@ const Header = () => {
           alt="logo"
         /> */}
         <div className="text-[24px] text-main font-semibold">
-          <h2 className="uppercase font-serif">
+          <h2 className="uppercase font-sans-serif">
             {current?.role === "User"
               ? "Phần mềm hỗ trợ cố sinh viên"
               : "Phần mềm hỗ trợ cố vấn học tập"}
           </h2>
-          <p className="text-[12px] mt-2 font-serif uppercase">
+          <p className="text-[12px] mt-2 font-sans-serif uppercase">
             {current?.role === "User"
               ? "Software to support student"
               : "Software to support learning consulting"}
@@ -50,7 +50,7 @@ const Header = () => {
         </svg>
 
         <div
-          className="text-[16px] relative text-main font-serif cursor-pointer select-none"
+          className="text-[16px] z-50 relative text-main font-sans-serif cursor-pointer select-none"
           onClick={() => setShowDropDown((state) => !state)}
         >
           {current?.fullname}
