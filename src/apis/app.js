@@ -18,12 +18,6 @@ export const apiClassById = (url, id) =>
     method: "get",
   });
 
-export const apiCoursesById = (url, id) =>
-  axios({
-    url: `/${url}/${id}`,
-    method: "get",
-  });
-
 // lấy điểm
 export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
   axios({
@@ -127,3 +121,10 @@ export const apiSelectInfoSemester = (key) =>
       url: `v1/common/select-semester-by-key?key=${key}`,
       method: "get",
   });
+
+// lấy thông môn học
+export const apiSelectInfoCourse = (IDFaculty, key, Semester) =>
+  axios({
+    url: `v1/common/select-courses-by-faculty-and-semester-and-key?IDFaculty=${IDFaculty}&Key=${key}&Semester=${Semester}`,
+    method: "get",
+});

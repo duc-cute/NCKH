@@ -163,11 +163,10 @@ export const readFileDataImport = (file) => {
 
 export const readFileDataAttendance = (
   file,
-  selectedSchoolYearId,
-  selectedFacultyId,
-  classScoreId,
-  selectedSemester,
-  selectedCourse
+  selectedFacultyValue,
+  selectedClassValue,
+  selectedSemesterValue,
+  selectedCourseValue
 ) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -256,11 +255,10 @@ export const readFileDataAttendance = (
         );
 
         const dataResponve = {
-          KeyId: selectedSchoolYearId,
-          FacultyId: selectedFacultyId,
-          ClassId: classScoreId,
-          Semester: selectedSemester,
-          Course: selectedCourse,
+          Faculty: selectedFacultyValue,
+          Class: selectedClassValue,
+          Semester: selectedSemesterValue,
+          Course: selectedCourseValue,
           DataAttendance: attendanceStudentCustom,
         };
 

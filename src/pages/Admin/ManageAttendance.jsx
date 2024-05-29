@@ -13,9 +13,9 @@ import {
   apiAllKey,
   apiAllFaculties,
   apiSelectInfoClass,
-  apiCoursesById,
   apiDataPoint,
   apiSelectInfoSemester,
+  apiSelectInfoCourse,
 } from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
@@ -31,12 +31,16 @@ const ManageAttendance = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [selectedClassId, setSelectedClassId] = useState();
-
+  const [courseValue, setCourseValue] = useState();
   const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedSemesterValue, setSelectedSemesterValue] = useState();
 
-  const [selectedCourse, setSelectedCourse] = useState();
   const [classScoreId, setClassScoreId] = useState();
   const [courceScoreId, setCourceScoreId] = useState();
+
+  const [selectedClassValue, setSelectedClassValue] = useState();
+  const [selectedFacultyValue, setSelectedFacultyValue] = useState();
+  const [selectedCourseValue, setSelectedCourseValue] = useState();
 
   const [inputMsv, setInputMsv] = useState();
 
@@ -64,11 +68,10 @@ const ManageAttendance = () => {
     (fileValue) => {
       readFileDataAttendance(
         fileValue,
-        selectedSchoolYearId,
-        selectedFacultyId,
-        classScoreId,
-        selectedSemester,
-        selectedCourse
+        selectedFacultyValue,
+        selectedClassValue,
+        selectedSemesterValue,
+        selectedCourseValue
       )
         .then((dataMain) => {
           setDataImport(dataMain);
@@ -103,11 +106,10 @@ const ManageAttendance = () => {
     },
     [
       dataPreview,
-      selectedSchoolYear,
-      selectedSemester,
-      selectedFacultyId,
-      classScoreId,
-      selectedCourse,
+      selectedSemesterValue,
+      selectedFacultyValue,
+      selectedClassValue,
+      selectedCourseValue,
     ]
   );
 
@@ -157,12 +159,15 @@ const ManageAttendance = () => {
   // api select option môn học
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/attendance/course-by-id-class";
-      const course = await apiCoursesById(url, classScoreId);
+      const course = await apiSelectInfoCourse(
+        selectedFacultyId,
+        selectedSchoolYearId,
+        selectedSemesterValue
+      );
       setCourses(course?.data);
     };
-    if (classScoreId) fetchData();
-  }, [classScoreId]);
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId, selectedSemesterValue]);
 
   // api data point student
   useEffect(() => {
@@ -272,6 +277,13 @@ const ManageAttendance = () => {
               }
               onChange={(event) => {
                 setSelectedFacultyId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedFaculty.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedFacultyValue(selectedItem.FacultyName);
+                }
               }}
             />
 
@@ -287,6 +299,13 @@ const ManageAttendance = () => {
               }
               onChange={(event) => {
                 setSelectedClassId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedClass.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedClassValue(selectedItem.NameClass);
+                }
               }}
             />
           </div>
@@ -302,13 +321,31 @@ const ManageAttendance = () => {
                     })
                   : []
               }
+              onChange={(event) => {
+                setSelectedSemesterValue(event.target.value);
+              }}
             />
 
             <SelectOption
               style={`w-full`}
-              name={"Chọn học phần"}
-              // data={courses}
-              onChange={(event) => {}}
+              name={"Chọn môn học"}
+              data={
+                courses
+                  ? courses.map((item) => {
+                      return { id: item.ID, name: item.NameCourse };
+                    })
+                  : []
+              }
+              onChange={(event) => {
+                setCourceScoreId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedClass.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedCourseValue(selectedItem.NameCourse);
+                }
+              }}
             />
 
             <InputField

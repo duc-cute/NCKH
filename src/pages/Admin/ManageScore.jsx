@@ -21,6 +21,7 @@ import {
   apiDataPoint,
   apiImportScore,
   apiSelectInfoSemester,
+  apiSelectInfoCourse,
 } from "../../apis";
 
 import { readFileData } from "../../ultils/helper";
@@ -49,7 +50,9 @@ const ManageScore = () => {
   const [selectedClassId, setSelectedClassId] = useState();
 
   const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedSemesterValue, setSelectedSemesterValue] = useState();
   const [selectedCourse, setSelectedCourse] = useState();
+  const [courseId, setCourseId] = useState();
 
   const [inputMsv, setInputMsv] = useState();
 
@@ -79,8 +82,6 @@ const ManageScore = () => {
       DataPoint: DataPoint,
     };
 
-    console.log(dataManageScore);
-
     const response = await apiImportScore(dataManageScore);
     if (response.status === 200) {
       toast.success(response.message);
@@ -97,6 +98,8 @@ const ManageScore = () => {
         headerDataScore,
         12
       );
+
+      console.log(dataMain);
       setDataPreview(dataMain);
     },
     [dataPreview]
@@ -145,6 +148,19 @@ const ManageScore = () => {
     fetchData();
   }, [selectedSchoolYearId]);
 
+  // api select option môn học
+  useEffect(() => {
+    const fetchData = async () => {
+      const course = await apiSelectInfoCourse(
+        selectedFacultyId,
+        selectedSchoolYearId,
+        selectedSemesterValue
+      );
+      setCourses(course?.data);
+    };
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId, selectedSemesterValue]);
+
   const groupButton = [
     {
       id: 1,
@@ -177,23 +193,6 @@ const ManageScore = () => {
         </Button>
       ),
     },
-  ];
-
-  const schoolYear = [
-    { key: 1, schoolYear: "k6" },
-    { key: 2, schoolYear: "k7" },
-    { key: 3, schoolYear: "k8" },
-    { key: 4, schoolYear: "k9" },
-    { key: 5, schoolYear: "k10" },
-    { key: 6, schoolYear: "k11" },
-    { key: 7, schoolYear: "k12" },
-    { key: 8, schoolYear: "k13" },
-    { key: 9, schoolYear: "k14" },
-  ];
-
-  const semester = [
-    { key: 1, semester: 1 },
-    { key: 2, semester: 2 },
   ];
 
   return (
@@ -256,20 +255,23 @@ const ManageScore = () => {
                     })
                   : []
               }
+              onChange={(event) => {
+                setSelectedSemesterValue(event.target.value);
+              }}
             />
 
             <SelectOption
               style={`w-full`}
-              name={"Chọn học phần"}
-              data={courses}
-              displayField={"NameCourse"}
-              valueKey={"NameCourse"}
+              name={"Chọn môn học"}
+              data={
+                courses
+                  ? courses.map((item) => {
+                      return { id: item.ID, name: item.NameCourse };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                setCourceScoreId(event.target.value);
-                const selectedOption =
-                  event.target.options[event.target.selectedIndex];
-                const selectedValue = selectedOption.getAttribute("data-value");
-                setSelectedCourse(selectedValue);
+                setCourseId(event.target.value);
               }}
             />
 
