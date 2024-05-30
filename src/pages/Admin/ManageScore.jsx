@@ -41,6 +41,8 @@ const ManageScore = () => {
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
 
+  console.log(dataSelect);
+
   // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
@@ -52,6 +54,7 @@ const ManageScore = () => {
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
   const [selectedCourse, setSelectedCourse] = useState();
+  const [dataPont, setDataPoint] = useState();
   const [courseId, setCourseId] = useState();
 
   const [inputMsv, setInputMsv] = useState();
@@ -69,7 +72,7 @@ const ManageScore = () => {
       }
     });
 
-    // // trả data cần lấy
+    // trả data cần lấy
     const dataManageScore = {
       Course: selectedCourse,
       Teacher: dataPreview.dataDescription[1],
@@ -160,6 +163,27 @@ const ManageScore = () => {
     };
     fetchData();
   }, [selectedFacultyId, selectedSchoolYearId, selectedSemesterValue]);
+
+  // api data point
+  useEffect(() => {
+    const fetchData = async () => {
+      const course = await apiDataPoint(
+        selectedSchoolYearId,
+        selectedClassId,
+        selectedFacultyId,
+        courseId,
+        selectedSemesterValue
+      );
+      setDataSelect(course?.data);
+    };
+    fetchData();
+  }, [
+    selectedSchoolYearId,
+    selectedFacultyId,
+    selectedClassId,
+    courseId,
+    selectedSemesterValue,
+  ]);
 
   const groupButton = [
     {
@@ -300,7 +324,7 @@ const ManageScore = () => {
           <Table
             title="Danh sách bảng điểm"
             columns={columnsStudent}
-            data={dataSelect?.dataStudents}
+            data={dataSelect}
             groupButton={groupButton}
             dataScoreOther={
               <ScoreOther

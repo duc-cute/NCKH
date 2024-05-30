@@ -13,9 +13,9 @@ import {
   apiAllKey,
   apiAllFaculties,
   apiSelectInfoClass,
-  apiDataPoint,
   apiSelectInfoSemester,
   apiSelectInfoCourse,
+  apiDataAttendance,
 } from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
@@ -31,17 +31,13 @@ const ManageAttendance = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [selectedClassId, setSelectedClassId] = useState();
-  const [courseValue, setCourseValue] = useState();
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
-
-  const [classScoreId, setClassScoreId] = useState();
-  const [courceScoreId, setCourceScoreId] = useState();
+  const [courceId, setCourceId] = useState();
 
   const [selectedClassValue, setSelectedClassValue] = useState();
   const [selectedFacultyValue, setSelectedFacultyValue] = useState();
   const [selectedCourseValue, setSelectedCourseValue] = useState();
-
   const [inputMsv, setInputMsv] = useState();
 
   // state modal
@@ -169,48 +165,74 @@ const ManageAttendance = () => {
     fetchData();
   }, [selectedFacultyId, selectedSchoolYearId, selectedSemesterValue]);
 
-  // api data point student
+  // api data điểm danh student
   useEffect(() => {
     const fetchData = async () => {
-      let dataFormat = [];
-      const url = "v1/attendance/select-attendance";
-      const res = await apiDataPoint(
-        url,
+      const res = await apiDataAttendance(
         selectedFacultyId,
-        classScoreId,
-        courceScoreId
+        selectedClassId,
+        courceId,
+        selectedSemesterValue,
+        selectedSchoolYearId
       );
 
-      if (res.status === 200)
-        dataFormat = res.data.DataAttendance.map((data) => {
-          const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
-          console.log("tt", Attendance[Attendance.length - 1]);
-          let End = Attendance[Attendance.length - 1]?.Day;
-          let Start = Attendance[0]?.Day;
-          let totalPercentDateStudy = Attendance.reduce(
-            (acc, curr) => {
-              if (curr.AttendanceStatus !== "") acc++;
-              return acc;
-            },
-            [0]
-          );
+      if (res.status === 200) {
+        const attendanceByStudent = res.data.reduce((acc, curr) => {
+          if (!acc[curr.Msv]) {
+            acc[curr.Msv] = {
+              Msv: curr.Msv,
+              FullName: curr.FullName,
+              DateOfBirth: curr.DateOfBirth,
+              Comment: curr.Comment,
+              totalSessions: 0,
+              attendedSessions: 0,
+            };
+          }
 
-          return {
-            Msv,
-            FullName,
-            DateOfBirth: moment(DateOfBirth).format("DD/MM/YYYY"),
-            Comment,
-            End: moment(End).format("DD/MM/YYYY"),
-            Start: moment(Start).format("DD/MM/YYYY"),
-            totalPercentDateStudy: [totalPercentDateStudy, Attendance.length],
-          };
+          acc[curr.Msv].totalSessions++;
+          if (curr.AttendanceStatus !== "") {
+            acc[curr.Msv].attendedSessions++;
+          }
+
+          return acc;
+        }, {});
+
+        const dataFormat = Object.values(attendanceByStudent).map(
+          (student) => ({
+            ...student,
+            DateOfBirth: student.DateOfBirth
+              ? moment(student.DateOfBirth).format("DD/MM/YYYY")
+              : moment().format("DD/MM/YYYY"),
+            Start: student.DateOfBirth
+              ? moment(student.DateOfBirth)
+                  .subtract(1, "months")
+                  .format("DD/MM/YYYY")
+              : moment().subtract(1, "months").format("DD/MM/YYYY"),
+            End: student.DateOfBirth
+              ? moment(student.DateOfBirth)
+                  .add(1, "months")
+                  .format("DD/MM/YYYY")
+              : moment().add(1, "months").format("DD/MM/YYYY"),
+            totalPercentDateStudy: `${student.attendedSessions}${3}`,
+          })
+        );
+
+        console.log("dataFormat", dataFormat);
+
+        setDataSelect({
+          dataStudents: dataFormat,
         });
-      setDataSelect({
-        dataStudents: dataFormat,
-      });
+      }
     };
-    if (selectedFacultyId && classScoreId && courceScoreId) fetchData();
-  }, [selectedFacultyId, classScoreId, courceScoreId]);
+
+    fetchData();
+  }, [
+    selectedFacultyId,
+    selectedClassId,
+    courceId,
+    selectedSemesterValue,
+    selectedSchoolYearId,
+  ]);
 
   const groupButton = [
     {
@@ -337,7 +359,7 @@ const ManageAttendance = () => {
                   : []
               }
               onChange={(event) => {
-                setCourceScoreId(event.target.value);
+                setCourceId(event.target.value);
                 const selectedId = Number(event.target.value);
                 const selectedItem = selectedClass.find(
                   (item) => item.ID === selectedId

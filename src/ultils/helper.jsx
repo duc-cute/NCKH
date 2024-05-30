@@ -137,18 +137,31 @@ export const readFileDataImport = (file) => {
         const workbook = XLSX.read(data, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-
-        // const knownHeaders = [
-        //   "stt",
-        //   "FacultyName",
-        //   "Founding",
-        //   "Email",
-        //   "PhoneNumber",
-        //   "Describe",
-        // ];
-
         dataMain = XLSX.utils.sheet_to_json(worksheet, {
-          // knownHeaders,
+          cellText: true,
+        });
+        resolve({ dataMain });
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+export const importProgram = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    let dataMain = [];
+
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        dataMain = XLSX.utils.sheet_to_json(worksheet, {
           cellText: true,
         });
         resolve({ dataMain });

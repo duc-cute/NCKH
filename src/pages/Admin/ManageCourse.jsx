@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import {
   Button,
@@ -10,14 +10,55 @@ import {
 } from "../../components";
 
 import icons from "../../ultils/icons";
-import { apiAllKey, apiAllFaculties, apiSelectInfoSemester } from "../../apis";
+import {
+  apiAllKey,
+  apiAllFaculties,
+  apiSelectInfoSemester,
+  apiImportProgram,
+} from "../../apis";
 
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
+import { importProgram } from "../../ultils/helper";
 const { AiOutlineCloudUpload, CgImport, FiTrash2, LuPencilLine } = icons;
 
 const ManageCourse = () => {
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+
+  const [inputCourseCode, setInputCourseCode] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+
+  // state modal
+  const [showModal, setShowModal] = useState(false);
+  const [fileName, setFileName] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
+  const [dataImport, setDataImport] = useState({});
+
+  const handleImportButtonClick = useCallback(async () => {
+    const response = await apiImportProgram(dataImport);
+    if (response.status === 200) {
+      toast.success("Import dữ liệu thành công !");
+      setFileName(null);
+      setDataPreview([]);
+    } else toast.error("Import dữ liệu thất bại !");
+  }, [dataPreview, fileName]);
+
+  const handlePreviewData = useCallback(
+    (fileValue) => {
+      importProgram(fileValue)
+        .then((dataMain) => {
+          console.log(dataMain);
+        })
+        .catch((error) => {
+          toast.error("File không đúng định dạng !");
+        });
+    },
+    [dataPreview]
+  );
+
   const columns = [
     { title: "stt", key: "id", sort: true },
     {
@@ -82,15 +123,6 @@ const ManageCourse = () => {
       semester: "2",
     },
   ];
-
-  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
-  const [selectedFaculty, setSelectedFaculty] = useState();
-  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
-  const [selectedFacultyId, setSelectedFacultyId] = useState();
-
-  const [inputCourseCode, setInputCourseCode] = useState();
-  const [showModal, setShowModal] = useState(false);
-  const [selectedSemester, setSelectedSemester] = useState();
 
   // api select option khóa
   useEffect(() => {
@@ -245,20 +277,20 @@ const ManageCourse = () => {
           setShow={setShowModal}
           title={"Import dữ liệu khung chương trình đào tạo"}
           // disableOkBtn={dataPreview.length < 1}
-          // onClickBtnOk={handleImportButtonClick}
+          onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}
           onClickBtnCancel={() => {
             setShowModal(false);
-            // setFileName(null);
-            // setDataPreview([]);
+            setFileName(null);
+            setDataPreview([]);
           }}
         >
           <DragFile
-          // data={dataPreview}
-          // columns={columnsAttendance}
-          // onChange={handlePreviewData}
-          // fileName={fileName}
-          // setFileName={setFileName}
+            // data={dataPreview}
+            // columns={columnsAttendance}
+            onChange={handlePreviewData}
+            fileName={fileName}
+            // setFileName={setFileName}
           />
         </Modal>
       )}
