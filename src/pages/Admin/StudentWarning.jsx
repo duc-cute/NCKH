@@ -18,7 +18,6 @@ import icons from "../../ultils/icons";
 import {
   apiAllFaculties,
   apiClassById,
-  apiCoursesById,
   apiDataPoint,
   apiImportScore,
 } from "../../apis";

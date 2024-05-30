@@ -18,36 +18,67 @@ export const apiClassById = (url, id) =>
     method: "get",
   });
 
-export const apiCoursesById = (url, id) =>
-  axios({
-    url: `/${url}/${id}`,
-    method: "get",
-  });
-
-  // lấy điểm
+// lấy điểm
 export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
   axios({
     url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
     method: "get",
   });
 
-  // thêm khoa
-export const apiAddFaculties = (url, data) =>
+// cập nhật lớp
+export const apiUpdateClass = (url, data) =>
   axios({
     url: `/${url}`,
-    method: "post",
-    data,
-  });
+    method: "put",
+    data
+});
 
-  // thêm lớp
+// thêm lớp
 export const apiAddClass = (url, data) =>
     axios({
       url: `/${url}`,
       method: "post",
       data,
   });
+
+// lấy thông tin lớp
+export const apiSelectInfoClass = (url, keyId, facultyId) =>
+  axios({
+    url: `/${url}?key=${keyId}&faculty=${facultyId}`,
+    method: "get",
+});
+
+// xóa lớp
+export const apiDeleteClass = (url, IDClass) =>
+    axios({
+      url: `/${url}/${IDClass}`,
+      method: "delete",
+  });
+
+// import class
+export const apiImportClass = (data) =>
+  axios({
+    url: "/v1/class/import-class", 
+    method: "post",
+    data,
+});
+
+// đếm số lượng class
+export const apiCountClass = () =>
+  axios({
+    url: "/v1/class/count-class", 
+    method: "get",
+});
+
+// thêm khoa
+export const apiAddFaculties = (url, data) =>
+    axios({
+      url: `/${url}`,
+      method: "post",
+      data,
+  });
   
-  // lấy thông tin khoa
+// lấy thông tin khoa
 export const apiSelectInfoFaculties = (url) =>
     axios({
       url: `/${url}`,
@@ -68,3 +99,32 @@ export const apiUpdateFaculties = (url, data) =>
       method: "put",
       data
   });
+
+// import khoa
+export const apiImportFaculty = (data) =>
+    axios({
+      url: "/v1/faculty/import-faculty", 
+      method: "post",
+      data,
+  });
+
+// đếm số lượng khoa
+export const apiCountFaculty = () =>
+  axios({
+    url: "/v1/faculty/count-faculty", 
+    method: "get",
+});
+
+// lấy thông tin kỳ
+export const apiSelectInfoSemester = (key) =>
+    axios({
+      url: `v1/common/select-semester-by-key?key=${key}`,
+      method: "get",
+  });
+
+// lấy thông môn học
+export const apiSelectInfoCourse = (IDFaculty, key, Semester) =>
+  axios({
+    url: `v1/common/select-courses-by-faculty-and-semester-and-key?IDFaculty=${IDFaculty}&Key=${key}&Semester=${Semester}`,
+    method: "get",
+});

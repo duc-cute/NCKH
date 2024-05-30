@@ -5,7 +5,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import path from "../../ultils/path";
 const Layout = () => {
   const { isLoggedIn, current } = useSelector((state) => state.user);
-  console.log("curr", current);
+  // console.log("curr", current);
   if (current?.role !== "Admin") return <Navigate to={`/${path.LOGIN}`} />;
   // if (!isLoggedIn || !current) return <Navigate to={`/${path.LOGIN}`} />;
   // if (!isLoggedIn || !current) return <Navigate to={`${path.LOGIN}`} />;

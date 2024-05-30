@@ -1,16 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Drawer,
-  InputField,
-  SelectOption,
-  Table,
-  Tag,
-  InputForm,
-  SelectLib,
-} from "..";
-
+import React, { useEffect, useState, useCallback } from "react";
+import { Button, InputField, SelectOption, Table, Modal, DragFile } from "..";
 import icons from "../../ultils/icons";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const {
   MdOutlineSend,
@@ -27,15 +19,17 @@ import {
   apiSelectInfoFaculties,
   apiDeleteFaculties,
   apiUpdateFaculties,
+  apiImportFaculty,
 } from "../../apis";
 
 import { toast } from "react-toastify";
+
+import { readFileDataImport } from "../../ultils/helper";
 
 const CategoryDepartment = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [facultyData, setFacultyData] = useState();
-
   const [facultyDataId, setFacultyDataId] = useState();
 
   // state input
@@ -44,6 +38,110 @@ const CategoryDepartment = () => {
   const [describeValue, setDescribeValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [phoneNumberValue, setPhoneNumberValue] = useState("");
+
+  // state modal
+  const [showModal, setShowModal] = useState(false);
+  const [fileName, setFileName] = useState(null);
+  const [dataPreview, setDataPreview] = useState([]);
+  const [dataImport, setDataImport] = useState({});
+
+  const handleImportButtonClick = useCallback(async () => {
+    const response = await apiImportFaculty(dataImport);
+    if (response.status === 200) {
+      toast.success("Import dữ liệu thành công !");
+      setFileName(null);
+      setDataPreview([]);
+    } else toast.error("Import dữ liệu thất bại !");
+  }, [dataPreview, fileName]);
+
+  const handlePreviewData = useCallback(
+    (fileValue) => {
+      readFileDataImport(fileValue)
+        .then((dataMain) => {
+          let dataFormat = Array.isArray(dataMain.dataMain)
+            ? dataMain.dataMain.map((data) => {
+                let date = new Date("1899-12-30");
+                date.setDate(date.getDate() + data["Ngày thành lập"]);
+
+                return {
+                  FacultyName: data["Tên khoa"],
+                  Founding: date.toISOString().slice(0, 10),
+                  Email: data["Email"],
+                  PhoneNumber: data["Số điện thoại liên hệ"],
+                  Describe: data["Mô tả"] || null,
+                };
+              })
+            : [];
+
+          setDataImport(dataFormat);
+          setDataPreview(dataFormat);
+        })
+        .catch((error) => {
+          toast.error("File không đúng định dạng !");
+        });
+    },
+    [dataPreview]
+  );
+
+  // export data
+  const handleExportData = useCallback(async () => {
+    if (!facultyData || facultyData.length === 0) {
+      toast.error("Không có dữ liệu để xuất !");
+      return;
+    }
+
+    if (facultyData) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Sheet 1");
+
+      // Tạo hàng đầu tiên (header) viết in đậm
+      const header = [
+        "STT",
+        "FacultyName",
+        "Founding",
+        "Email",
+        "PhoneNumber",
+        "Describe",
+      ];
+      header.forEach((key, index) => {
+        worksheet.getCell(1, index + 1).value = key;
+        worksheet.getCell(1, index + 1).font = { bold: true };
+      });
+
+      // Thêm dữ liệu vào các hàng tiếp theo
+      facultyData.forEach((obj, rowIndex) => {
+        worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1; // STT
+        header.slice(1).forEach((key, columnIndex) => {
+          worksheet.getCell(rowIndex + 2, columnIndex + 2).value = obj[key];
+        });
+      });
+
+      // Tạo border cho tất cả các ô và điều chỉnh độ rộng của các cột
+      const maxColumnNumber = header.length;
+      const maxRowNumber = facultyData.length + 1;
+
+      for (let rowNumber = 1; rowNumber <= maxRowNumber; rowNumber++) {
+        for (let colNumber = 1; colNumber <= maxColumnNumber; colNumber++) {
+          const cell = worksheet.getCell(rowNumber, colNumber);
+          cell.border = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          };
+          // Điều chỉnh độ rộng của cột
+          if (colNumber === 1) {
+            worksheet.getColumn(colNumber).width = 5;
+          } else {
+            worksheet.getColumn(colNumber).width = 20;
+          }
+        }
+      }
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      saveAs(new Blob([buffer]), "danhmuckhoa.xlsx");
+    }
+  }, [facultyData]);
 
   // api select option khóa
   useEffect(() => {
@@ -112,6 +210,7 @@ const CategoryDepartment = () => {
     }
   };
 
+  // clear input
   const handleEdit = async (record) => {
     setFacultyValue(record.FacultyName || "");
     setFoundingValue(record.Founding || "");
@@ -121,6 +220,7 @@ const CategoryDepartment = () => {
     setFacultyDataId(record.ID);
   };
 
+  // api cập nhật khoa
   const handleUpdate = async () => {
     const url = "v1/faculty/update";
 
@@ -132,8 +232,6 @@ const CategoryDepartment = () => {
       phoneNumber: phoneNumberValue,
       idFaculty: facultyDataId,
     };
-
-    console.log("data", data);
 
     if (!facultyDataId) {
       toast.error("Vui lòng chọn khoa cần cập nhật");
@@ -150,11 +248,6 @@ const CategoryDepartment = () => {
   };
 
   const columns = [
-    {
-      title: "id",
-      key: "ID",
-      sort: true,
-    },
     {
       title: "Tên khoa",
       key: "FacultyName",
@@ -194,33 +287,33 @@ const CategoryDepartment = () => {
     },
   ];
 
-  // data fake khi chưa có api
-  // const data = [
-  //   {
-  //     id: "1",
-  //     department: "Công nghệ thông tin",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  //   {
-  //     id: "2",
-  //     department: "Công nghệ ô tô",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  //   {
-  //     id: "3",
-  //     department: "Quản trị kinh doanh",
-  //     ngaythanhlap: "2021-10-10",
-  //     email: "cntt@eaut.edu.vn",
-  //     sdt: "1900123123",
-  //     mota: "",
-  //   },
-  // ];
+  const columnsPreview = [
+    {
+      title: "Tên khoa",
+      key: "FacultyName",
+      sort: true,
+    },
+    {
+      title: "Ngày thành lập",
+      key: "Founding",
+      sort: true,
+    },
+    {
+      title: "Email",
+      key: "Email",
+      sort: true,
+    },
+    {
+      title: "Số điện thoại",
+      key: "PhoneNumber",
+      sort: true,
+    },
+    {
+      title: "Mô tả",
+      key: "Describe",
+      sort: true,
+    },
+  ];
 
   return (
     <>
@@ -358,6 +451,7 @@ const CategoryDepartment = () => {
             <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<AiOutlineCloudUpload />}
+              handleOnclick={handleExportData}
             >
               Export
             </Button>
@@ -365,6 +459,9 @@ const CategoryDepartment = () => {
             <Button
               style={"py-[7px] text-white rounded-md "}
               icon={<CgImport />}
+              handleOnclick={() => {
+                setShowModal(true);
+              }}
             >
               Import
             </Button>
@@ -372,15 +469,32 @@ const CategoryDepartment = () => {
         </div>
 
         <div className="mt-12">
-          {facultyData && (
-            <Table
-              title="Danh sách khoa"
-              columns={columns}
-              data={facultyData}
-            />
-          )}
+          <Table title="Danh sách khoa" columns={columns} data={facultyData} />
         </div>
       </div>
+      {showModal && (
+        <Modal
+          show={showModal}
+          setShow={setShowModal}
+          title={"Import dữ liệu khoa"}
+          disableOkBtn={dataPreview?.length < 1}
+          onClickBtnOk={handleImportButtonClick}
+          textOk={"Import"}
+          onClickBtnCancel={() => {
+            setShowModal(false);
+            setFileName(null);
+            setDataPreview([]);
+          }}
+        >
+          <DragFile
+            data={dataPreview}
+            columns={columnsPreview}
+            onChange={handlePreviewData}
+            fileName={fileName}
+            setFileName={setFileName}
+          />
+        </Modal>
+      )}
     </>
   );
 };

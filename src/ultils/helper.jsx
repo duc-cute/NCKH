@@ -126,13 +126,47 @@ export const readFileData = (file, cellPositions, header, range) => {
   });
 };
 
+export const readFileDataImport = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    let dataMain = [];
+
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        // const knownHeaders = [
+        //   "stt",
+        //   "FacultyName",
+        //   "Founding",
+        //   "Email",
+        //   "PhoneNumber",
+        //   "Describe",
+        // ];
+
+        dataMain = XLSX.utils.sheet_to_json(worksheet, {
+          // knownHeaders,
+          cellText: true,
+        });
+        resolve({ dataMain });
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+};
+
 export const readFileDataAttendance = (
   file,
-  selectedSchoolYearId,
-  selectedFacultyId,
-  classScoreId,
-  selectedSemester,
-  selectedCourse
+  selectedFacultyValue,
+  selectedClassValue,
+  selectedSemesterValue,
+  selectedCourseValue
 ) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -221,11 +255,10 @@ export const readFileDataAttendance = (
         );
 
         const dataResponve = {
-          KeyId: selectedSchoolYearId,
-          FacultyId: selectedFacultyId,
-          ClassId: classScoreId,
-          Semester: selectedSemester,
-          Course: selectedCourse,
+          Faculty: selectedFacultyValue,
+          Class: selectedClassValue,
+          Semester: selectedSemesterValue,
+          Course: selectedCourseValue,
           DataAttendance: attendanceStudentCustom,
         };
 

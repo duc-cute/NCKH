@@ -2,22 +2,20 @@ import React, { useState, useCallback, useEffect } from "react";
 import moment from "moment";
 import {
   Button,
-  ScoreOther,
   Table,
   SelectOption,
   Modal,
   DragFile,
   InputField,
-  RadioAttendance,
-  Tag,
 } from "../../components";
 import {
   apiImportAttendance,
-  apiAllFaculties,
-  apiClassById,
-  apiCoursesById,
-  apiDataPoint,
   apiAllKey,
+  apiAllFaculties,
+  apiSelectInfoClass,
+  apiDataPoint,
+  apiSelectInfoSemester,
+  apiSelectInfoCourse,
 } from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
@@ -30,16 +28,21 @@ const ManageAttendance = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedClass, setSelectedClass] = useState();
-  const [selectedSemester, setSelectedSemester] = useState();
-  const [selectedCourse, setSelectedCourse] = useState();
-
-  // state id
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [selectedClassId, setSelectedClassId] = useState();
+  const [courseValue, setCourseValue] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedSemesterValue, setSelectedSemesterValue] = useState();
+
   const [classScoreId, setClassScoreId] = useState();
   const [courceScoreId, setCourceScoreId] = useState();
 
-  console.log(classScoreId);
+  const [selectedClassValue, setSelectedClassValue] = useState();
+  const [selectedFacultyValue, setSelectedFacultyValue] = useState();
+  const [selectedCourseValue, setSelectedCourseValue] = useState();
+
+  const [inputMsv, setInputMsv] = useState();
 
   // state modal
   const [showModal, setShowModal] = useState(false);
@@ -47,11 +50,7 @@ const ManageAttendance = () => {
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
 
-  console.log("dataPreview", dataPreview);
-
   // state data
-  const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
 
@@ -69,11 +68,10 @@ const ManageAttendance = () => {
     (fileValue) => {
       readFileDataAttendance(
         fileValue,
-        selectedSchoolYearId,
-        selectedFacultyId,
-        classScoreId,
-        selectedSemester,
-        selectedCourse
+        selectedFacultyValue,
+        selectedClassValue,
+        selectedSemesterValue,
+        selectedCourseValue
       )
         .then((dataMain) => {
           setDataImport(dataMain);
@@ -108,11 +106,10 @@ const ManageAttendance = () => {
     },
     [
       dataPreview,
-      selectedSchoolYear,
-      selectedSemester,
-      selectedFacultyId,
-      classScoreId,
-      selectedCourse,
+      selectedSemesterValue,
+      selectedFacultyValue,
+      selectedClassValue,
+      selectedCourseValue,
     ]
   );
 
@@ -139,22 +136,38 @@ const ManageAttendance = () => {
   // api select option lớp
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/class/select-class-by-faculty";
-      const classScore = await apiClassById(url, selectedFacultyId);
+      const url = "v1/common/select-class-by-faculty-and-key";
+      const classScore = await apiSelectInfoClass(
+        url,
+        selectedSchoolYearId,
+        selectedFacultyId
+      );
       setSelectedClass(classScore?.data);
     };
     fetchData();
-  }, [selectedFacultyId]);
+  }, [selectedFacultyId, selectedSchoolYearId]);
+
+  // api select option kỳ
+  useEffect(() => {
+    const fetchData = async () => {
+      const semester = await apiSelectInfoSemester(selectedSchoolYearId);
+      setSelectedSemester(semester?.data.listKy);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
 
   // api select option môn học
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/attendance/course-by-id-class";
-      const course = await apiCoursesById(url, classScoreId);
+      const course = await apiSelectInfoCourse(
+        selectedFacultyId,
+        selectedSchoolYearId,
+        selectedSemesterValue
+      );
       setCourses(course?.data);
     };
-    if (classScoreId) fetchData();
-  }, [classScoreId]);
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId, selectedSemesterValue]);
 
   // api data point student
   useEffect(() => {
@@ -216,7 +229,7 @@ const ManageAttendance = () => {
       button: (
         <Button
           handleOnclick={() => {
-            if (!selectedSchoolYear) {
+            if (!selectedSchoolYearId) {
               toast.error("Vui lòng chọn khóa trước khi import");
             } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
@@ -239,7 +252,6 @@ const ManageAttendance = () => {
         <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
           <div className="flex gap-3 items-center justify-between pt-5 mb-6">
             <SelectOption
-              style={`w-full`}
               name={"Chọn khóa"}
               data={
                 selectedSchoolYear
@@ -265,6 +277,13 @@ const ManageAttendance = () => {
               }
               onChange={(event) => {
                 setSelectedFacultyId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedFaculty.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedFacultyValue(selectedItem.FacultyName);
+                }
               }}
             />
 
@@ -279,7 +298,14 @@ const ManageAttendance = () => {
                   : []
               }
               onChange={(event) => {
-                setClassScoreId(event.target.value);
+                setSelectedClassId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedClass.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedClassValue(selectedItem.NameClass);
+                }
               }}
             />
           </div>
@@ -287,29 +313,60 @@ const ManageAttendance = () => {
           <div className="flex items-center gap-3 ">
             <SelectOption
               style={`w-full`}
-              name={"Chọn học kỳ"}
-              // data={semester}
-              displayField={"semester"}
+              name={"Chọn kỳ học"}
+              data={
+                selectedSemester
+                  ? selectedSemester.map((item) => {
+                      return { id: item.ID, name: item };
+                    })
+                  : []
+              }
               onChange={(event) => {
-                // setSelectedSemester(event.target.value);
+                setSelectedSemesterValue(event.target.value);
               }}
             />
 
             <SelectOption
               style={`w-full`}
-              name={"Chọn học phần"}
-              // data={courses}
-              onChange={(event) => {}}
+              name={"Chọn môn học"}
+              data={
+                courses
+                  ? courses.map((item) => {
+                      return { id: item.ID, name: item.NameCourse };
+                    })
+                  : []
+              }
+              onChange={(event) => {
+                setCourceScoreId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedClass.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedCourseValue(selectedItem.NameCourse);
+                }
+              }}
             />
 
             <InputField
               placeholder={"Nhập mã sinh viên ..."}
               style={`flex max-h-[40px] w-[683px]`}
               name={"Mã sinh viên"}
+              value={inputMsv}
+              onChange={(e) => {
+                setInputMsv(e.target.value);
+              }}
             />
 
             <Button>Search</Button>
-            <Button style={"bg-white text-black"}>Clear</Button>
+            <Button
+              style={"bg-white text-black"}
+              handleOnclick={() => {
+                setInputMsv("");
+              }}
+            >
+              Clear
+            </Button>
           </div>
         </div>
 

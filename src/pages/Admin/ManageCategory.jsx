@@ -1,138 +1,31 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Drawer,
-  InputField,
-  SelectOption,
-  Table,
-  Tag,
-  InputForm,
-  SelectLib,
-  CategoryDepartment,
-  CategoryClass,
-  CategorySubject,
-} from "../../components";
+import { Drawer, CategoryDepartment, CategoryClass } from "../../components";
 
 import icons from "../../ultils/icons";
-import {
-  apiAllFaculties,
-  apiClassById,
-  apiCoursesById,
-  apiDataPoint,
-  apiImportScore,
-} from "../../apis";
-
-import { useForm } from "react-hook-form";
-import {
-  levelColor,
-  listStatusWarning,
-  listStudentWarning,
-} from "../../ultils/constant";
-
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  CgImport,
-  TiPlus,
-  FiTrash2,
-  LuPencilLine,
-  MdOutlineSend,
-  GrUpdate,
-  SiGoogleclassroom,
-  FaRegCalendarAlt,
-  SlCalender,
-  MdSubject,
-  FaArrowCircleRight,
-  SiStudyverse,
-  MdOutlineClass,
-  IoIosCreate,
-} = icons;
+import { apiCountFaculty, apiCountClass } from "../../apis";
+const { SiGoogleclassroom, FaArrowCircleRight, MdOutlineClass, IoIosCreate } =
+  icons;
 
 const ManageCategory = () => {
-  const [faculties, setFaculties] = useState([]);
-  const [classScores, setClassScores] = useState([]);
-  const [facultyId, setFacultyId] = useState(null);
-  const [classScoreId, setClassScoreId] = useState(null);
-  const [courceScoreId, setCourceScoreId] = useState(null);
-  const [courses, setCourses] = useState([]);
-
   const [showDes, setShowDes] = useState(false);
   const [schoolYear, setSchoolYear] = useState(false);
-  const [subject, setSubject] = useState(false);
   const [department, setDepartment] = useState(false);
   const [titleCategory, setTitleCategory] = useState("");
 
-  const {
-    register,
-    setValue,
-    reset,
-    formState: { errors },
-    handleSubmit,
-    getValues,
-    watch,
-  } = useForm();
+  // state count
+  const [countClass, setCountClass] = useState();
+  const [countFaculty, setCountFaculty] = useState();
 
-  // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
+      const res = await apiCountFaculty();
+      setCountFaculty(res.data.TotalFaculty);
+
+      const res2 = await apiCountClass();
+      setCountClass(res2.data.totalClass);
     };
     fetchData();
-  }, []);
-
-  // api select option lớp
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-class-by-id";
-      const classScore = await apiClassById(url, facultyId);
-      setClassScores(classScore?.data);
-    };
-    if (facultyId) fetchData();
-  }, [facultyId]);
-
-  // api data point student
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "v1/point/select-point-by-id-class-id-faculty-id-course";
-      const res = await apiDataPoint(
-        url,
-        facultyId,
-        classScoreId,
-        courceScoreId
-      );
-      console.log(res);
-      if (res.status === 200)
-        setDataSelect({
-          dataStudents: res.dataStudents,
-          dataTeacher: res.dataTeacher[0],
-        });
-    };
-    if (facultyId && classScoreId && courceScoreId) fetchData();
-  }, [facultyId, classScoreId, courceScoreId]);
-
-  const groupButton = [
-    {
-      id: 1,
-      button: (
-        <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<AiOutlineCloudUpload />}
-        >
-          Export
-        </Button>
-      ),
-    },
-    {
-      id: 2,
-      button: (
-        <Button style={"py-[7px] text-white rounded-md "} icon={<CgImport />}>
-          Import
-        </Button>
-      ),
-    },
-  ];
+  });
 
   return (
     <>
@@ -150,45 +43,11 @@ const ManageCategory = () => {
 
         <div className="flex w-full justify-center">
           <div className="flex flex-wrap gap-8 justify-start mt-6 w-[92%]">
-            {/* <div className="relative cursor-default">
-              <div className="bg-[#f39c12] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 10</div>
-                <div className="text-[18px] my-5">Danh mục năm học</div>
-              </div>
-              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#da8c0f] hover:bg-[#906f3a] rounded-[8px] cursor-pointer p-2 w-full justify-center">
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
-                  </div>
-                </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <SlCalender color="#da8b10" size={"60px"} />
-              </div>
-            </div> */}
-
-            {/* <div className="relative cursor-default">
-              <div className="bg-[#04a559] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 2</div>
-                <div className="text-[18px] my-5">Danh mục học kỳ</div>
-              </div>
-              <div className="flex gap-2 absolute text-[#fff] bottom-0 bg-[#318a60] hover:bg-[#448265] rounded-[8px] cursor-pointer p-2 w-full justify-center">
-                <div className="flex gap-2 ">
-                  <div>Chi tiết</div>
-                  <div>
-                    <FaArrowCircleRight />
-                  </div>
-                </div>
-              </div>
-              <div className=" absolute top-2 right-2">
-                <SiStudyverse color="#318a60" size={"60px"} />
-              </div>
-            </div> */}
-
             <div className="relative cursor-default">
               <div className="bg-[#00c0ef] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 18</div>
+                <div className="font-bold text-[28px]">
+                  total {countFaculty}
+                </div>
                 <div className="text-[18px] my-5">Danh mục khoa</div>
               </div>
               <div className=" cursor-pointer">
@@ -199,7 +58,6 @@ const ManageCategory = () => {
                     setShowDes(true);
                     setSchoolYear(false);
                     setDepartment(true);
-                    setSubject(false);
                     setTitleCategory("Danh mục khoa");
                   }}
                 >
@@ -210,7 +68,7 @@ const ManageCategory = () => {
                     </div>
                   </div>
                 </div>
-                <div className=" absolute top-2 right-2">
+                <div className=" absolute top-2 right-2 cursor-pointer">
                   <MdOutlineClass color="#327d90" size={"60px"} />
                 </div>
               </div>
@@ -218,7 +76,7 @@ const ManageCategory = () => {
 
             <div className="relative cursor-default">
               <div className="bg-[#dd4b39] rounded-[8px] text-[#fff] p-4 w-[260px] h-[150px]">
-                <div className="font-bold text-[28px]">total 70</div>
+                <div className="font-bold text-[28px]">total {countClass}</div>
                 <div className="text-[18px] my-5">Danh mục lớp</div>
               </div>
               <div className=" cursor-pointer">
@@ -229,7 +87,6 @@ const ManageCategory = () => {
                     setShowDes(true);
                     setSchoolYear(true);
                     setDepartment(false);
-                    setSubject(false);
                     setTitleCategory("Danh mục lớp học");
                   }}
                 >
@@ -257,7 +114,6 @@ const ManageCategory = () => {
             <div className="drawer-department">
               {schoolYear && <CategoryClass />}
               {department && <CategoryDepartment />}
-              {subject && <CategorySubject />}
             </div>
           </Drawer>
         )}
