@@ -18,10 +18,17 @@ export const apiClassById = (url, id) =>
     method: "get",
   });
 
-// lấy điểm
-export const apiDataPoint = (url, IdFaculty, IdClass, IdCourse) =>
+// lấy điểm học tập
+export const apiDataPoint = (Key, IDClass, IDFaculty, IDCourse, Semester) =>
   axios({
-    url: `/${url}?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}`,
+    url: `v1/point/select-point-students?Key=${Key}&IDFaculty=${IDFaculty}&IDClass=${IDClass}&IDCourse=${IDCourse}&Semester=${Semester}`,
+    method: "get",
+  });
+
+  // lấy điểm danh
+export const apiDataAttendance = (IdFaculty, IdClass, IdCourse, Semester, Key) =>
+  axios({
+    url: `v1/attendance/select-attendance?IdFaculty=${IdFaculty}&IdClass=${IdClass}&IdCourse=${IdCourse}&Semester=${Semester}&Key=${Key}`,
     method: "get",
   });
 
@@ -127,4 +134,12 @@ export const apiSelectInfoCourse = (IDFaculty, key, Semester) =>
   axios({
     url: `v1/common/select-courses-by-faculty-and-semester-and-key?IDFaculty=${IDFaculty}&Key=${key}&Semester=${Semester}`,
     method: "get",
+});
+
+// import chương trình đào tạo
+export const apiImportProgram= (data) =>
+  axios({
+    url: "/v1/faculty/import-studyprograms", 
+    method: "post",
+    data,
 });

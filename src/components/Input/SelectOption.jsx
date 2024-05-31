@@ -1,6 +1,8 @@
 import React from "react";
 
 const SelectOption = ({ name, data, onChange, style }) => {
+  // console.log("data", data, ", name", name);
+
   return (
     <select
       className={`bg-gray-50 border max-h-[40px] border-gray-300 text-gray-900 text-sm rounded-lg
