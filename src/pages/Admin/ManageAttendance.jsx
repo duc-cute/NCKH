@@ -21,6 +21,7 @@ import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
 import { toast } from "react-toastify";
 import { columnsAttendance } from "../../ultils/constant";
+import useDebounce from "../../hooks/useDebounce";
 const { AiOutlineCloudUpload, CgImport } = icons;
 
 const ManageAttendance = () => {
@@ -217,8 +218,6 @@ const ManageAttendance = () => {
           })
         );
 
-        console.log("dataFormat", dataFormat);
-
         setDataSelect({
           dataStudents: dataFormat,
         });
@@ -267,6 +266,67 @@ const ManageAttendance = () => {
       ),
     },
   ];
+  let debounceSearch = useDebounce(inputMsv,500)
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await apiDataAttendance(
+        selectedFacultyId,
+        selectedClassId,
+        courceId,
+        selectedSemesterValue,
+        selectedSchoolYearId
+      );
+
+      if (res.status === 200) {
+        const attendanceByStudent = res.data.reduce((acc, curr) => {
+          if (!acc[curr.Msv]) {
+            acc[curr.Msv] = {
+              Msv: curr.Msv,
+              FullName: curr.FullName,
+              DateOfBirth: curr.DateOfBirth,
+              Comment: curr.Comment,
+              totalSessions: 0,
+              attendedSessions: 0,
+            };
+          }
+
+          acc[curr.Msv].totalSessions++;
+          if (curr.AttendanceStatus !== "") {
+            acc[curr.Msv].attendedSessions++;
+          }
+
+          return acc;
+        }, {});
+
+        const dataFormat = Object.values(attendanceByStudent).map(
+          (student) => ({
+            ...student,
+            DateOfBirth: student.DateOfBirth
+              ? moment(student.DateOfBirth).format("DD/MM/YYYY")
+              : moment().format("DD/MM/YYYY"),
+            Start: student.DateOfBirth
+              ? moment(student.DateOfBirth)
+                  .subtract(1, "months")
+                  .format("DD/MM/YYYY")
+              : moment().subtract(1, "months").format("DD/MM/YYYY"),
+            End: student.DateOfBirth
+              ? moment(student.DateOfBirth)
+                  .add(1, "months")
+                  .format("DD/MM/YYYY")
+              : moment().add(1, "months").format("DD/MM/YYYY"),
+            totalPercentDateStudy: `${student.attendedSessions}${3}`,
+          })
+        );
+
+        setDataSelect({
+          dataStudents: dataFormat.filter((item) => item?.Msv?.includes(debounceSearch)),
+        });
+      }
+    };
+   
+    fetchData()
+
+  },[debounceSearch])
 
   return (
     <>

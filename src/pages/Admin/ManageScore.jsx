@@ -31,6 +31,7 @@ import {
   columnsStudent,
   headerDataScore,
 } from "../../ultils/constant";
+import useDebounce from "../../hooks/useDebounce"
 
 const ManageScore = () => {
   const [showModal, setShowModal] = useState(false);
@@ -55,7 +56,7 @@ const ManageScore = () => {
   const [dataPont, setDataPoint] = useState();
   const [courseId, setCourseId] = useState();
 
-  const [inputMsv, setInputMsv] = useState();
+  const [inputMsv, setInputMsv] = useState("");
 
   // xử lý khi click import
   const handleImportButtonClick = useCallback(async () => {
@@ -181,6 +182,7 @@ const ManageScore = () => {
     selectedClassId,
     courseId,
     selectedSemesterValue,
+  
   ]);
 
   const groupButton = [
@@ -216,6 +218,23 @@ const ManageScore = () => {
       ),
     },
   ];
+
+
+  let debounceSearch = useDebounce(inputMsv,500)
+  useEffect(() => {
+    const fetchData = async () => {
+      const course = await apiDataPoint(
+        selectedSchoolYearId,
+        selectedClassId,
+        selectedFacultyId,
+        courseId,
+        selectedSemesterValue
+      );
+      setDataSelect(course?.data?.filter((item) => item?.Msv?.includes(debounceSearch)))
+    };
+    fetchData()
+
+  },[debounceSearch])
 
   return (
     <>
@@ -302,9 +321,7 @@ const ManageScore = () => {
               style={`flex max-h-[40px] w-[684px]`}
               name={"Mã sinh viên"}
               value={inputMsv}
-              onChange={(e) => {
-                setInputMsv(e.target.value);
-              }}
+              onChange={(e) =>setInputMsv(e.target.value) }
             />
             <Button>Search</Button>
             <Button
