@@ -27,7 +27,6 @@ const ManageCourse = () => {
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
-
   const [inputCourseCode, setInputCourseCode] = useState();
   const [selectedSemester, setSelectedSemester] = useState();
 
@@ -37,26 +36,73 @@ const ManageCourse = () => {
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
 
+  // handle import
   const handleImportButtonClick = useCallback(async () => {
+    console.log(dataImport);
+
     const response = await apiImportProgram(dataImport);
     if (response.status === 200) {
       toast.success("Import dữ liệu thành công !");
       setFileName(null);
       setDataPreview([]);
     } else toast.error("Import dữ liệu thất bại !");
-  }, [dataPreview, fileName]);
+  }, [dataPreview, fileName, dataImport]);
 
   const handlePreviewData = useCallback(
     (fileValue) => {
       importProgram(fileValue)
         .then((dataMain) => {
-          console.log(dataMain);
+          const data = dataMain.dataMain;
+          if (!Array.isArray(data)) {
+            console.error("Data is not an array");
+            return;
+          }
+
+          const transformedData = {
+            NameStudyPrograms: data[0]["Ngành học"],
+            Key: data[0]["Khóa"],
+            IDFaculty: selectedFacultyId,
+            DataCourse: data.reduce((acc, curr) => {
+              const existingBlock = acc.find(
+                (block) => block.BlockKnowledge === curr["Khối đào tạo"]
+              );
+
+              const course = {
+                STT: curr.stt,
+                MHP: curr["Mã học phần"],
+                TENHP: curr["Tên học phần"],
+                STC: curr["Số tín chỉ"],
+                LT_BT: curr["LT, BT"],
+                TH: curr.TH,
+                DAMH_BTL: curr["ĐAMH/ BTL"],
+                KLTN_DATN_TT: curr["ĐAMH/ BTL_1"],
+                GIO_TH: curr["Số giờ tự học"],
+                MHPKQ: curr["Mã học phần"],
+                HK: curr["Học kỳ"],
+              };
+
+              if (existingBlock) {
+                existingBlock.STC += curr["Số tín chỉ"];
+                existingBlock.value.push(course);
+              } else {
+                acc.push({
+                  BlockKnowledge: curr["Khối đào tạo"],
+                  STC: curr["Số tín chỉ"],
+                  value: [course],
+                });
+              }
+
+              return acc;
+            }, []),
+          };
+
+          setDataImport(transformedData);
         })
         .catch((error) => {
-          toast.error("File không đúng định dạng !");
+          console.error("Error:", error);
         });
     },
-    [dataPreview]
+    [dataPreview, selectedFacultyId]
   );
 
   const columns = [
@@ -287,7 +333,7 @@ const ManageCourse = () => {
         >
           <DragFile
             // data={dataPreview}
-            // columns={columnsAttendance}
+            columns={columns}
             onChange={handlePreviewData}
             fileName={fileName}
             // setFileName={setFileName}

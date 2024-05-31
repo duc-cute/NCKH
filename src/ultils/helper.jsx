@@ -48,7 +48,7 @@ export const validate = (payload, setInvalidFields) => {
             ...prev,
             {
               name: arr[0],
-              mes: "Password  including numbers and capital letters",
+              mes: "Password including numbers and capital letters",
             },
           ]);
         }
@@ -102,13 +102,13 @@ export const readFileData = (file, cellPositions, header, range) => {
         const infoDataDes = cellPositions.map((cellPos) => {
           const cell = XLSX.utils.decode_cell(cellPos);
           const value = worksheet[XLSX.utils.encode_cell(cell)]?.v || null;
-          return value ? value.trim() : null;
+          return typeof value === "string" ? value.trim() : null;
         });
 
         dataDescription = infoDataDes.map((item) => {
           if (!item) return null;
 
-          return item.split(":")[1].trim();
+          return item.split(":")[1] ? item.split(":")[1].trim() : null;
         });
 
         dataMain = XLSX.utils.sheet_to_json(worksheet, {
@@ -261,7 +261,9 @@ export const readFileDataAttendance = (
               Comment,
               Attendance: Attendance.map((item) => ({
                 ...item,
-                AttendanceStatus: String(item.AttendanceStatus),
+                AttendanceStatus: item.AttendanceStatus
+                  ? String(item.AttendanceStatus)
+                  : "",
               })),
             };
           }

@@ -48,13 +48,10 @@ const ManageScore = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [selectedClassId, setSelectedClassId] = useState();
-
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
   const [selectedCourse, setSelectedCourse] = useState();
-  const [dataPont, setDataPoint] = useState();
   const [courseId, setCourseId] = useState();
-
   const [inputMsv, setInputMsv] = useState();
 
   // xử lý khi click import

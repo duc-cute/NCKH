@@ -71,7 +71,6 @@ const ManageAttendance = () => {
       )
         .then((dataMain) => {
           setDataImport(dataMain);
-          console.log("data", dataMain);
           let dataFormat = dataMain.DataAttendance.map((data) => {
             const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
             let End = Attendance[Attendance.length - 1].Day;
