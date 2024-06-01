@@ -1,6 +1,13 @@
 /** @format */
 import { Layout, LayoutStudent, Modal, NotFound } from "./components";
-import { Blog, DocumentStudy, Profile, Schedule, Study } from "./pages/Student";
+import {
+  Blog,
+  DocumentStudy,
+  Profile,
+  Schedule,
+  Study,
+  StudyWarning,
+} from "./pages/Student";
 import { Register, Login } from "./pages/Public";
 import {
   DashBoash,
@@ -14,7 +21,8 @@ import {
   ManageScore,
   ManageCategory,
   ManageAttendance,
-  StudentWarning,
+  StudentWarningIndex,
+  StudentWarningForm,
 } from "./pages/Admin";
 import path from "./ultils/path";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -39,8 +47,8 @@ const router = createBrowserRouter([
         element: <Study />,
       },
       {
-        path: path.STUDENT_WARNING,
-        element: <StudentWarning />,
+        path: path.STUDYWARNING,
+        element: <StudyWarning />,
       },
       {
         path: path.DOCUMENTSTUDY,
@@ -76,11 +84,16 @@ const router = createBrowserRouter([
       },
       {
         path: path.STUDENT_WARNING,
-        element: <StudentWarning />,
+        element: <StudentWarningIndex />,
       },
+
       {
         path: path.MANAGE_STUDENT_SCORE,
         element: <ManageScore />,
+      },
+      {
+        path: path.STUDENT_WARNING_FORM,
+        element: <StudentWarningForm />,
       },
       {
         path: path.MANAGE_STUDENT_CRUD,

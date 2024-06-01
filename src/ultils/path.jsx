@@ -29,6 +29,7 @@ const path = {
   MANAGE_MAIL: "manage-mail",
   MANAGE_CATEGORY: "manage-category",
   STUDENT_WARNING: "student-warning",
+  STUDENT_WARNING_FORM: "warning-form",
 };
 
 export default path;

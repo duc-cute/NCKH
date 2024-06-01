@@ -20,6 +20,7 @@ module.exports = {
         main: "1280px",
         sidebar: "200px",
       },
+
       height: {
         header: "80px",
         table: "270px",
@@ -33,7 +34,9 @@ module.exports = {
       colors: {
         main: "#4f7db3",
         primary: "#446084",
+        error: "#ee3131",
       },
+
       boxShadow: {
         "category-study":
           "0 2px 4px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .08)",
