@@ -34,7 +34,6 @@ const ManageAttendance = () => {
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
   const [courceId, setCourceId] = useState();
-
   const [selectedClassValue, setSelectedClassValue] = useState();
   const [selectedFacultyValue, setSelectedFacultyValue] = useState();
   const [selectedCourseValue, setSelectedCourseValue] = useState();
@@ -254,6 +253,12 @@ const ManageAttendance = () => {
               toast.error("Vui lòng chọn khóa trước khi import");
             } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
+            } else if (!selectedClassId) {
+              toast.error("Vui lòng chọn lớp trước khi import");
+            } else if (!selectedSemesterValue) {
+              toast.error("Vui lòng chọn học kỳ trước khi import");
+            } else if (!courceId) {
+              toast.error("Vui lòng chọn môn học trước khi import");
             } else {
               setShowModal(true);
             }
@@ -360,7 +365,7 @@ const ManageAttendance = () => {
               onChange={(event) => {
                 setCourceId(event.target.value);
                 const selectedId = Number(event.target.value);
-                const selectedItem = selectedClass.find(
+                const selectedItem = courses.find(
                   (item) => item.ID === selectedId
                 );
                 if (selectedItem) {

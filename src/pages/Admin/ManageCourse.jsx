@@ -20,7 +20,7 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { importProgram } from "../../ultils/helper";
-const { AiOutlineCloudUpload, CgImport, FiTrash2, LuPencilLine } = icons;
+const { AiOutlineCloudUpload, CgImport } = icons;
 
 const ManageCourse = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -96,7 +96,16 @@ const ManageCourse = () => {
             }, []),
           };
 
+          const dataPreview = transformedData.DataCourse.map((value) => {
+            return value.value;
+          });
+
+          const mergedDataPreview = dataPreview.reduce((acc, curr) => {
+            return acc.concat(curr);
+          }, []);
+
           setDataImport(transformedData);
+          setDataPreview(mergedDataPreview);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -106,29 +115,22 @@ const ManageCourse = () => {
   );
 
   const columns = [
-    { title: "stt", key: "id", sort: true },
+    { title: "stt", key: "STT", sort: true },
     {
       title: "Mã học phần",
-      key: "courseCode",
+      key: "MHP",
       sort: true,
     },
-    { title: "Tên học phần", key: "courseName", sort: true },
-    { title: "Số tín chỉ", key: "numberOfCredits" },
-    { title: "Số giờ tự học", key: "selfStudy" },
-    { title: "Mã học phần tiên quyết", key: "prerequisiteCourse" },
-    { title: "Học kỳ", key: "semester" },
-    {
-      title: "Action",
-      key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <span onClick={() => setShowDes(true)} className={`cursor-pointer`}>
-            <LuPencilLine color="#1677ff" />
-          </span>
-          <FiTrash2 color="red" />
-        </div>
-      ),
-    },
+    { title: "Tên học phần", key: "TENHP", sort: true },
+    { title: "Số tín chỉ", key: "STC" },
+    { title: "Số giờ tự học", key: "GIO_TH" },
+    { title: "Mã học phần tiên quyết", key: "MHPKQ" },
+    { title: "Học kỳ", key: "HK" },
+    { title: "LT, BT", key: "HK" },
+    { title: "TH", key: "HK" },
+    { title: "ĐAMH/ BTL", key: "HK" },
+    { title: "ĐAMH/ BTL", key: "HK" },
+    { title: "KLTN/ ĐATN/ TT", key: "HK" },
   ];
 
   const data = [
@@ -225,17 +227,17 @@ const ManageCourse = () => {
       id: 3,
       button: (
         <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<CgImport />}
           handleOnclick={() => {
-            if (selectedFacultyId === null) {
+            if (!selectedSchoolYearId) {
               toast.error("Vui lòng chọn khóa trước khi import");
-            } else if (selectedFacultyId === null) {
+            } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
             } else {
               setShowModal(true);
             }
           }}
+          style={"py-[7px] text-white rounded-md "}
+          icon={<CgImport />}
         >
           Import
         </Button>
@@ -279,7 +281,7 @@ const ManageCourse = () => {
 
             <SelectOption
               style={`w-full`}
-              name={"Chọn kỳ học"}
+              name={"Chọn khối đào tạo"}
               data={
                 selectedSemester
                   ? selectedSemester.map((item) => {
@@ -322,7 +324,7 @@ const ManageCourse = () => {
           show={showModal}
           setShow={setShowModal}
           title={"Import dữ liệu khung chương trình đào tạo"}
-          // disableOkBtn={dataPreview.length < 1}
+          disableOkBtn={dataPreview.length < 1}
           onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}
           onClickBtnCancel={() => {
@@ -332,11 +334,11 @@ const ManageCourse = () => {
           }}
         >
           <DragFile
-            // data={dataPreview}
+            data={dataPreview}
             columns={columns}
             onChange={handlePreviewData}
             fileName={fileName}
-            // setFileName={setFileName}
+            setFileName={setFileName}
           />
         </Modal>
       )}

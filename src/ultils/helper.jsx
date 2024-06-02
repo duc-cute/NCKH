@@ -272,8 +272,9 @@ export const readFileDataAttendance = (
         const dataResponve = {
           Faculty: selectedFacultyValue,
           Class: selectedClassValue,
-          Semester: selectedSemesterValue,
           Course: selectedCourseValue,
+          Semester: selectedSemesterValue,
+          SchoolYear: "2021-2022",
           DataAttendance: attendanceStudentCustom,
         };
 
