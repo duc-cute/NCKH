@@ -21,7 +21,7 @@ const InputForm = ({
       {label && (
         <label
           htmlFor={id}
-          className="block  mb-[6px] text-sm font-medium text-gray-900 "
+          className="block  mb-[6px] text-base font-medium text-gray-900 "
         >
           {label}
         </label>

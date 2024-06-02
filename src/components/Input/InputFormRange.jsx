@@ -18,13 +18,12 @@ const InputForm = ({
   setValue,
 }) => {
   const [valueDisplay, setValueDisplay] = useState(0);
-  console.log("🚀 ~ valueDisplay:", valueDisplay);
   return (
     <div className="w-full relative">
       {label && (
         <label
           htmlFor={id}
-          className="block  mb-[6px] text-sm font-medium text-gray-900 "
+          className="block  mb-[8px] text-base font-medium text-gray-900 "
         >
           {label}
         </label>
@@ -36,15 +35,15 @@ const InputForm = ({
         step={5}
         type={"range"}
         id={id}
+        defaultValue={valueDisplay}
         disabled={disabled}
         readOnly={readOnly}
         {...register(id, validate)}
         className={twMerge(
-          `bg-gray-50 border range accent-[#1677ff] border-gray-300  text-sm rounded-lg outline-none focus:ring-blue-300 focus:border-main-300 block w-full p-2 ${style} ${
+          `bg-gray-50 border range accent-[#1677ff] border-gray-300  text-sm rounded-lg outline-none focus:ring-blue-300 focus:border-main-300 block w-full py-2 ${style} ${
             readOnly ? "cursor-not-allowed bg-main-50" : ""
           }`
         )}
-        placeholder={placeholder}
         onChange={(e) => {
           setValue(id, e.target.value);
           setValueDisplay(e.target.value);
@@ -55,10 +54,10 @@ const InputForm = ({
           position: "absolute",
           left: `${(valueDisplay / 100) * 100}%`,
           transform: `${valueDisplay > 0 ? "translateX(-50%)" : ""}`,
-          top: "12px", // Adjust the position above the input range
+          top: "18px", // Adjust the position above the input range
         }}
       >
-        {valueDisplay}
+        {valueDisplay}%
       </div>
       {errors[id] && (
         <small className="text-[12px] text-error italic  ">

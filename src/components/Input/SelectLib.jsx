@@ -10,9 +10,19 @@ const SelectLib = ({
   placeholder,
   validate,
   id,
+  label,
+  errors,
 }) => {
   return (
     <div className="w-full ">
+      {label && (
+        <label
+          htmlFor={id}
+          className="block  mb-[6px] text-base font-medium text-gray-900 "
+        >
+          {label}
+        </label>
+      )}
       <Select
         {...register(id, validate)}
         options={options}
@@ -35,6 +45,11 @@ const SelectLib = ({
         onChange={(e) => setValue(id, e?.id)}
         getOptionValue={(option) => option.id}
       />
+      {errors[id] && (
+        <small className="text-[12px] text-error italic  ">
+          {errors[id]?.message}
+        </small>
+      )}
     </div>
   );
 };

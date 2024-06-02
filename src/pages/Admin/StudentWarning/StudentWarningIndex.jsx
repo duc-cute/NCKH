@@ -13,6 +13,7 @@ import {
   // CategorySubject,
   Modal,
 } from "../../../components";
+import swal from "sweetalert2";
 
 import icons from "../../../ultils/icons";
 import {
@@ -30,6 +31,7 @@ import {
 } from "../../../ultils/constant";
 import { useNavigate } from "react-router-dom";
 import path from "../../../ultils/path";
+import { apiDeleteWarning, apiGetAllWarning } from "../../../apis/warning";
 
 const {
   AiOutlineCloudUpload,
@@ -38,27 +40,82 @@ const {
   TiPlus,
   FiTrash2,
   LuPencilLine,
-  MdOutlineSend,
-  GrUpdate,
-  SiGoogleclassroom,
-  FaRegCalendarAlt,
-  SlCalender,
-  MdSubject,
 } = icons;
 
 const StudentWarningIndex = () => {
-  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [listWarning, setListWarning] = useState([]);
+
+  const handleDelete = (id) => {
+    swal
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          const res = await apiDeleteWarning(id);
+          console.log("🚀 ~ .then ~ res:", res);
+          // if (res.success) {
+          //   const queries = Object.fromEntries(params);
+          //   queries.page = 1;
+          //   navigate({
+          //     pathname: location.pathname,
+          //     search: createSearchParams(queries).toString(),
+          //   });
+          //   fetchData({ ...queries, limit: import.meta.env.VITE_PROD_LIMIT });
+
+          //   swal.fire({
+          //     title: "Deleted!",
+          //     text: res?.mes,
+          //     icon: "success",
+          //   });
+          // } else {
+          //   swal.fire({
+          //     title: "Deleted!",
+          //     text: res?.mes,
+          //     icon: "error",
+          //   });
+          // }
+        }
+      });
+  };
+
   const columns = [
     {
       title: "STT",
       sort: true,
     },
+    { title: "Tiêu đề cảnh báo", key: "level", sort: true },
     { title: "Mức cảnh báo", key: "level", sort: true },
     { title: "Số buổi nghỉ/tín", key: "year" },
     { title: "Số tín chỉ tối đa nợ", key: "hocki" },
     { title: "Tình trạng học phí", key: "khoa" },
     { title: "Điểm GPA", key: "num" },
+    {
+      title: "Action",
+      key: "action",
+      render: (row) => (
+        <div className="flex items-center gap-3 cursor-pointer">
+          <span
+            onClick={() =>
+              navigate(
+                `/${path.ADMIN}/${path.STUDENT_WARNING_FORM}/${row?.IDWarning}`
+              )
+            }
+            className={`cursor-pointer`}
+          >
+            <LuPencilLine color="#1677ff" />
+          </span>
+          <FiTrash2 onClick={() => handleDelete(row?.IDWarning)} color="red" />
+        </div>
+      ),
+    },
   ];
 
   const groupButton = [
@@ -85,6 +142,13 @@ const StudentWarningIndex = () => {
       ),
     },
   ];
+  const fetchData = async () => {
+    const res = await apiGetAllWarning();
+    console.log("res", res);
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>

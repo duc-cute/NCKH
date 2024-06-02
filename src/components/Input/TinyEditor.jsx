@@ -6,7 +6,7 @@ import React from "react";
 const TinyEditor = ({ id, setValue, label, register, errors, validate }) => {
   return (
     <div>
-      <span className="block mb-[6px] text-sm font-medium text-gray-900 ">
+      <span className="block mb-[6px] text-base font-medium text-gray-900 ">
         {label}
       </span>
       <Editor
