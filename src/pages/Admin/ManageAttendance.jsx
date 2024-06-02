@@ -23,6 +23,9 @@ import { toast } from "react-toastify";
 import { columnsAttendance } from "../../ultils/constant";
 const { AiOutlineCloudUpload, CgImport } = icons;
 
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
 const ManageAttendance = () => {
   // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -106,6 +109,39 @@ const ManageAttendance = () => {
       selectedCourseValue,
     ]
   );
+
+  async function exportToExcel(dataSelect) {
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Students");
+
+    worksheet.columns = [
+      { header: "Msv", key: "Msv", width: 10 },
+      { header: "FullName", key: "FullName", width: 20 },
+      { header: "Ngày bắt đầu", key: "Start", width: 10 },
+      { header: "Ngày kết thúc", key: "End", width: 10 },
+      { header: "Tổng số buổi nghỉ", key: "totalPercentDateStudy", width: 10 },
+      { header: "Tổng số buổi học", key: "totalSessions", width: 10 },
+      { header: "ghi chú", key: "Comment", width: 10 },
+    ];
+
+    dataSelect?.forEach((student) => {
+      worksheet.addRow(student);
+    });
+
+    let buffer = await workbook.xlsx.writeBuffer();
+    let blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "diemdanh.xlsx");
+  }
+
+  const handleExportClick = async () => {
+    if (Array.isArray(dataSelect?.dataStudents)) {
+      await exportToExcel(dataSelect?.dataStudents);
+    } else {
+      toast.error("Không có dữ liệu để xuất file");
+    }
+  };
 
   // api select option khóa
   useEffect(() => {
@@ -215,8 +251,6 @@ const ManageAttendance = () => {
           })
         );
 
-        console.log("dataFormat", dataFormat);
-
         setDataSelect({
           dataStudents: dataFormat,
         });
@@ -239,6 +273,7 @@ const ManageAttendance = () => {
         <Button
           style={"py-[7px] text-white rounded-md "}
           icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
         >
           Export
         </Button>

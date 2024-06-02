@@ -32,6 +32,9 @@ import {
   headerDataScore,
 } from "../../ultils/constant";
 
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
 const ManageScore = () => {
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState(null);
@@ -110,6 +113,43 @@ const ManageScore = () => {
     [dataPreview]
   );
 
+  async function exportToExcel(dataSelect) {
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Students");
+
+    worksheet.columns = [
+      { header: "Msv", key: "Msv", width: 10 },
+      { header: "FullName", key: "FullName", width: 20 },
+      { header: "Giới tính", key: "Gender", width: 10 },
+      { header: "Điểm chuyên cần", key: "Frequent", width: 10 },
+      { header: "Điểm giữa kỳ", key: "MidtermScore", width: 10 },
+      { header: "Điểm cuối kỳ", key: "FinalExamScore", width: 10 },
+      { header: "Điểm trung bình", key: "AverageScore", width: 10 },
+      { header: "Điểm số", key: "Scores", width: 10 },
+      { header: "Điểm chữ", key: "LetterGrades", width: 10 },
+      { header: "mô đun điểm", key: "scoreModule", width: 10 },
+      { header: "ghi chú", key: "Note", width: 10 },
+    ];
+
+    dataSelect?.forEach((student) => {
+      worksheet.addRow(student);
+    });
+
+    let buffer = await workbook.xlsx.writeBuffer();
+    let blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "diemhoctap.xlsx");
+  }
+
+  const handleExportClick = async () => {
+    if (dataSelect !== null && dataSelect.length > 0) {
+      await exportToExcel(dataSelect);
+    } else {
+      toast.error("Không có dữ liệu để xuất file");
+    }
+  };
+
   // api select option khóa
   useEffect(() => {
     const fetchData = async () => {
@@ -187,8 +227,6 @@ const ManageScore = () => {
     selectedSemesterValue,
   ]);
 
-  console.log(dataSelect);
-
   const groupButton = [
     {
       id: 1,
@@ -196,6 +234,7 @@ const ManageScore = () => {
         <Button
           style={"py-[7px] text-white rounded-md "}
           icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
         >
           Export
         </Button>
