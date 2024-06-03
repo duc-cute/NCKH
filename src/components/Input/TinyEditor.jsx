@@ -3,7 +3,15 @@
 import { Editor } from "@tinymce/tinymce-react";
 import React from "react";
 
-const TinyEditor = ({ id, setValue, label, register, errors, validate }) => {
+const TinyEditor = ({
+  id,
+  setValue,
+  label,
+  register,
+  errors,
+  validate,
+  value,
+}) => {
   return (
     <div>
       <span className="block mb-[6px] text-base font-medium text-gray-900 ">
@@ -12,6 +20,7 @@ const TinyEditor = ({ id, setValue, label, register, errors, validate }) => {
       <Editor
         apiKey="dhlxleeqnprm5fginnh3rftr5cvbvcvc3pkxzfke213luzxe"
         {...register(id, validate)}
+        initialValue={value}
         onChange={(e) => setValue(id, e.target.getContent())}
         init={{
           height: 500,

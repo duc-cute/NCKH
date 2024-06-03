@@ -12,6 +12,7 @@ const SelectLib = ({
   id,
   label,
   errors,
+  defaultValue,
 }) => {
   return (
     <div className="w-full ">
@@ -27,6 +28,7 @@ const SelectLib = ({
         {...register(id, validate)}
         options={options}
         placeholder={placeholder}
+        value={defaultValue}
         formatOptionLabel={(option) => (
           <div className="flex min-w-[120px] text-sm items-center gap-3 font-medium text-main-600">
             {option?.image && (
@@ -43,7 +45,7 @@ const SelectLib = ({
         isClearable={isClearable}
         isSearchable={true}
         onChange={(e) => setValue(id, e?.id)}
-        getOptionValue={(option) => option.id}
+        getOptionValue={(option) => option?.id}
       />
       {errors[id] && (
         <small className="text-[12px] text-error italic  ">

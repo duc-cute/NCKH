@@ -12,7 +12,6 @@ const Button = ({
   disable = false,
   type = "button",
 }) => {
-  console.log("handleOnclick", handleOnclick);
   const [showDropdown, setShowDropdown] = useState(false);
   return (
     <div className="relative" onClick={() => setShowDropdown((prev) => !prev)}>

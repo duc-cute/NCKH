@@ -209,6 +209,7 @@ const ManageStudent = () => {
             </span>
           }
           isClearable={true}
+          errors={errors}
         />
       ),
     },
@@ -226,6 +227,7 @@ const ManageStudent = () => {
             </span>
           }
           isClearable={true}
+          errors={errors}
         />
       ),
     },

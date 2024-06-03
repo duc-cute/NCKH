@@ -12,12 +12,13 @@ const InputForm = ({
   id,
   errors,
   register,
-  defaultValue,
+  defaultValue = 0,
   validate,
   readOnly,
   setValue,
+  valueDisplay,
+  setValueDisplay,
 }) => {
-  const [valueDisplay, setValueDisplay] = useState(0);
   return (
     <div className="w-full relative">
       {label && (

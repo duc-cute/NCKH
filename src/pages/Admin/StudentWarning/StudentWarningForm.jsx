@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -7,8 +7,16 @@ import {
   SelectLib,
   TinyEditor,
 } from "../../../components";
-import { apiCreateWarning } from "../../../apis/warning";
+import {
+  apiCreateWarning,
+  apiGetWarningById,
+  apiUpdateWarning,
+} from "../../../apis/warning";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import path from "../../../ultils/path";
+import { TTHP } from "../../../ultils/constant";
 
 const StudentWarningForm = () => {
   const {
@@ -21,16 +29,46 @@ const StudentWarningForm = () => {
     watch,
   } = useForm();
   const { current } = useSelector((state) => state.user);
-  console.log("🚀 ~ StudentWarningForm ~ current:", current);
+  const [selectedWarning, setSelectedWarning] = useState(null);
+  const [valueDisplay, setValueDisplay] = useState(0);
+
+  const navigate = useNavigate();
 
   const handleCreateOrUpdate = async (data) => {
-    if (data?.IDWarning) {
+    if (data?.ID) {
+      const res = await apiUpdateWarning({ ...data, IDWarning: data?.ID });
+      if (res?.status === 200) {
+        toast.success(res?.message);
+        navigate(`/${path.ADMIN}/${path.STUDENT_WARNING}`);
+      }
     } else {
-      console.log("da", data);
       const res = await apiCreateWarning(data);
-      console.log("res", res);
+      if (res?.status === 200) {
+        toast.success(res?.message);
+        navigate(`/${path.ADMIN}/${path.STUDENT_WARNING}`);
+      }
     }
   };
+  const [params] = useSearchParams();
+  const id = params.get("id");
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        const res = await apiGetWarningById(id);
+        if (res?.status === 200) {
+          setSelectedWarning({ ...res?.data[0] });
+          setValueDisplay(res?.data[0]?.LevelWarning);
+          reset({
+            ...res?.data[0],
+          });
+        }
+      }
+    };
+    fetchData();
+  }, [params]);
+  // useEffect(() => {
+
+  // },[''])
   return (
     <div className="mx-6 my-2 h-full">
       <form
@@ -62,16 +100,10 @@ const StudentWarningForm = () => {
             errors={errors}
             validate={{ required: "Need Fill This Field" }}
             setValue={setValue}
-            options={[
-              {
-                id: "Nợ học phí",
-                label: "Nợ học phí",
-              },
-              {
-                id: "Đủ học phí",
-                label: "Đủ học phí",
-              },
-            ]}
+            options={TTHP}
+            defaultValue={TTHP?.find(
+              (item) => item.id === selectedWarning?.TTHP
+            )}
           />
           <InputForm
             id={"STC_NO"}
@@ -96,6 +128,8 @@ const StudentWarningForm = () => {
             errors={errors}
             validate={{ required: "Need Fill This Field" }}
             setValue={setValue}
+            valueDisplay={valueDisplay}
+            setValueDisplay={setValueDisplay}
           />
         </div>
         <TinyEditor
@@ -105,14 +139,15 @@ const StudentWarningForm = () => {
           register={register}
           errors={errors}
           setValue={setValue}
+          value={selectedWarning?.ContentWarning}
         />
         <div className="mt-5 flex justify-end">
           <Button
             style={"bg-[#1677ff]"}
             type="submit"
-            // handleOnClick={handleSubmit(handleCreateOrUpdate)}
+            handleOnClick={handleSubmit(handleCreateOrUpdate)}
           >
-            Tạo cảnh báo
+            {id ? "Cập nhật cảnh báo" : "Tạo cảnh báo"}
           </Button>
         </div>
       </form>

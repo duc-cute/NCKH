@@ -17,6 +17,16 @@ export const headerDataScore = [
   "scoreModule",
   "Note",
 ];
+export const TTHP = [
+  {
+    id: "Nợ học phí",
+    label: "Nợ học phí",
+  },
+  {
+    id: "Đủ học phí",
+    label: "Đủ học phí",
+  },
+];
 
 export const cellScorePositions = ["A8", "A9", "A10", "D10", "I8", "I9", "I10"];
 
