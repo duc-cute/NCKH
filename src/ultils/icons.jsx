@@ -32,6 +32,9 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import { SiStudyverse } from "react-icons/si";
 import { MdOutlineClass } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
+import { IoMdInformationCircleOutline } from "react-icons/io";
+import { GrContactInfo } from "react-icons/gr";
+import { FaUserFriends } from "react-icons/fa";
 
 const icons = {
   BsFillPeopleFill,
@@ -70,6 +73,9 @@ const icons = {
   SiStudyverse,
   MdOutlineClass,
   IoSettingsOutline,
+  IoMdInformationCircleOutline,
+  GrContactInfo,
+  FaUserFriends,
 };
 
 export default icons;
