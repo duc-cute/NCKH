@@ -31,7 +31,7 @@ import {
   columnsStudent,
   headerDataScore,
 } from "../../ultils/constant";
-import useDebounce from "../../hooks/useDebounce"
+import useDebounce from "../../hooks/useDebounce";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
@@ -225,7 +225,6 @@ const ManageScore = () => {
     selectedClassId,
     courceId,
     selectedSemesterValue,
-  
   ]);
 
   const groupButton = [
@@ -263,8 +262,7 @@ const ManageScore = () => {
     },
   ];
 
-
-  let debounceSearch = useDebounce(inputMsv,500)
+  let debounceSearch = useDebounce(inputMsv, 500);
   useEffect(() => {
     const fetchData = async () => {
       const course = await apiDataPoint(
@@ -274,11 +272,12 @@ const ManageScore = () => {
         courseId,
         selectedSemesterValue
       );
-      setDataSelect(course?.data?.filter((item) => item?.Msv?.includes(debounceSearch)))
+      setDataSelect(
+        course?.data?.filter((item) => item?.Msv?.includes(debounceSearch))
+      );
     };
-    fetchData()
-
-  },[debounceSearch])
+    fetchData();
+  }, [debounceSearch]);
 
   return (
     <>
@@ -387,7 +386,7 @@ const ManageScore = () => {
               style={`flex max-h-[40px] w-[684px]`}
               name={"Mã sinh viên"}
               value={inputMsv}
-              onChange={(e) =>setInputMsv(e.target.value) }
+              onChange={(e) => setInputMsv(e.target.value)}
             />
             <Button>Search</Button>
             <Button

@@ -120,6 +120,43 @@ const ManageCourse = () => {
     [dataPreview, selectedFacultyId]
   );
 
+  // xử lý export
+  async function exportToExcel(dataProgram) {
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Students");
+
+    worksheet.columns = [
+      { header: "Stt", key: "STT", width: 5 },
+      { header: "Mã Học Phần", key: "CourseCode", width: 20 },
+      { header: "Tên Học Phần", key: "NameCourse", width: 10 },
+      { header: "Số Tín Chỉ", key: "NumberOfCredits", width: 10 },
+      { header: "Số Giờ Tự Học", key: "SelfLearning", width: 10 },
+      { header: "Học Kỳ", key: "Semester", width: 10 },
+      { header: "LT, BT", key: "ExerciseTheory", width: 10 },
+      { header: "ĐAMH/ BTL", key: "SpecializedProjects", width: 10 },
+      { header: "KLTN/ ĐATN/ TT", key: "BigExercise", width: 10 },
+      { header: "Mô Tả", key: "Describe", width: 10 },
+    ];
+
+    dataProgram?.forEach((student) => {
+      worksheet.addRow(student);
+    });
+
+    let buffer = await workbook.xlsx.writeBuffer();
+    let blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "chuongtrinhdaotao.xlsx");
+  }
+
+  const handleExportClick = async () => {
+    if (Array.isArray(dataProgram)) {
+      await exportToExcel(dataProgram);
+    } else {
+      toast.error("Không có dữ liệu để xuất file");
+    }
+  };
+
   const columns = [
     { title: "stt", key: "STT", sort: true },
     {
@@ -179,6 +216,7 @@ const ManageCourse = () => {
   // ];
 
   // api select option khóa
+
   useEffect(() => {
     const fetchData = async () => {
       const url = "v1/common/select-years-by-faculty";
@@ -236,6 +274,7 @@ const ManageCourse = () => {
         <Button
           style={"py-[7px] text-white rounded-md "}
           icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
         >
           Export
         </Button>
