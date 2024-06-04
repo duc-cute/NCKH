@@ -331,82 +331,82 @@ const ManageStudent = () => {
     }
   };
 
-  const groupButton = [
-    {
-      id: 1,
-      button: (
-        <SelectLib
-          options={warningLevel}
-          register={register}
-          id={"listStudent"}
-          setValue={setValue}
-          placeholder={
-            <span className="text-sm text-[#808080] font-normal">
-              Chọn mức cảnh báo
-            </span>
-          }
-          isClearable={true}
-        />
-      ),
-    },
-    {
-      id: 2,
-      button: (
-        <SelectLib
-          options={listStudentWarning}
-          register={register}
-          id={"listStudent"}
-          setValue={setValue}
-          placeholder={
-            <span className="text-sm text-[#808080] font-normal">
-              Chọn Danh Sách Sinh Viên
-            </span>
-          }
-          isClearable={true}
-        />
-      ),
-    },
-    {
-      id: 3,
-      button: (
-        <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<AiOutlineCloudUpload />}
-          handleOnclick={handleExportClick}
-        >
-          Export
-        </Button>
-      ),
-    },
-    {
-      id: 4,
-      button: (
-        <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<CgImport />}
-          handleOnclick={() => {
-            setShowModal(true);
-          }}
-        >
-          Import
-        </Button>
-      ),
-    },
+  // const groupButton = [
+  //   {
+  //     id: 1,
+  //     button: (
+  //       <SelectLib
+  //         options={warningLevel}
+  //         register={register}
+  //         id={"listStudent"}
+  //         setValue={setValue}
+  //         placeholder={
+  //           <span className="text-sm text-[#808080] font-normal">
+  //             Chọn mức cảnh báo
+  //           </span>
+  //         }
+  //         isClearable={true}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: 2,
+  //     button: (
+  //       <SelectLib
+  //         options={listStudentWarning}
+  //         register={register}
+  //         id={"listStudent"}
+  //         setValue={setValue}
+  //         placeholder={
+  //           <span className="text-sm text-[#808080] font-normal">
+  //             Chọn Danh Sách Sinh Viên
+  //           </span>
+  //         }
+  //         isClearable={true}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: 3,
+  //     button: (
+  //       <Button
+  //         style={"py-[7px] text-white rounded-md "}
+  //         icon={<AiOutlineCloudUpload />}
+  //         handleOnclick={handleExportClick}
+  //       >
+  //         Export
+  //       </Button>
+  //     ),
+  //   },
+  //   {
+  //     id: 4,
+  //     button: (
+  //       <Button
+  //         style={"py-[7px] text-white rounded-md "}
+  //         icon={<CgImport />}
+  //         handleOnclick={() => {
+  //           setShowModal(true);
+  //         }}
+  //       >
+  //         Import
+  //       </Button>
+  //     ),
+  //   },
 
-    {
-      id: 5,
-      button: (
-        <Button
-          dropdown={true}
-          listWarning={listStatusWarning}
-          style={"py-[7px] text-white rounded-md "}
-          icon={<AiOutlineSend />}
-        >
-          Gửi cảnh báo
-        </Button>
-      ),
-    },
-  ];
+  //   {
+  //     id: 5,
+  //     button: (
+  //       <Button
+  //         dropdown={true}
+  //         listWarning={listStatusWarning}
+  //         style={"py-[7px] text-white rounded-md "}
+  //         icon={<AiOutlineSend />}
+  //       >
+  //         Gửi cảnh báo
+  //       </Button>
+  //     ),
+  //   },
+  // ];
 
   return (
     <div className=" h-[1000px]">
