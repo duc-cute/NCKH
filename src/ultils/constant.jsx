@@ -91,17 +91,14 @@ export const columnsAttendance = [
     key: "End",
   },
   {
-    title: "Tổng số buổi nghỉ",
+    title: "Số buổi nghỉ",
     key: "totalPercentDateStudy",
-    sort: true,
-    render: (total) => (
-      <div className="flex items-center justify-center">
-        <Tag status={(+total[0] / +total[1]) * 100 < 20 ? "" : "warning"}>
-          {`${total[0]}/${total[1]}`}
-        </Tag>
-      </div>
-    ),
   },
+  {
+    title: "Tổng số buổi",
+    key: "totalSessions",
+  },
+
   { title: "Ghi chú", key: "Comment" },
 ];
 

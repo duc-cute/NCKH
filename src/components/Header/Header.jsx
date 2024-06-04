@@ -21,7 +21,7 @@ const Header = () => {
         <div className="text-[24px] text-main font-semibold">
           <h2 className="uppercase font-sans-serif">
             {current?.role === "User"
-              ? "Phần mềm hỗ trợ cố sinh viên"
+              ? "Phần mềm hỗ trợ cảnh báo sinh viên"
               : "Phần mềm hỗ trợ cố vấn học tập"}
           </h2>
           <p className="text-[12px] mt-2 font-sans-serif uppercase">

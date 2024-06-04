@@ -11,35 +11,11 @@ import {
   Tag,
   InputForm,
   SelectLib,
-  CategoryDepartment,
-  CategorySubject,
 } from "../../components";
 
-import {
-  apiAllFaculties,
-  apiClassById,
-  apiDataPoint,
-  apiImportScore,
-} from "../../apis";
+import { apiAllFaculties } from "../../apis";
 
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  CgImport,
-  TiPlus,
-  FiTrash2,
-  LuPencilLine,
-  MdOutlineSend,
-  GrUpdate,
-  SiGoogleclassroom,
-  FaRegCalendarAlt,
-  SlCalender,
-  MdSubject,
-  FaChartColumn,
-  FaChartPie,
-  IoManSharp,
-  AiOutlineControl,
-} = icons;
+const { FaChartColumn, FaChartPie, IoManSharp, AiOutlineControl } = icons;
 
 const DashBoash = () => {
   const [faculties, setFaculties] = useState([]);
@@ -306,15 +282,6 @@ const DashBoash = () => {
       .attr("height", (d) => yScale(0) - yScale(d.value))
       .attr("fill", (d, i) => d3.schemeCategory10[i]);
 
-    const tooltip = d3
-      .select("body")
-      .append("div")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px");
-
     g.selectAll(".bar")
       .on("mouseover", function (event, d) {
         tooltip.transition().duration(200).style("opacity", 0.9);
@@ -343,157 +310,157 @@ const DashBoash = () => {
   }, []);
 
   return (
-    <div className="">
-      <div className="flex">
-        <div className="bg-[#ffff] ml-4 rounded-[12px] p-3">
-          <div className="flex items-center">
-            <div className="font-bold text-[20px] ml-[26px]">
-              Thống kê sinh viên theo từng khoa
-            </div>
-            <div className="ml-3">
-              <FaChartPie />
-            </div>
+    <div className="flex">
+      <div className="bg-[#ffff] ml-4 rounded-[12px] p-3">
+        <div className="flex items-center">
+          <div className="font-bold text-[20px] ml-[26px]">
+            Thống kê sinh viên theo từng khoa
           </div>
-          <div className="flex relative">
-            <div className="absolute top-[30px] right-[260px] bg-[#4a4397] p-2 rounded-[8px]">
-              <IoManSharp color="#ffff" />
-            </div>
-            <svg ref={ref}></svg>
-            <svg ref={legendRef}></svg>
+          <div className="ml-3">
+            <FaChartPie />
           </div>
-          <div className=" w-full space-y-4 bg-[#f7f7fc] px-5 rounded-xl relative py-3">
-            <div className="absolute bg-[#ff6483] p-2 rounded-[8px] top-[-12px] left-4">
-              <AiOutlineControl color="#fff" />
+        </div>
+
+        <div className="flex relative">
+          <div className="absolute top-[30px] right-[260px] bg-[#4a4397] p-2 rounded-[8px]">
+            <IoManSharp color="#ffff" />
+          </div>
+          <svg ref={ref}></svg>
+          <svg ref={legendRef}></svg>
+        </div>
+
+        <div className=" w-full space-y-4 bg-[#f7f7fc] px-5 rounded-xl relative py-3">
+          <div className="absolute bg-[#ff6483] p-2 rounded-[8px] top-[-12px] left-4">
+            <AiOutlineControl color="#fff" />
+          </div>
+          <div className="flex gap-3 justify-between">
+            <div className="flex gap-3 flex-col bg-[#ffff] p-5 rounded-[8px] w-[50%] relative">
+              <div className="absolute top-[-7px] bg-slate-50 left-[80px]">
+                Theo dõi khoa
+              </div>
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn khóa"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn khoa"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
+
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn năm học"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
+
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn học kỳ"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
             </div>
-            <div className="flex gap-3 justify-between">
-              <div className="flex gap-3 flex-col bg-[#ffff] p-5 rounded-[8px] w-[50%] relative">
-                <div className="absolute top-[-7px] bg-slate-50 left-[80px]">
-                  Theo dõi khoa
-                </div>
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn khóa"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn khoa"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn năm học"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn học kỳ"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
+            <div className="flex gap-3 flex-col bg-[#ffff] p-5 rounded-[8px] w-[50%] relative">
+              <div className="absolute top-[-7px] bg-slate-50 left-[80px]">
+                Theo dõi lớp
               </div>
-              <div className="flex gap-3 flex-col bg-[#ffff] p-5 rounded-[8px] w-[50%] relative">
-                <div className="absolute top-[-7px] bg-slate-50 left-[80px]">
-                  Theo dõi lớp
-                </div>
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn khóa"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn khoa"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn lớp"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn khóa"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  // setFacultyId(event.target.value);
+                  // setClassScores([]);
+                  // setCourses([]);
+                }}
+              />
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn khoa"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn lớp"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
 
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn năm học"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn năm học"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
 
-                <SelectOption
-                  style={`w-[300px]`}
-                  name={"Chọn học kỳ"}
-                  data={faculties}
-                  displayField={"FacultyName"}
-                  onChange={(event) => {
-                    setFacultyId(event.target.value);
-                    setClassScores([]);
-                    setCourses([]);
-                  }}
-                />
-              </div>
+              <SelectOption
+                style={`w-[300px]`}
+                name={"Chọn học kỳ"}
+                data={faculties}
+                displayField={"FacultyName"}
+                onChange={(event) => {
+                  setFacultyId(event.target.value);
+                  setClassScores([]);
+                  setCourses([]);
+                }}
+              />
             </div>
           </div>
         </div>
-        <div className="bg-[#fff] ml-2 rounded-[12px] p-3">
-          <div className="flex items-center">
-            <div className="font-bold text-[20px] ml-[26px]">
-              Thống kê sinh viên theo từng lớp (sĩ số: 100 sv)
-            </div>
-            <div className="ml-3">
-              <FaChartColumn />
-            </div>
+      </div>
+      <div className="bg-[#fff] ml-2 rounded-[12px] p-3">
+        <div className="flex items-center">
+          <div className="font-bold text-[20px] ml-[26px]">
+            Thống kê sinh viên theo từng lớp (sĩ số: 100 sv)
           </div>
-          <div style={{ display: "flex" }}>
-            <svg ref={barChartRef}></svg>
+          <div className="ml-3">
+            <FaChartColumn />
           </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          <svg ref={barChartRef}></svg>
         </div>
       </div>
     </div>

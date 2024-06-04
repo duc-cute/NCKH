@@ -20,14 +20,16 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { importProgram } from "../../ultils/helper";
-const { AiOutlineCloudUpload, CgImport, FiTrash2, LuPencilLine } = icons;
+const { AiOutlineCloudUpload, CgImport } = icons;
+
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const ManageCourse = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
-
   const [inputCourseCode, setInputCourseCode] = useState();
   const [selectedSemester, setSelectedSemester] = useState();
 
@@ -37,52 +39,101 @@ const ManageCourse = () => {
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
 
+  // handle import
   const handleImportButtonClick = useCallback(async () => {
+    console.log(dataImport);
+
     const response = await apiImportProgram(dataImport);
     if (response.status === 200) {
       toast.success("Import dữ liệu thành công !");
       setFileName(null);
       setDataPreview([]);
     } else toast.error("Import dữ liệu thất bại !");
-  }, [dataPreview, fileName]);
+  }, [dataPreview, fileName, dataImport]);
 
   const handlePreviewData = useCallback(
     (fileValue) => {
       importProgram(fileValue)
         .then((dataMain) => {
-          console.log(dataMain);
+          const data = dataMain.dataMain;
+          if (!Array.isArray(data)) {
+            console.error("Data is not an array");
+            return;
+          }
+
+          const transformedData = {
+            NameStudyPrograms: data[0]["Ngành học"],
+            Key: data[0]["Khóa"],
+            IDFaculty: selectedFacultyId,
+            DataCourse: data.reduce((acc, curr) => {
+              const existingBlock = acc.find(
+                (block) => block.BlockKnowledge === curr["Khối đào tạo"]
+              );
+
+              const course = {
+                STT: curr.stt,
+                MHP: curr["Mã học phần"],
+                TENHP: curr["Tên học phần"],
+                STC: curr["Số tín chỉ"],
+                LT_BT: curr["LT, BT"],
+                TH: curr.TH,
+                DAMH_BTL: curr["ĐAMH/ BTL"],
+                KLTN_DATN_TT: curr["ĐAMH/ BTL_1"],
+                GIO_TH: curr["Số giờ tự học"],
+                MHPKQ: curr["Mã học phần"],
+                HK: curr["Học kỳ"],
+              };
+
+              if (existingBlock) {
+                existingBlock.STC += curr["Số tín chỉ"];
+                existingBlock.value.push(course);
+              } else {
+                acc.push({
+                  BlockKnowledge: curr["Khối đào tạo"],
+                  STC: curr["Số tín chỉ"],
+                  value: [course],
+                });
+              }
+
+              return acc;
+            }, []),
+          };
+
+          const dataPreview = transformedData.DataCourse.map((value) => {
+            return value.value;
+          });
+
+          const mergedDataPreview = dataPreview.reduce((acc, curr) => {
+            return acc.concat(curr);
+          }, []);
+
+          setDataImport(transformedData);
+          setDataPreview(mergedDataPreview);
         })
         .catch((error) => {
-          toast.error("File không đúng định dạng !");
+          console.error("Error:", error);
         });
     },
-    [dataPreview]
+    [dataPreview, selectedFacultyId]
   );
 
   const columns = [
-    { title: "stt", key: "id", sort: true },
+    { title: "stt", key: "STT", sort: true },
     {
       title: "Mã học phần",
-      key: "courseCode",
+      key: "MHP",
       sort: true,
     },
-    { title: "Tên học phần", key: "courseName", sort: true },
-    { title: "Số tín chỉ", key: "numberOfCredits" },
-    { title: "Số giờ tự học", key: "selfStudy" },
-    { title: "Mã học phần tiên quyết", key: "prerequisiteCourse" },
-    { title: "Học kỳ", key: "semester" },
-    {
-      title: "Action",
-      key: "action",
-      render: (item) => (
-        <div className="flex items-center gap-3 cursor-pointer">
-          <span onClick={() => setShowDes(true)} className={`cursor-pointer`}>
-            <LuPencilLine color="#1677ff" />
-          </span>
-          <FiTrash2 color="red" />
-        </div>
-      ),
-    },
+    { title: "Tên học phần", key: "TENHP", sort: true },
+    { title: "Số tín chỉ", key: "STC" },
+    { title: "Số giờ tự học", key: "GIO_TH" },
+    { title: "Mã học phần tiên quyết", key: "MHPKQ" },
+    { title: "Học kỳ", key: "HK" },
+    { title: "LT, BT", key: "HK" },
+    { title: "TH", key: "HK" },
+    { title: "ĐAMH/ BTL", key: "HK" },
+    { title: "ĐAMH/ BTL", key: "HK" },
+    { title: "KLTN/ ĐATN/ TT", key: "HK" },
   ];
 
   const data = [
@@ -179,17 +230,17 @@ const ManageCourse = () => {
       id: 3,
       button: (
         <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<CgImport />}
           handleOnclick={() => {
-            if (selectedFacultyId === null) {
+            if (!selectedSchoolYearId) {
               toast.error("Vui lòng chọn khóa trước khi import");
-            } else if (selectedFacultyId === null) {
+            } else if (!selectedFacultyId) {
               toast.error("Vui lòng chọn khoa trước khi import");
             } else {
               setShowModal(true);
             }
           }}
+          style={"py-[7px] text-white rounded-md "}
+          icon={<CgImport />}
         >
           Import
         </Button>
@@ -233,7 +284,7 @@ const ManageCourse = () => {
 
             <SelectOption
               style={`w-full`}
-              name={"Chọn kỳ học"}
+              name={"Chọn khối đào tạo"}
               data={
                 selectedSemester
                   ? selectedSemester.map((item) => {
@@ -276,7 +327,7 @@ const ManageCourse = () => {
           show={showModal}
           setShow={setShowModal}
           title={"Import dữ liệu khung chương trình đào tạo"}
-          // disableOkBtn={dataPreview.length < 1}
+          disableOkBtn={dataPreview.length < 1}
           onClickBtnOk={handleImportButtonClick}
           textOk={"Import"}
           onClickBtnCancel={() => {
@@ -286,11 +337,11 @@ const ManageCourse = () => {
           }}
         >
           <DragFile
-            // data={dataPreview}
-            // columns={columnsAttendance}
+            data={dataPreview}
+            columns={columns}
             onChange={handlePreviewData}
             fileName={fileName}
-            // setFileName={setFileName}
+            setFileName={setFileName}
           />
         </Modal>
       )}

@@ -32,6 +32,8 @@ import {
   headerDataScore,
 } from "../../ultils/constant";
 import useDebounce from "../../hooks/useDebounce"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const ManageScore = () => {
   const [showModal, setShowModal] = useState(false);
@@ -49,14 +51,13 @@ const ManageScore = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [selectedClassId, setSelectedClassId] = useState();
-
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
-  const [selectedCourse, setSelectedCourse] = useState();
-  const [dataPont, setDataPoint] = useState();
-  const [courseId, setCourseId] = useState();
-
-  const [inputMsv, setInputMsv] = useState("");
+  const [inputMsv, setInputMsv] = useState();
+  const [selectedFacultyValue, setSelectedFacultyValue] = useState();
+  const [selectedClassValue, setSelectedClassValue] = useState();
+  const [courceId, setCourceId] = useState();
+  const [selectedCourseValue, setSelectedCourseValue] = useState();
 
   // xử lý khi click import
   const handleImportButtonClick = useCallback(async () => {
@@ -73,15 +74,22 @@ const ManageScore = () => {
 
     // trả data cần lấy
     const dataManageScore = {
-      Course: selectedCourse,
+      Course: selectedCourseValue,
       Teacher: dataPreview.dataDescription[1],
-      Faculity: selectedFaculty,
-      Class: selectedClass,
+      Faculty: selectedFacultyValue,
+      Class: selectedClassValue,
       TotalHours: +dataPreview.dataDescription[4],
       NumberOfCredits: +dataPreview.dataDescription[5],
-      FinalExamDate: dataPreview.dataDescription[6],
+      FinalExamDate: "2022-02-01",
       DataStudents: DataStudents,
-      DataPoint: DataPoint,
+      DataPoint: DataPoint.map((point) => ({
+        ...point,
+        Frequent: parseFloat(point.Frequent),
+        MidtermScore: parseFloat(point.MidtermScore),
+        FinalExamScore: parseFloat(point.FinalExamScore),
+        AverageScore: parseFloat(point.AverageScore),
+        Scores: parseFloat(point.Scores),
+      })),
     };
 
     const response = await apiImportScore(dataManageScore);
@@ -100,12 +108,47 @@ const ManageScore = () => {
         headerDataScore,
         12
       );
-
-      console.log(dataMain);
       setDataPreview(dataMain);
     },
     [dataPreview]
   );
+
+  async function exportToExcel(dataSelect) {
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Students");
+
+    worksheet.columns = [
+      { header: "Msv", key: "Msv", width: 10 },
+      { header: "FullName", key: "FullName", width: 20 },
+      { header: "Giới tính", key: "Gender", width: 10 },
+      { header: "Điểm chuyên cần", key: "Frequent", width: 10 },
+      { header: "Điểm giữa kỳ", key: "MidtermScore", width: 10 },
+      { header: "Điểm cuối kỳ", key: "FinalExamScore", width: 10 },
+      { header: "Điểm trung bình", key: "AverageScore", width: 10 },
+      { header: "Điểm số", key: "Scores", width: 10 },
+      { header: "Điểm chữ", key: "LetterGrades", width: 10 },
+      { header: "mô đun điểm", key: "scoreModule", width: 10 },
+      { header: "ghi chú", key: "Note", width: 10 },
+    ];
+
+    dataSelect?.forEach((student) => {
+      worksheet.addRow(student);
+    });
+
+    let buffer = await workbook.xlsx.writeBuffer();
+    let blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "diemhoctap.xlsx");
+  }
+
+  const handleExportClick = async () => {
+    if (dataSelect !== null && dataSelect.length > 0) {
+      await exportToExcel(dataSelect);
+    } else {
+      toast.error("Không có dữ liệu để xuất file");
+    }
+  };
 
   // api select option khóa
   useEffect(() => {
@@ -170,7 +213,7 @@ const ManageScore = () => {
         selectedSchoolYearId,
         selectedClassId,
         selectedFacultyId,
-        courseId,
+        courceId,
         selectedSemesterValue
       );
       setDataSelect(course?.data);
@@ -180,7 +223,7 @@ const ManageScore = () => {
     selectedSchoolYearId,
     selectedFacultyId,
     selectedClassId,
-    courseId,
+    courceId,
     selectedSemesterValue,
   
   ]);
@@ -192,6 +235,7 @@ const ManageScore = () => {
         <Button
           style={"py-[7px] text-white rounded-md "}
           icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
         >
           Export
         </Button>
@@ -267,6 +311,13 @@ const ManageScore = () => {
               }
               onChange={(event) => {
                 setSelectedFacultyId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedFaculty.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedFacultyValue(selectedItem.FacultyName);
+                }
               }}
             />
 
@@ -282,9 +333,17 @@ const ManageScore = () => {
               }
               onChange={(event) => {
                 setSelectedClassId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = selectedClass.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedClassValue(selectedItem.NameClass);
+                }
               }}
             />
           </div>
+
           <div className="flex items-center gap-3 ">
             <SelectOption
               style={`w-full`}
@@ -312,7 +371,14 @@ const ManageScore = () => {
                   : []
               }
               onChange={(event) => {
-                setCourseId(event.target.value);
+                setCourceId(event.target.value);
+                const selectedId = Number(event.target.value);
+                const selectedItem = courses.find(
+                  (item) => item.ID === selectedId
+                );
+                if (selectedItem) {
+                  setSelectedCourseValue(selectedItem.NameCourse);
+                }
               }}
             />
 

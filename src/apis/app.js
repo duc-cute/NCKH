@@ -139,7 +139,7 @@ export const apiSelectInfoCourse = (IDFaculty, key, Semester) =>
 // import chương trình đào tạo
 export const apiImportProgram= (data) =>
   axios({
-    url: "/v1/faculty/import-studyprograms", 
+    url: "/v1/studyprogram/import-studyprograms", 
     method: "post",
     data,
 });

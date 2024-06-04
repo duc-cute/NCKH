@@ -19,6 +19,7 @@ import {
   apiAllFaculties,
   apiSelectInfoClass,
   apiImportStudent,
+  apiDataStudent,
 } from "../../apis";
 import { useForm } from "react-hook-form";
 import {
@@ -33,72 +34,8 @@ import { readFileDataImport } from "../../ultils/helper";
 
 import { toast } from "react-toastify";
 
-const data = [
-  {
-    key: "1",
-    name: "Nguyễn Văn Đức",
-    msv: 20211841,
-    email: "20211841@eaut.edu.vn",
-    statusFee: 0,
-
-    phone: "0888804085",
-    class: "DCCNTT12.10.7",
-    notPass: "1",
-    sex: "male",
-    country: "Hà Nội",
-    gpa: "3.2",
-    dateofbirth: "15-01-2003",
-    level: 1,
-  },
-  {
-    key: "2",
-    name: "Nguyễn Hải",
-    msv: 20211844,
-    email: "20211842@eaut.edu.vn",
-    statusFee: 2,
-
-    phone: "0888804085",
-    class: "DCCNTT12.10.7",
-    notPass: "0",
-    sex: "female",
-    country: "Hà Nội",
-    gpa: "3.2",
-    dateofbirth: "15-01-2003",
-    level: 2,
-  },
-  {
-    key: "3",
-    name: "Nguyễn Thị Thu Hiền",
-    msv: 20211873,
-    email: "20211843@eaut.edu.vn",
-    statusFee: 1,
-
-    phone: "0888804085",
-    class: "DCCNTT12.10.7",
-    notPass: "0",
-    sex: "male",
-    country: "Hà Nội",
-    gpa: "3.2",
-    dateofbirth: "15-01-2003",
-    level: 2,
-  },
-  {
-    key: "4",
-    name: "Nguyễn Thị Hà",
-    msv: 20211848,
-    email: "20211844@eaut.edu.vn",
-    statusFee: 0,
-
-    phone: "0888804085",
-    class: "DCCNTT12.10.7",
-    notPass: "1",
-    sex: "female",
-    country: "Hà Nội",
-    gpa: "3.2",
-    dateofbirth: "15-01-2003",
-    level: 4,
-  },
-];
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const ManageStudent = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -107,6 +44,7 @@ const ManageStudent = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [selectedClassId, setSelectedClassId] = useState();
+  const [studentArray, setStudentArray] = useState([]);
 
   // state modal
   const [showModal, setShowModal] = useState(false);
@@ -129,49 +67,15 @@ const ManageStudent = () => {
   } = useForm();
 
   const columns = [
-    {
-      title: (
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            className="w-4 h-4  bg-gray-100 border-gray-300 rounded   "
-          />
-        </div>
-      ),
-      key: "msv",
-      render: (msv) => (
-        <input
-          value={msv}
-          type="checkbox"
-          className="w-4 h-4  bg-gray-100 border-gray-300 rounded "
-        />
-      ),
-    },
-
-    {
-      title: "Mã sinh viên",
-      key: "msv",
-      sort: true,
-      render: (msv, item) => (
-        <span className={` ${item?.level ? levelColor[item.level - 1] : ""}`}>
-          {msv}
-        </span>
-      ),
-    },
-    { title: "Họ tên", key: "name" },
-    { title: "Ngày sinh", key: "class" },
-    { title: "Giới tính", key: "email" },
-    { title: "Dân tộc", key: "phone" },
-    { title: "Quê quán", key: "class" },
-    { title: "Nơi thường trú", key: "email" },
-    { title: "Email", key: "phone" },
-    { title: "Số điện thoại", key: "class" },
-    { title: "Người giám hộ 1", key: "email" },
-    { title: "Quan hệ GH 1", key: "phone" },
-    { title: "SDT GH 1", key: "phone" },
-    { title: "Người giám hộ 2", key: "email" },
-    { title: "Quan hệ GH 2", key: "phone" },
-    { title: "SDT GH 2", key: "phone" },
+    { title: "msv", key: "Msv" },
+    { title: "Họ tên", key: "FullName" },
+    { title: "Ngày sinh", key: "DateOfBirth" },
+    { title: "Giới tính", key: "Gender" },
+    { title: "Khóa", key: "Key" },
+    { title: "status", key: "status" },
+    { title: "Số điện thoại", key: "PhoneNumber" },
+    { title: "Số tín chỉ nợ", key: "STC_NO" },
+    { title: "Nợ học phần", key: "NO_HP" },
   ];
 
   const columnsPreview = [
@@ -375,6 +279,135 @@ const ManageStudent = () => {
     fetchData();
   }, [selectedFacultyId, selectedSchoolYearId]);
 
+  // api data student
+  useEffect(() => {
+    const fetchData = async () => {
+      const dataStudents = await apiDataStudent(
+        selectedSchoolYearId,
+        selectedFacultyId,
+        selectedClassId
+      );
+
+      if (dataStudents?.data && dataStudents.data.length > 0) {
+        setStudentArray(dataStudents.data.map((item) => item.student));
+      }
+    };
+
+    fetchData();
+  }, [selectedSchoolYearId, selectedFacultyId, selectedClassId]);
+
+  async function exportToExcel(studentArray) {
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Students");
+
+    worksheet.columns = [
+      { header: "Msv", key: "Msv", width: 10 },
+      { header: "FullName", key: "FullName", width: 20 },
+      { header: "Email", key: "Email", width: 10 },
+      { header: "Ngày sinh", key: "DateOfBirth", width: 10 },
+      { header: "Khóa", key: "Key", width: 10 },
+      { header: "Trạng thái", key: "status", width: 10 },
+      { header: "Số điện thoại", key: "PhoneNumber", width: 10 },
+      { header: "Số tín chỉ nợ", key: "STC_NO", width: 10 },
+      { header: "Nợ học phần", key: "NO_HP", width: 10 },
+    ];
+
+    studentArray.forEach((student) => {
+      worksheet.addRow(student);
+    });
+
+    let buffer = await workbook.xlsx.writeBuffer();
+    let blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Students.xlsx");
+  }
+
+  const handleExportClick = () => {
+    if (studentArray && studentArray.length > 0) {
+      exportToExcel(studentArray);
+    } else {
+      toast.error("Bạn chưa có dữ liệu để xuất");
+    }
+  };
+
+  const groupButton = [
+    {
+      id: 1,
+      button: (
+        <SelectLib
+          options={warningLevel}
+          register={register}
+          id={"listStudent"}
+          setValue={setValue}
+          placeholder={
+            <span className="text-sm text-[#808080] font-normal">
+              Chọn mức cảnh báo
+            </span>
+          }
+          isClearable={true}
+        />
+      ),
+    },
+    {
+      id: 2,
+      button: (
+        <SelectLib
+          options={listStudentWarning}
+          register={register}
+          id={"listStudent"}
+          setValue={setValue}
+          placeholder={
+            <span className="text-sm text-[#808080] font-normal">
+              Chọn Danh Sách Sinh Viên
+            </span>
+          }
+          isClearable={true}
+        />
+      ),
+    },
+    {
+      id: 3,
+      button: (
+        <Button
+          style={"py-[7px] text-white rounded-md "}
+          icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
+        >
+          Export
+        </Button>
+      ),
+    },
+    {
+      id: 4,
+      button: (
+        <Button
+          style={"py-[7px] text-white rounded-md "}
+          icon={<CgImport />}
+          handleOnclick={() => {
+            setShowModal(true);
+          }}
+        >
+          Import
+        </Button>
+      ),
+    },
+
+    {
+      id: 5,
+      button: (
+        <Button
+          dropdown={true}
+          listWarning={listStatusWarning}
+          style={"py-[7px] text-white rounded-md "}
+          icon={<AiOutlineSend />}
+        >
+          Gửi cảnh báo
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div className=" h-[1000px]">
       <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
@@ -447,7 +480,7 @@ const ManageStudent = () => {
         <Table
           title="Danh sách sinh viên"
           columns={columns}
-          data={data}
+          data={studentArray}
           groupButton={groupButton}
         />
       </div>
