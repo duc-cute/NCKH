@@ -13,8 +13,9 @@ import icons from "../../ultils/icons";
 import {
   apiAllKey,
   apiAllFaculties,
-  apiSelectInfoSemester,
   apiImportProgram,
+  apiBlockProgram,
+  apiGetDataProgram,
 } from "../../apis";
 
 import { useForm } from "react-hook-form";
@@ -31,7 +32,9 @@ const ManageCourse = () => {
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
   const [inputCourseCode, setInputCourseCode] = useState();
-  const [selectedSemester, setSelectedSemester] = useState();
+  const [blockProgram, setBlockProgram] = useState();
+  const [blockProgramId, setBlockProgramId] = useState();
+  const [dataProgram, setDataProgram] = useState();
 
   // state modal
   const [showModal, setShowModal] = useState(false);
@@ -121,59 +124,59 @@ const ManageCourse = () => {
     { title: "stt", key: "STT", sort: true },
     {
       title: "Mã học phần",
-      key: "MHP",
+      key: "CourseCode",
       sort: true,
     },
-    { title: "Tên học phần", key: "TENHP", sort: true },
-    { title: "Số tín chỉ", key: "STC" },
-    { title: "Số giờ tự học", key: "GIO_TH" },
-    { title: "Mã học phần tiên quyết", key: "MHPKQ" },
-    { title: "Học kỳ", key: "HK" },
-    { title: "LT, BT", key: "HK" },
-    { title: "TH", key: "HK" },
-    { title: "ĐAMH/ BTL", key: "HK" },
-    { title: "ĐAMH/ BTL", key: "HK" },
-    { title: "KLTN/ ĐATN/ TT", key: "HK" },
+    { title: "Tên học phần", key: "NameCourse", sort: true },
+    { title: "Số tín chỉ", key: "NumberOfCredits" },
+    { title: "Số giờ tự học", key: "SelfLearning" },
+    // { title: "Mã học phần tiên quyết", key: "MHPKQ" },
+    { title: "Học kỳ", key: "Semester" },
+    { title: "LT, BT", key: "ExerciseTheory" },
+    // { title: "Ngày thi kết thúc môn", key: "FinalExamDate" },
+    { title: "ĐAMH/ BTL", key: "SpecializedProjects" },
+    { title: "KLTN/ ĐATN/ TT", key: "BigExercise" },
+    { title: "Mô tả", key: "Describe" },
   ];
 
-  const data = [
-    {
-      id: 1,
-      courseCode: "IT3213",
-      courseName: "Kiến trúc máy tính",
-      numberOfCredits: 2,
-      selfStudy: "45",
-      prerequisiteCourse: "IT1208",
-      semester: "2",
-    },
-    {
-      id: 2,
-      courseCode: "IT3214",
-      courseName: "An toàn bảo mật thông tin",
-      numberOfCredits: 3,
-      selfStudy: "75",
-      prerequisiteCourse: "IT1208",
-      semester: "5",
-    },
-    {
-      id: 3,
-      courseCode: "IT3215",
-      courseName: "Quản trị hệ thống Windows Server1",
-      numberOfCredits: 2,
-      selfStudy: "45",
-      prerequisiteCourse: "IT1208",
-      semester: "3",
-    },
-    {
-      id: 4,
-      courseCode: "IT3216",
-      courseName: "Hệ quản trị CSDL Oracle",
-      numberOfCredits: 2,
-      selfStudy: "45",
-      prerequisiteCourse: "IT1208",
-      semester: "2",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     courseCode: "IT3213",
+  //     courseName: "Kiến trúc máy tính",
+  //     numberOfCredits: 2,
+  //     selfStudy: "45",
+  //     prerequisiteCourse: "IT1208",
+  //     semester: "2",
+  //   },
+  //   {
+  //     id: 2,
+  //     courseCode: "IT3214",
+  //     courseName: "An toàn bảo mật thông tin",
+  //     numberOfCredits: 3,
+  //     selfStudy: "75",
+  //     prerequisiteCourse: "IT1208",
+  //     semester: "5",
+  //   },
+  //   {
+  //     id: 3,
+  //     courseCode: "IT3215",
+  //     courseName: "Quản trị hệ thống Windows Server1",
+  //     numberOfCredits: 2,
+  //     selfStudy: "45",
+  //     prerequisiteCourse: "IT1208",
+  //     semester: "3",
+  //   },
+  //   {
+  //     id: 4,
+  //     courseCode: "IT3216",
+  //     courseName: "Hệ quản trị CSDL Oracle",
+  //     numberOfCredits: 2,
+  //     selfStudy: "45",
+  //     prerequisiteCourse: "IT1208",
+  //     semester: "2",
+  //   },
+  // ];
 
   // api select option khóa
   useEffect(() => {
@@ -195,14 +198,26 @@ const ManageCourse = () => {
     fetchData();
   }, [selectedSchoolYearId]);
 
-  // api select option kỳ
+  // api select option khối đào tạo
   useEffect(() => {
     const fetchData = async () => {
-      const semester = await apiSelectInfoSemester(selectedSchoolYearId);
-      setSelectedSemester(semester?.data.listKy);
+      const data = await apiBlockProgram(
+        selectedFacultyId,
+        selectedSchoolYearId
+      );
+      setBlockProgram(data?.data);
     };
     fetchData();
-  }, [selectedSchoolYearId]);
+  }, [selectedSchoolYearId, selectedFacultyId]);
+
+  // api select tất cả dữ liệu chương trình đào tạo
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await apiGetDataProgram(blockProgramId);
+      setDataProgram(data?.data);
+    };
+    fetchData();
+  }, [selectedSchoolYearId, selectedFacultyId, blockProgramId]);
 
   const {
     register,
@@ -286,12 +301,15 @@ const ManageCourse = () => {
               style={`w-full`}
               name={"Chọn khối đào tạo"}
               data={
-                selectedSemester
-                  ? selectedSemester.map((item) => {
-                      return { id: item.ID, name: item };
+                blockProgram
+                  ? blockProgram.map((item) => {
+                      return { id: item.ID, name: item.NameBlockKnowledge };
                     })
                   : []
               }
+              onChange={(event) => {
+                setBlockProgramId(event.target.value);
+              }}
             />
 
             <InputField
@@ -317,7 +335,7 @@ const ManageCourse = () => {
           <Table
             title="Danh sách khung chương trình đào tạo"
             columns={columns}
-            data={data}
+            data={dataProgram}
             groupButton={groupButton}
           />
         </div>

@@ -46,4 +46,10 @@ export const apiDataProfile = () =>
       method: "put",
       data: data
   });
-  
+
+// lấy thông tin hiển thị cảnh báo
+export const apiWarningStudent = () =>
+  axios({
+    url: `v1/student/warning`,
+    method: "get",
+  });

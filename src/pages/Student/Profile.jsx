@@ -20,13 +20,17 @@ const {
   FaUserFriends,
 } = icons;
 
-import { apiDataProfile, apiUpdateAvatar } from "../../apis";
+import { apiDataProfile, apiUpdateAvatar, apiWarningStudent } from "../../apis";
 
 const Profile = () => {
   const { current } = useSelector((state) => state.user);
   const { showModal } = useSelector((state) => state.app);
 
   const { dataProfile, setDataProfile } = useState();
+  const [updataAvatar, setDataAvatar] = useState();
+
+  const { dataWarning, setDataWarning } = useState();
+
   const [show, setShow] = useState(true);
   const dispatch = useDispatch();
 
@@ -40,7 +44,13 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  console.log("dataProfile: ", dataProfile);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await apiWarningStudent();
+      setDataWarning(data);
+    };
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   dispatch(showModal({

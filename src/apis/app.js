@@ -18,6 +18,20 @@ export const apiClassById = (url, id) =>
     method: "get",
   });
 
+// api select option khối đào tạo
+export const apiBlockProgram = (IDFaculty, Key) =>
+    axios({
+     url: `v1/studyprogram/select-blockknowledge-by-key-faculty?IDFaculty=${IDFaculty}&Key=${Key}`,
+     method: "get",
+   });
+
+// api lấy dữ liệu chương trình đào tạo
+export const apiGetDataProgram = (IDBlockknowledge) =>
+  axios({
+   url: `v1/studyprogram/select-course-by-key-faculty-blockknowledge?IDBlockknowledge=${IDBlockknowledge}`,
+   method: "get",
+ });
+
 // lấy điểm học tập
 export const apiDataPoint = (Key, IDClass, IDFaculty, IDCourse, Semester) =>
   axios({
