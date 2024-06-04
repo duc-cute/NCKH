@@ -36,6 +36,11 @@ import { toast } from "react-toastify";
 
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import {
+  apiGetAllStudentWarning,
+  apiGetAllWarning,
+  apiGetStudentWarning,
+} from "../../apis/warning";
 
 const ManageStudent = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -51,10 +56,9 @@ const ManageStudent = () => {
   const [fileName, setFileName] = useState(null);
   const [dataPreview, setDataPreview] = useState([]);
   const [dataImport, setDataImport] = useState({});
-
   const [inputMsv, setInputMsv] = useState("");
-
-  const [chooseWarning, setChooseWarning] = useState(null);
+  const [listWarning, setListWarning] = useState([]);
+  const [optionSelect, setOptionSelect] = useState(null);
 
   const {
     register,
@@ -97,84 +101,45 @@ const ManageStudent = () => {
     { title: "Quan hệ GH 2", key: "NguoiThan2.QuanHe" },
     { title: "SDT GH 2", key: "NguoiThan2.SDT" },
   ];
+  console.log("ư", watch("warwning"));
 
-  const groupButton = [
-    {
-      id: 1,
-      button: (
-        <SelectLib
-          options={warningLevel}
-          register={register}
-          id={"listStudent"}
-          setValue={setValue}
-          placeholder={
-            <span className="text-sm text-[#808080] font-normal">
-              Chọn mức cảnh báo
-            </span>
-          }
-          isClearable={true}
-          errors={errors}
-        />
-      ),
-    },
-    {
-      id: 2,
-      button: (
-        <SelectLib
-          options={listStudentWarning}
-          register={register}
-          id={"listStudent"}
-          setValue={setValue}
-          placeholder={
-            <span className="text-sm text-[#808080] font-normal">
-              Chọn Danh Sách Sinh Viên
-            </span>
-          }
-          isClearable={true}
-          errors={errors}
-        />
-      ),
-    },
-    {
-      id: 3,
-      button: (
-        <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<AiOutlineCloudUpload />}
-        >
-          Export
-        </Button>
-      ),
-    },
-    {
-      id: 4,
-      button: (
-        <Button
-          style={"py-[7px] text-white rounded-md "}
-          icon={<CgImport />}
-          handleOnclick={() => {
-            setShowModal(true);
-          }}
-        >
-          Import
-        </Button>
-      ),
-    },
+  const fetchDataAfterWarning = async (id) => {
+    let res;
+    if (id) {
+      if (id === "all") res = await apiGetAllStudentWarning();
+      else res = await apiGetStudentWarning(id);
 
-    {
-      id: 5,
-      button: (
-        <Button
-          dropdown={true}
-          listWarning={listStatusWarning}
-          style={"py-[7px] text-white rounded-md "}
-          icon={<AiOutlineSend />}
-        >
-          Gửi cảnh báo
-        </Button>
-      ),
-    },
-  ];
+      if (res?.status === 200) {
+        setStudentArray([...res?.data]);
+      }
+    } else {
+      setStudentArray([]);
+    }
+
+    console.log("res", res);
+  };
+  console.log("res", studentArray);
+
+  useEffect(() => {
+    fetchDataAfterWarning(watch("warwning"));
+  }, [watch("warwning")]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await apiGetAllWarning();
+      if (res?.status === 200) {
+        const listWarningFormat = res?.data?.map((item) => ({
+          id: item?.ID,
+          label: item?.NameWarning,
+        }));
+        setListWarning([
+          ...listWarningFormat,
+          { id: "all", label: "Tất cả sinh viên bị cảnh báo" },
+        ]);
+      }
+    };
+    fetchData();
+  }, []);
 
   // handle import
   const handleImportButtonClick = useCallback(async () => {
@@ -331,82 +296,70 @@ const ManageStudent = () => {
     }
   };
 
-  // const groupButton = [
-  //   {
-  //     id: 1,
-  //     button: (
-  //       <SelectLib
-  //         options={warningLevel}
-  //         register={register}
-  //         id={"listStudent"}
-  //         setValue={setValue}
-  //         placeholder={
-  //           <span className="text-sm text-[#808080] font-normal">
-  //             Chọn mức cảnh báo
-  //           </span>
-  //         }
-  //         isClearable={true}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     id: 2,
-  //     button: (
-  //       <SelectLib
-  //         options={listStudentWarning}
-  //         register={register}
-  //         id={"listStudent"}
-  //         setValue={setValue}
-  //         placeholder={
-  //           <span className="text-sm text-[#808080] font-normal">
-  //             Chọn Danh Sách Sinh Viên
-  //           </span>
-  //         }
-  //         isClearable={true}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     id: 3,
-  //     button: (
-  //       <Button
-  //         style={"py-[7px] text-white rounded-md "}
-  //         icon={<AiOutlineCloudUpload />}
-  //         handleOnclick={handleExportClick}
-  //       >
-  //         Export
-  //       </Button>
-  //     ),
-  //   },
-  //   {
-  //     id: 4,
-  //     button: (
-  //       <Button
-  //         style={"py-[7px] text-white rounded-md "}
-  //         icon={<CgImport />}
-  //         handleOnclick={() => {
-  //           setShowModal(true);
-  //         }}
-  //       >
-  //         Import
-  //       </Button>
-  //     ),
-  //   },
-
-  //   {
-  //     id: 5,
-  //     button: (
-  //       <Button
-  //         dropdown={true}
-  //         listWarning={listStatusWarning}
-  //         style={"py-[7px] text-white rounded-md "}
-  //         icon={<AiOutlineSend />}
-  //       >
-  //         Gửi cảnh báo
-  //       </Button>
-  //     ),
-  //   },
-  // ];
+  const groupButton = [
+    {
+      id: 1,
+      button: (
+        <SelectLib
+          options={listWarning}
+          register={register}
+          id={"warwning"}
+          setValue={setValue}
+          placeholder={
+            <span className="text-sm text-[#808080] font-normal">
+              Chọn danh sách sinh viên đang bị cảnh báo
+            </span>
+          }
+          isClearable={true}
+          errors={errors}
+        />
+      ),
+    },
+    // {
+    //   id: 2,
+    //   button: (
+    //     <SelectLib
+    //       options={listStudentWarning}
+    //       register={register}
+    //       id={"listStudent"}
+    //       setValue={setValue}
+    //       placeholder={
+    //         <span className="text-sm text-[#808080] font-normal">
+    //           Chọn Danh Sách Sinh Viên
+    //         </span>
+    //       }
+    //       isClearable={true}
+    //       errors={errors}
+    //     />
+    //   ),
+    // },
+    {
+      id: 3,
+      button: (
+        <Button
+          style={"py-[7px] text-white rounded-md "}
+          icon={<AiOutlineCloudUpload />}
+          handleOnclick={handleExportClick}
+        >
+          Export
+        </Button>
+      ),
+    },
+    {
+      id: 4,
+      button: (
+        <Button
+          style={"py-[7px] text-white rounded-md "}
+          icon={<CgImport />}
+          handleOnclick={() => {
+            setShowModal(true);
+          }}
+        >
+          Import
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className=" h-[1000px]">
@@ -480,7 +433,7 @@ const ManageStudent = () => {
         <Table
           title="Danh sách sinh viên"
           columns={columns}
-          data={studentArray}
+          data={studentArray || []}
           groupButton={groupButton}
         />
       </div>

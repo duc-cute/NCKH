@@ -1,34 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Drawer,
-  InputField,
-  SelectOption,
   Table,
-  Tag,
-  InputForm,
-  SelectLib,
-  // CategoryDepartment,
-  // CategorySchoolYear,
-  // CategorySubject,
-  Modal,
 } from "../../../components";
 import swal from "sweetalert2";
-
 import icons from "../../../ultils/icons";
-import {
-  apiAllFaculties,
-  apiClassById,
-  apiDataPoint,
-  apiImportScore,
-} from "../../../apis";
-
 import { Controller, useForm } from "react-hook-form";
-import {
-  levelColor,
-  listStatusWarning,
-  listStudentWarning,
-} from "../../../ultils/constant";
 import { useNavigate } from "react-router-dom";
 import path from "../../../ultils/path";
 import { apiDeleteWarning, apiGetAllWarning, apiSendWarning } from "../../../apis/warning";
@@ -37,8 +14,6 @@ import { toast } from "react-toastify";
 const {
   AiOutlineCloudUpload,
   AiOutlineSend,
-  CgImport,
-  TiPlus,
   FiTrash2,
   LuPencilLine,
 } = icons;
@@ -221,3 +196,4 @@ const StudentWarningIndex = () => {
 };
 
 export default StudentWarningIndex;
+

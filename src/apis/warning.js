@@ -35,4 +35,14 @@ export const apiSendWarning = (data) =>
       method: "post",
       data,
     });
-  
+export const apiGetStudentWarning = (id) =>
+      axios({
+        url: `${base_url}/select-all-student-by-warning/${id}`,
+        method: "get",
+      });
+export const apiGetAllStudentWarning = () =>
+      axios({
+          url: `${base_url}//select-all-student-by-warning`,
+          method: "get",
+      });
+      

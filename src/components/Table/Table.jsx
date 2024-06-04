@@ -27,12 +27,12 @@ const Table = ({
       if (a[key] > b[key]) return 1;
       return 0;
     });
-    setDisplayData(sortData.slice(offset, offset + limits));
+    setDisplayData(sortData?.slice(offset, offset + limits));
   };
 
   useEffect(() => {
     if (data) {
-      setDisplayData(data.slice(offset, offset + limits));
+      setDisplayData(data?.slice(offset, offset + limits));
     }
   }, [params, data]);
 
