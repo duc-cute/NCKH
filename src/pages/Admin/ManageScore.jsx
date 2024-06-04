@@ -44,6 +44,8 @@ const ManageScore = () => {
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
 
+  console.log("dataSelect: ", dataSelect);
+
   // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
@@ -80,7 +82,7 @@ const ManageScore = () => {
       Class: selectedClassValue,
       TotalHours: +dataPreview.dataDescription[4],
       NumberOfCredits: +dataPreview.dataDescription[5],
-      FinalExamDate: "2022-02-01",
+      FinalExamDate: dataPreview.dataDescription[6].slice(0, -3),
       DataStudents: DataStudents,
       DataPoint: DataPoint.map((point) => ({
         ...point,
@@ -88,7 +90,8 @@ const ManageScore = () => {
         MidtermScore: parseFloat(point.MidtermScore),
         FinalExamScore: parseFloat(point.FinalExamScore),
         AverageScore: parseFloat(point.AverageScore),
-        Scores: parseFloat(point.Scores),
+        LetterGrades: point.Scores,
+        Scores: parseFloat(parseFloat(point.LetterGrades).toFixed(2)),
       })),
     };
 
@@ -108,6 +111,7 @@ const ManageScore = () => {
         headerDataScore,
         12
       );
+
       setDataPreview(dataMain);
     },
     [dataPreview]
@@ -216,7 +220,22 @@ const ManageScore = () => {
         courceId,
         selectedSemesterValue
       );
-      setDataSelect(course?.data);
+
+      const processedData = course?.data.map((item) => {
+        const newItem = {};
+        for (const key in item) {
+          if (item[key] === "" || item[key] === null || item[key] < 0) {
+            newItem[key] = 0;
+          } else if (typeof item[key] === "number") {
+            newItem[key] = parseFloat(item[key].toFixed(2));
+          } else {
+            newItem[key] = item[key];
+          }
+        }
+        return newItem;
+      });
+
+      setDataSelect(processedData);
     };
     fetchData();
   }, [
@@ -269,7 +288,7 @@ const ManageScore = () => {
         selectedSchoolYearId,
         selectedClassId,
         selectedFacultyId,
-        courseId,
+        courceId,
         selectedSemesterValue
       );
       setDataSelect(

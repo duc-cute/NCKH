@@ -314,7 +314,7 @@ const ManageAttendance = () => {
       ),
     },
   ];
-  let debounceSearch = useDebounce(inputMsv,500)
+  let debounceSearch = useDebounce(inputMsv, 500);
   useEffect(() => {
     const fetchData = async () => {
       const res = await apiDataAttendance(
@@ -367,14 +367,15 @@ const ManageAttendance = () => {
         );
 
         setDataSelect({
-          dataStudents: dataFormat.filter((item) => item?.Msv?.includes(debounceSearch)),
+          dataStudents: dataFormat.filter((item) =>
+            item?.Msv?.includes(debounceSearch)
+          ),
         });
       }
     };
-   
-    fetchData()
 
-  },[debounceSearch])
+    fetchData();
+  }, [debounceSearch]);
 
   return (
     <>
