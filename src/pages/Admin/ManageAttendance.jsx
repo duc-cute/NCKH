@@ -77,13 +77,15 @@ const ManageAttendance = () => {
             const { Msv, FullName, DateOfBirth, Comment, Attendance } = data;
             let End = Attendance[Attendance.length - 1].Day;
             let Start = Attendance[0].Day;
-            let totalPercentDateStudy = Attendance.reduce(
-              (acc, curr) => {
-                if (curr.AttendanceStatus !== "") acc++;
-                return acc;
-              },
-              [0]
-            );
+            let totalSessions = Attendance.length;
+            let attendedSessions = Attendance.reduce((acc, curr) => {
+              if (curr.AttendanceStatus !== "") acc++;
+              return acc;
+            }, 0);
+            let totalPercentDateStudy = Attendance.reduce((acc, curr) => {
+              if (curr.AttendanceStatus === "3") acc++;
+              return acc;
+            }, 0);
 
             return {
               Msv,
@@ -92,7 +94,9 @@ const ManageAttendance = () => {
               Comment,
               End,
               Start,
-              totalPercentDateStudy: [totalPercentDateStudy, Attendance.length],
+              totalSessions,
+              attendedSessions,
+              totalPercentDateStudy,
             };
           });
           setDataPreview(dataFormat);
@@ -218,12 +222,16 @@ const ManageAttendance = () => {
               FullName: curr.FullName,
               DateOfBirth: curr.DateOfBirth,
               Comment: curr.Comment,
-              totalSessions: 0,
+              totalSessions: curr.NumberOfCredits * 5,
               attendedSessions: 0,
+              totalPercentDateStudy: 0,
             };
           }
 
-          acc[curr.Msv].totalSessions++;
+          if (curr.AttendanceStatus === "3") {
+            acc[curr.Msv].totalPercentDateStudy++;
+          }
+
           if (curr.AttendanceStatus !== "") {
             acc[curr.Msv].attendedSessions++;
           }
@@ -247,7 +255,6 @@ const ManageAttendance = () => {
                   .add(1, "months")
                   .format("DD/MM/YYYY")
               : moment().add(1, "months").format("DD/MM/YYYY"),
-            totalPercentDateStudy: `${student.attendedSessions}${3}`,
           })
         );
 
