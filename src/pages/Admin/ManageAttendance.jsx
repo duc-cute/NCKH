@@ -240,22 +240,17 @@ const ManageAttendance = () => {
           return acc;
         }, {});
 
+        var fakeStart = "17/08/2023";
+        var fakeEnd = "06/10/2023";
+
         const dataFormat = Object.values(attendanceByStudent).map(
           (student) => ({
             ...student,
             DateOfBirth: student.DateOfBirth
               ? moment(student.DateOfBirth).format("DD/MM/YYYY")
               : moment().format("DD/MM/YYYY"),
-            Start: student.DateOfBirth
-              ? moment(student.DateOfBirth)
-                  .subtract(1, "months")
-                  .format("DD/MM/YYYY")
-              : moment().subtract(1, "months").format("DD/MM/YYYY"),
-            End: student.DateOfBirth
-              ? moment(student.DateOfBirth)
-                  .add(1, "months")
-                  .format("DD/MM/YYYY")
-              : moment().add(1, "months").format("DD/MM/YYYY"),
+            Start: student.DateOfBirth ? fakeStart : fakeStart,
+            End: student.DateOfBirth ? fakeEnd : fakeEnd,
           })
         );
 
