@@ -31,7 +31,7 @@ import {
 } from "../../../ultils/constant";
 import { useNavigate } from "react-router-dom";
 import path from "../../../ultils/path";
-import { apiDeleteWarning, apiGetAllWarning } from "../../../apis/warning";
+import { apiDeleteWarning, apiGetAllWarning, apiSendWarning } from "../../../apis/warning";
 import { toast } from "react-toastify";
 
 const {
@@ -90,10 +90,12 @@ const StudentWarningIndex = () => {
       });
   };
 
-  const handleSendWarning = (data) => {
+  const handleSendWarning =async (data) => {
     let selectedIds = Object.keys(data.checkboxes);
-    let arr = selectedIds.filter((key) => data.checkboxes[key]);
-    console.log("🚀 ~ handleSendWarning ~ arr:", arr);
+    let list_id_warning = selectedIds.filter((key) => data.checkboxes[key]);
+    const res = await apiSendWarning({list_id_warning:list_id_warning})
+    if(res?.status === "200") toast.success(res?.message)
+    else toast.error("Error sending warning !!")
   };
 
   const columns = [

@@ -29,3 +29,10 @@ export const apiUpdateWarning = (data) =>
     method: "put",
     data,
   });
+export const apiSendWarning = (data) =>
+    axios({
+      url: `${base_url}/send-all-student-by-warning`,
+      method: "post",
+      data,
+    });
+  
