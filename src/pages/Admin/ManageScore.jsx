@@ -17,6 +17,7 @@ import {
 import {
   apiAllKey,
   apiAllFaculties,
+  apiAllFacultieGetName,
   apiSelectInfoClass,
   apiDataPoint,
   apiImportScore,
@@ -166,8 +167,7 @@ const ManageScore = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/common/select-all-faculty";
-      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      const facultie = await apiAllFacultieGetName();
       setSelectedFaculty(facultie?.data);
     };
     fetchData();

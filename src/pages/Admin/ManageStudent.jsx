@@ -20,6 +20,7 @@ import {
   apiSelectInfoClass,
   apiImportStudent,
   apiDataStudent,
+  apiAllFacultieGetName,
 } from "../../apis";
 import { useForm } from "react-hook-form";
 import {
@@ -115,10 +116,7 @@ const ManageStudent = () => {
     } else {
       setStudentArray([]);
     }
-
-    console.log("res", res);
   };
-  console.log("res", studentArray);
 
   useEffect(() => {
     fetchDataAfterWarning(watch("warwning"));
@@ -223,8 +221,7 @@ const ManageStudent = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/common/select-all-faculty";
-      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      const facultie = await apiAllFacultieGetName();
       setSelectedFaculty(facultie?.data);
     };
     fetchData();
