@@ -21,6 +21,8 @@ import {
   apiImportStudent,
   apiDataStudent,
 } from "../../apis";
+import useDebounce from "../../hooks/useDebounce";
+
 import { useForm } from "react-hook-form";
 import {
   levelColor,
@@ -58,7 +60,7 @@ const ManageStudent = () => {
   const [dataImport, setDataImport] = useState({});
   const [inputMsv, setInputMsv] = useState("");
   const [listWarning, setListWarning] = useState([]);
-  const [optionSelect, setOptionSelect] = useState(null);
+  let debounceSearch = useDebounce(inputMsv, 500);
 
   const {
     register,
@@ -108,12 +110,14 @@ const ManageStudent = () => {
       else res = await apiGetStudentWarning(id);
       if (res?.status === 200) {
         let data = res?.data?.map((item) => {
-          const STC_NO = item?.STC_NO.reduce((acc, curr) => {
-            return acc + curr?.NumberOfCredits;
-          }, 0);
-          console.log("STC_NO", STC_NO);
+          if (item?.STC_NO?.length > 0) {
+            const STC_NO = item?.STC_NO?.reduce((acc, curr) => {
+              return acc + curr?.NumberOfCredits;
+            }, 0);
+            console.log("STC_NO", STC_NO);
 
-          return { ...item, STC_NO };
+            return { ...item, STC_NO };
+          }
         });
 
         setStudentArray([...data]);
@@ -364,6 +368,25 @@ const ManageStudent = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const dataStudents = await apiDataStudent(
+        selectedSchoolYearId,
+        selectedFacultyId,
+        selectedClassId
+      );
+
+      if (dataStudents?.data && dataStudents?.data?.length > 0) {
+        setStudentArray(
+          dataStudents.data
+            .map((item) => item.student)
+            ?.filter((item) => item?.Msv?.includes(debounceSearch))
+        );
+      }
+    };
+
+    fetchData();
+  }, [debounceSearch]);
   return (
     <div className=" h-[1000px]">
       <div className=" mx-4 flex flex-col px-4 bg-[#ebebeb] rounded-xl pb-4">
