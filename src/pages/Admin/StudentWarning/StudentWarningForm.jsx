@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import path from "../../../ultils/path";
-import { TTHP } from "../../../ultils/constant";
+import { TTHP, htmlWarning } from "../../../ultils/constant";
 
 const StudentWarningForm = () => {
   const {
@@ -75,6 +75,17 @@ const StudentWarningForm = () => {
         className="bg-[#fff] px-5 py-4 rounded-xl pb-4"
         onSubmit={handleSubmit(handleCreateOrUpdate)}
       >
+        <div className=" flex justify-end">
+          <Button
+            style={"bg-[#FFB700]"}
+            type="button"
+            handleOnclick={() =>
+              navigate(`/${path.ADMIN}/${path.STUDENT_WARNING}`)
+            }
+          >
+            Quay lại
+          </Button>
+        </div>
         <div className="flex w-full gap-3 mb-3">
           <InputForm
             id={"NameWarning"}
@@ -139,7 +150,7 @@ const StudentWarningForm = () => {
           register={register}
           errors={errors}
           setValue={setValue}
-          value={selectedWarning?.ContentWarning}
+          value={selectedWarning?.ContentWarning || htmlWarning}
         />
         <div className="mt-5 flex justify-end">
           <Button

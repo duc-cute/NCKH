@@ -79,7 +79,6 @@ const ManageStudent = () => {
     { title: "status", key: "status" },
     { title: "Số điện thoại", key: "PhoneNumber" },
     { title: "Số tín chỉ nợ", key: "STC_NO" },
-    { title: "Nợ học phần", key: "NO_HP" },
   ];
 
   const columnsPreview = [
@@ -101,24 +100,28 @@ const ManageStudent = () => {
     { title: "Quan hệ GH 2", key: "NguoiThan2.QuanHe" },
     { title: "SDT GH 2", key: "NguoiThan2.SDT" },
   ];
-  console.log("ư", watch("warwning"));
 
   const fetchDataAfterWarning = async (id) => {
     let res;
     if (id) {
       if (id === "all") res = await apiGetAllStudentWarning();
       else res = await apiGetStudentWarning(id);
-
       if (res?.status === 200) {
-        setStudentArray([...res?.data]);
+        let data = res?.data?.map((item) => {
+          const STC_NO = item?.STC_NO.reduce((acc, curr) => {
+            return acc + curr?.NumberOfCredits;
+          }, 0);
+          console.log("STC_NO", STC_NO);
+
+          return { ...item, STC_NO };
+        });
+
+        setStudentArray([...data]);
       }
     } else {
       setStudentArray([]);
     }
-
-    console.log("res", res);
   };
-  console.log("res", studentArray);
 
   useEffect(() => {
     fetchDataAfterWarning(watch("warwning"));

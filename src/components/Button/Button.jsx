@@ -16,7 +16,9 @@ const Button = ({
   return (
     <div className="relative" onClick={() => setShowDropdown((prev) => !prev)}>
       <div
-        onClick={handleOnclick && handleOnclick}
+        onClick={() => {
+          handleOnclick && handleOnclick();
+        }}
         className={twMerge(
           ` cursor-pointer flex text-white items-center gap-[6px] bg-[#1677ff] font-main border-[#d9d9d9] border-solid border-[1px] focus:ring-blue-300  rounded-lg text-sm px-3 py-2  focus:outline-none ${style} ${
             disable && "bg-white text-gray-300"

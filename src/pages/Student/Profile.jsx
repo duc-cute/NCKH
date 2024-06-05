@@ -27,6 +27,7 @@ const Profile = () => {
   const [selected, setSelected] = useState("studentInfo");
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [profileData, setProfileData] = useState();
+  const [dataModal,setDataModal] = useState(null)
 
   // Hàm cập nhật avatar
   const [urlImage, setUrlImage] = useState(profileData?.student.Avatar || "");
@@ -62,6 +63,15 @@ const Profile = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+     const fetchData = async () => {
+        const res = await apiWarningStudent();
+        console.log("res",res)
+        if(res?.status === 200) setDataModal({...res?.data}) 
+     }
+     fetchData()
+  },[])
 
   return (
     <>
@@ -246,7 +256,7 @@ const Profile = () => {
       <Modal
         title={<p className="text-red-600">Cảnh báo học vụ</p>}
         setShow={setShow}
-        show={show}
+        show={show && dataModal}
         onClickBtnCancel={() => setShow(false)}
       >
         <ul className="space-y-4 list-inside font-main ">
