@@ -13,49 +13,138 @@ import {
   SelectLib,
 } from "../../components";
 
-import { apiAllFaculties } from "../../apis";
-
 const { FaChartColumn, FaChartPie, IoManSharp, AiOutlineControl } = icons;
 
-const DashBoash = () => {
-  const [faculties, setFaculties] = useState([]);
+import {
+  apiAllKey,
+  apiAllFacultieGetName,
+  apiSelectInfoClass,
+  apiSelectInfoSemester,
+  apiReportFaculty,
+  apiReportClass,
+} from "../../apis";
 
-  // api select option khoa
+const DashBoash = () => {
+  // chọn năm học, học kỳ, khoa, lớp, môn học
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState();
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();
+
+  const [selectedFaculty, setSelectedFaculty] = useState();
+  const [selectedFacultyValue, setSelectedFacultyValue] = useState();
+  const [selectedFacultyId, setSelectedFacultyId] = useState();
+
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [selectedSemesterValue, setSelectedSemesterValue] = useState();
+
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedClassValue, setSelectedClassValue] = useState();
+  const [selectedClassId, setSelectedClassId] = useState();
+
+  const [reportFaculty, setReportFaculty] = useState();
+  const [reportClass, setReportClass] = useState();
+
+  // api select option khóa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/point/select-all-faculty";
-      const facultie = await apiAllFaculties(url);
-      setFaculties(facultie?.data);
+      const url = "v1/common/select-years-by-faculty";
+      const schoolYear = await apiAllKey(url);
+      setSelectedSchoolYear(schoolYear?.data);
     };
     fetchData();
   }, []);
 
+  // api select option khoa
+  useEffect(() => {
+    const fetchData = async () => {
+      const facultie = await apiAllFacultieGetName();
+      setSelectedFaculty(facultie?.data);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
+
+  // api select option lớp
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "v1/common/select-class-by-faculty-and-key";
+      const classScore = await apiSelectInfoClass(
+        url,
+        selectedSchoolYearId,
+        selectedFacultyId
+      );
+      setSelectedClass(classScore?.data);
+    };
+    fetchData();
+  }, [selectedFacultyId, selectedSchoolYearId]);
+
+  // api select option kỳ
+  useEffect(() => {
+    const fetchData = async () => {
+      const semester = await apiSelectInfoSemester(selectedSchoolYearId);
+      setSelectedSemester(semester?.data.listKy);
+    };
+    fetchData();
+  }, [selectedSchoolYearId]);
+
+  // api thống kê khóa
+  useEffect(() => {
+    const fetchData = async () => {
+      const report = await apiReportFaculty(
+        selectedSchoolYearId,
+        selectedFacultyId,
+        selectedSemesterValue
+      );
+      setReportFaculty(report?.data);
+    };
+    fetchData();
+  }, [selectedSchoolYearId, selectedFacultyId, selectedSemesterValue]);
+
+  // api thống kê lớp
+  useEffect(() => {
+    const fetchData = async () => {
+      const report = await apiReportClass(
+        selectedSchoolYearId,
+        selectedFacultyId,
+        selectedSemesterValue,
+        selectedClassId
+      );
+      setReportClass(report?.data);
+    };
+    fetchData();
+  }, [
+    selectedSchoolYearId,
+    selectedFacultyId,
+    selectedSemesterValue,
+    selectedClassId,
+  ]);
+
   const ref = useRef();
   const legendRef = useRef();
 
+  // biểu đồ tròn
   useEffect(() => {
-    const totalStudents = 600;
-    const studentsAtRiskOfNotQualifyingForExam = Math.floor(
-      Math.random() * totalStudents
-    );
-    const studentsAtRiskOfRepeatingTheYear = Math.floor(
-      Math.random() * (totalStudents - studentsAtRiskOfNotQualifyingForExam)
-    );
-    const studentsAtRiskOfNotGraduating = Math.floor(
-      Math.random() *
-        (totalStudents -
-          studentsAtRiskOfNotQualifyingForExam -
-          studentsAtRiskOfRepeatingTheYear)
-    );
-    const studentTuitionDebt = Math.floor(
-      Math.random() *
-        (totalStudents -
-          studentsAtRiskOfNotQualifyingForExam -
-          studentsAtRiskOfRepeatingTheYear -
-          studentsAtRiskOfNotGraduating)
-    );
+    const totalStudents = reportFaculty?.total_student_in_faculty || 600;
+    const studentsAtRiskOfNotQualifyingForExam = (
+      (reportFaculty?.khong_du_dk_thi / totalStudents) *
+      100
+    ).toFixed(2);
+
+    const studentsAtRiskOfRepeatingTheYear = (
+      (reportFaculty?.co_nguy_co_hoc_lai / totalStudents) *
+      100
+    ).toFixed(2);
+
+    const studentsAtRiskOfNotGraduating = (
+      (reportFaculty?.co_nguy_co_khong_tot_nghiep / totalStudents) *
+      100
+    ).toFixed(2);
+
+    const studentTuitionDebt = (
+      (reportFaculty?.sv_no_hoc_phi / totalStudents) *
+      100
+    ).toFixed(2);
+
     const studentsNotAtRisk =
-      totalStudents -
+      100 -
       studentsAtRiskOfNotQualifyingForExam -
       studentsAtRiskOfRepeatingTheYear -
       studentsAtRiskOfNotGraduating -
@@ -66,6 +155,7 @@ const DashBoash = () => {
         value: studentsAtRiskOfNotQualifyingForExam,
         label: "Sinh viên không đủ điều kiện dự thi",
       },
+
       {
         value: studentsAtRiskOfRepeatingTheYear,
         label: "Sinh viên có nguy cơ học lại",
@@ -74,7 +164,9 @@ const DashBoash = () => {
         value: studentsAtRiskOfNotGraduating,
         label: "Sinh viên có nguy cơ không tốt nghiệp",
       },
+
       { value: studentTuitionDebt, label: "Sinh viên Nợ học phí" },
+
       { value: studentsNotAtRisk, label: "Sinh viên trong nhóm an toàn" },
     ];
 
@@ -122,14 +214,7 @@ const DashBoash = () => {
     g.on("mouseover", function (event, d) {
       tooltip.transition().duration(200).style("opacity", 0.9);
       tooltip
-        .html(
-          "Số lượng sinh viên: " +
-            d.data.value +
-            "<br/>" +
-            "Tỉ lệ sinh viên: " +
-            ((d.data.value / totalStudents) * 100).toFixed(1) +
-            "%"
-        )
+        .html("Tỉ lệ sinh viên: " + d.data.value + "%")
         .style(
           "left",
           d3.pointer(event, ref.current)[0] +
@@ -190,7 +275,7 @@ const DashBoash = () => {
       .attr("x", rectX)
       .attr("y", rectY)
       .attr("width", rectWidth)
-      .attr("height", rectHeight)
+      .attr("height", rectHeight || 0)
       .attr("rx", borderRadius)
       .attr("ry", borderRadius)
       .style("fill", "#3d377e");
@@ -205,36 +290,37 @@ const DashBoash = () => {
       .style("font-size", "16px")
       .style("font-weight", "200")
       .style("fill", "white");
-  }, []);
+  }, [reportFaculty]);
 
+  // biểu đồ cột
   const barChartRef = useRef();
   useEffect(() => {
-    const totalStudents = 100;
-    const studentsAtRiskOfNotQualifyingForExam = Math.floor(
-      Math.random() * totalStudents
-    );
-    const studentsAtRiskOfRepeatingTheYear = Math.floor(
-      Math.random() * (totalStudents - studentsAtRiskOfNotQualifyingForExam)
-    );
-    const studentsAtRiskOfNotGraduating = Math.floor(
-      Math.random() *
-        (totalStudents -
-          studentsAtRiskOfNotQualifyingForExam -
-          studentsAtRiskOfRepeatingTheYear)
-    );
-    const studentTuitionDebt = Math.floor(
-      Math.random() *
-        (totalStudents -
-          studentsAtRiskOfNotQualifyingForExam -
-          studentsAtRiskOfRepeatingTheYear -
-          studentsAtRiskOfNotGraduating)
-    );
-    const studentsNotAtRisk =
-      totalStudents -
-      studentsAtRiskOfNotQualifyingForExam -
-      studentsAtRiskOfRepeatingTheYear -
-      studentsAtRiskOfNotGraduating -
-      studentTuitionDebt;
+    const totalStudents = reportClass?.total_student_in_class || 60;
+    const studentsAtRiskOfNotQualifyingForExam = (
+      (reportClass?.khong_du_dk_thi / totalStudents) *
+      100
+    ).toFixed(2);
+    const studentsAtRiskOfRepeatingTheYear = (
+      (reportClass?.co_nguy_co_hoc_lai / totalStudents) *
+      100
+    ).toFixed(2);
+    const studentsAtRiskOfNotGraduating = (
+      (reportClass?.co_nguy_co_khong_tot_nghiep / totalStudents) *
+      100
+    ).toFixed(2);
+    const studentTuitionDebt = (
+      (reportClass?.sv_no_hoc_phi / totalStudents) *
+      100
+    ).toFixed(2);
+
+    const svAnToan =
+      100 -
+      (+studentsAtRiskOfNotQualifyingForExam +
+        +studentsAtRiskOfRepeatingTheYear +
+        +studentsAtRiskOfNotGraduating +
+        +studentTuitionDebt);
+
+    console.log("studentsNotAtRisk, ", svAnToan);
 
     const data = [
       {
@@ -246,11 +332,11 @@ const DashBoash = () => {
         label: "Nguy cơ không tốt nghiệp",
       },
       { value: studentTuitionDebt, label: "Sinh viên Nợ học phí" },
-      { value: studentsNotAtRisk, label: "Trong nhóm an toàn" },
       {
         value: studentsAtRiskOfRepeatingTheYear,
         label: "Nguy cơ học lại",
       },
+      { value: svAnToan, label: "Trong nhóm an toàn" },
     ];
 
     const svg = d3
@@ -264,13 +350,14 @@ const DashBoash = () => {
       .domain(data.map((d) => d.label))
       .padding(0.4);
 
-    const yScale = d3.scaleLinear().range([450, 0]).domain([0, totalStudents]);
+    const yScale = d3.scaleLinear().range([450, 0]).domain([0, 100]);
 
     const g = svg
       .append("g")
       .attr("transform", "translate(" + 50 + "," + 50 + ")");
     g.append("g").call(d3.axisLeft(yScale));
 
+    console.log("data, ", data);
     g.selectAll(".bar")
       .data(data)
       .enter()
@@ -282,24 +369,24 @@ const DashBoash = () => {
       .attr("height", (d) => yScale(0) - yScale(d.value))
       .attr("fill", (d, i) => d3.schemeCategory10[i]);
 
-    g.selectAll(".bar")
-      .on("mouseover", function (event, d) {
-        tooltip.transition().duration(200).style("opacity", 0.9);
-        tooltip
-          .html(
-            "Số lượng sinh viên: " +
-              d.value +
-              "<br/>" +
-              "Tỉ lệ sinh viên: " +
-              ((d.value / totalStudents) * 100).toFixed(1) +
-              "%"
-          )
-          .style("left", event.pageX + "px")
-          .style("top", event.pageY - 28 + "px");
-      })
-      .on("mouseout", function (d) {
-        tooltip.transition().duration(500).style("opacity", 0);
-      });
+    // g.selectAll(".bar")
+    //   .on("mouseover", function (event, d) {
+    //     tooltip.transition().duration(200).style("opacity", 0.9);
+    //     tooltip
+    //       .html(
+    //         "Số lượng sinh viên: " +
+    //           d.value +
+    //           "<br/>" +
+    //           "Tỉ lệ sinh viên: " +
+    //           ((d.value / totalStudents) * 100).toFixed(1) +
+    //           "%"
+    //       )
+    //       .style("left", event.pageX + "px")
+    //       .style("top", event.pageY - 28 + "px");
+    //   })
+    //   .on("mouseout", function (d) {
+    //     tooltip.transition().duration(500).style("opacity", 0);
+    //   });
 
     g.append("g")
       .attr("transform", "translate(0," + 450 + ")")
@@ -307,7 +394,7 @@ const DashBoash = () => {
       .selectAll("text")
       .attr("transform", "translate(-10,0)rotate(-25)")
       .style("text-anchor", "end");
-  }, []);
+  }, [reportClass]);
 
   return (
     <div className="flex">
@@ -339,49 +426,53 @@ const DashBoash = () => {
                 Theo dõi khoa
               </div>
               <SelectOption
-                style={`w-[300px]`}
                 name={"Chọn khóa"}
-                data={faculties}
-                displayField={"FacultyName"}
+                data={
+                  selectedSchoolYear
+                    ? selectedSchoolYear.map((item) => {
+                        return { name: item };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedSchoolYearId(event.target.value);
                 }}
               />
+
               <SelectOption
-                style={`w-[300px]`}
+                style={`w-full`}
                 name={"Chọn khoa"}
-                data={faculties}
-                displayField={"FacultyName"}
+                data={
+                  selectedFaculty
+                    ? selectedFaculty.map((item) => {
+                        return { id: item.ID, name: item.FacultyName };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedFacultyId(event.target.value);
+                  const selectedId = Number(event.target.value);
+                  const selectedItem = selectedFaculty.find(
+                    (item) => item.ID === selectedId
+                  );
+                  if (selectedItem) {
+                    setSelectedFacultyValue(selectedItem.FacultyName);
+                  }
                 }}
               />
 
               <SelectOption
-                style={`w-[300px]`}
-                name={"Chọn năm học"}
-                data={faculties}
-                displayField={"FacultyName"}
+                style={`w-full`}
+                name={"Chọn kỳ học"}
+                data={
+                  selectedSemester
+                    ? selectedSemester.map((item) => {
+                        return { id: item.ID, name: item };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
-                }}
-              />
-
-              <SelectOption
-                style={`w-[300px]`}
-                name={"Chọn học kỳ"}
-                data={faculties}
-                displayField={"FacultyName"}
-                onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedSemesterValue(event.target.value);
                 }}
               />
             </div>
@@ -390,60 +481,75 @@ const DashBoash = () => {
                 Theo dõi lớp
               </div>
               <SelectOption
-                style={`w-[300px]`}
                 name={"Chọn khóa"}
-                data={faculties}
-                displayField={"FacultyName"}
+                data={
+                  selectedSchoolYear
+                    ? selectedSchoolYear.map((item) => {
+                        return { name: item };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  // setFacultyId(event.target.value);
-                  // setClassScores([]);
-                  // setCourses([]);
+                  setSelectedSchoolYearId(event.target.value);
                 }}
               />
+
               <SelectOption
-                style={`w-[300px]`}
+                style={`w-full`}
                 name={"Chọn khoa"}
-                data={faculties}
-                displayField={"FacultyName"}
+                data={
+                  selectedFaculty
+                    ? selectedFaculty.map((item) => {
+                        return { id: item.ID, name: item.FacultyName };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedFacultyId(event.target.value);
+                  const selectedId = Number(event.target.value);
+                  const selectedItem = selectedFaculty.find(
+                    (item) => item.ID === selectedId
+                  );
+                  if (selectedItem) {
+                    setSelectedFacultyValue(selectedItem.FacultyName);
+                  }
                 }}
               />
+
               <SelectOption
-                style={`w-[300px]`}
+                style={`w-full`}
                 name={"Chọn lớp"}
-                data={faculties}
-                displayField={"FacultyName"}
+                data={
+                  selectedClass
+                    ? selectedClass.map((item) => {
+                        return { id: item.ID, name: item.NameClass };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedClassId(event.target.value);
+                  const selectedId = Number(event.target.value);
+                  const selectedItem = selectedClass.find(
+                    (item) => item.ID === selectedId
+                  );
+                  if (selectedItem) {
+                    setSelectedClassValue(selectedItem.NameClass);
+                  }
                 }}
               />
 
               <SelectOption
-                style={`w-[300px]`}
-                name={"Chọn năm học"}
-                data={faculties}
-                displayField={"FacultyName"}
+                style={`w-full`}
+                name={"Chọn kỳ học"}
+                data={
+                  selectedSemester
+                    ? selectedSemester.map((item) => {
+                        return { id: item.ID, name: item };
+                      })
+                    : []
+                }
                 onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
-                }}
-              />
-
-              <SelectOption
-                style={`w-[300px]`}
-                name={"Chọn học kỳ"}
-                data={faculties}
-                displayField={"FacultyName"}
-                onChange={(event) => {
-                  setFacultyId(event.target.value);
-                  setClassScores([]);
-                  setCourses([]);
+                  setSelectedSemesterValue(event.target.value);
                 }}
               />
             </div>
@@ -453,7 +559,7 @@ const DashBoash = () => {
       <div className="bg-[#fff] ml-2 rounded-[12px] p-3">
         <div className="flex items-center">
           <div className="font-bold text-[20px] ml-[26px]">
-            Thống kê sinh viên theo từng lớp (sĩ số: 100 sv)
+            Thống kê sinh viên theo từng lớp
           </div>
           <div className="ml-3">
             <FaChartColumn />

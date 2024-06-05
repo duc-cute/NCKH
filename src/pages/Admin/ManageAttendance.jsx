@@ -16,6 +16,7 @@ import {
   apiSelectInfoSemester,
   apiSelectInfoCourse,
   apiDataAttendance,
+  apiAllFacultieGetName,
 } from "../../apis";
 import { readFileDataAttendance } from "../../ultils/helper";
 import icons from "../../ultils/icons";
@@ -161,8 +162,7 @@ const ManageAttendance = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/common/select-all-faculty";
-      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      const facultie = await apiAllFacultieGetName();
       setSelectedFaculty(facultie?.data);
     };
     fetchData();

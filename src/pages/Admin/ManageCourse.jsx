@@ -16,6 +16,7 @@ import {
   apiImportProgram,
   apiBlockProgram,
   apiGetDataProgram,
+  apiAllFacultieGetName,
 } from "../../apis";
 
 import { useForm } from "react-hook-form";
@@ -229,8 +230,7 @@ const ManageCourse = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/common/select-all-faculty";
-      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      const facultie = await apiAllFacultieGetName();
       setSelectedFaculty(facultie?.data);
     };
     fetchData();
