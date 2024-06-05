@@ -44,8 +44,6 @@ const ManageScore = () => {
   const [courses, setCourses] = useState([]);
   const [dataSelect, setDataSelect] = useState(null);
 
-  console.log("dataSelect: ", dataSelect);
-
   // chọn năm học, học kỳ, khoa, lớp, môn học
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
@@ -82,6 +80,7 @@ const ManageScore = () => {
       Class: selectedClassValue,
       TotalHours: +dataPreview.dataDescription[4],
       NumberOfCredits: +dataPreview.dataDescription[5],
+      Semester: selectedSemesterValue,
       FinalExamDate: dataPreview.dataDescription[6].slice(0, -3),
       DataStudents: DataStudents,
       DataPoint: DataPoint.map((point) => ({
