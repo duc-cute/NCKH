@@ -135,6 +135,7 @@ const DashBoash = () => {
     fetchData();
   }, [selectedSchoolYearId, selectedFacultyId2, selectedSemesterValue]);
 
+  console.log();
   // api thống kê lớp
   useEffect(() => {
     const fetchData = async () => {
