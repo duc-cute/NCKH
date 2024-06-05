@@ -259,6 +259,7 @@ const Profile = () => {
         setShow={setShow}
         show={show && dataModal}
         onClickBtnCancel={() => setShow(false)}
+        showSaveBtn={false}
       >
         <ul className="space-y-4 list-inside font-main ">
           <li className="font-semibold text-xl text-red-500">
@@ -280,14 +281,14 @@ const Profile = () => {
             </li>
           )}
 
-          <li className="font-semibold text-xl text-red-500">
+          {/* <li className="font-semibold text-xl text-red-500">
             Số môn đi học muộn quá 20%, có nguy cơ học lại
             <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
               <li>Lập trình Java(3 tín chỉ)</li>
               <li>Mạng máy tính(2 tín chỉ)</li>
               <li>Lịch sử Đảng(2 tín chỉ)</li>
             </ul>
-          </li>
+          </li> */}
           <li className="font-semibold text-xl text-red-500">
             Tình trạng học phí:
             <span className="ps-3 font-semibold text-xl mt-2 space-y-1">

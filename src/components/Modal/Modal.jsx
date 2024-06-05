@@ -12,6 +12,7 @@ const Modal = ({
   disableOkBtn,
   onClickBtnOk,
   onClickBtnCancel,
+  showSaveBtn = true,
 }) => {
   return (
     <>
@@ -57,9 +58,11 @@ const Modal = ({
               >
                 Cancle
               </Button>
-              <Button disable={disableOkBtn} handleOnclick={onClickBtnOk}>
-                {textOk || "Save"}
-              </Button>
+              {showSaveBtn && (
+                <Button disable={disableOkBtn} handleOnclick={onClickBtnOk}>
+                  {textOk || "Save"}
+                </Button>
+              )}
             </div>
           </div>
         </div>
