@@ -29,7 +29,9 @@ const StudentWarningForm = () => {
     watch,
   } = useForm();
   const { current } = useSelector((state) => state.user);
-  const [selectedWarning, setSelectedWarning] = useState(null);
+  const [selectedWarning, setSelectedWarning] = useState({
+    ContentWarning: htmlWarning,
+  });
   const [valueDisplay, setValueDisplay] = useState(0);
 
   const navigate = useNavigate();
@@ -42,7 +44,15 @@ const StudentWarningForm = () => {
         navigate(`/${path.ADMIN}/${path.STUDENT_WARNING}`);
       }
     } else {
-      const res = await apiCreateWarning(data);
+      let res;
+      if (!data?.ContentWarning) {
+        res = await apiCreateWarning({
+          ...data,
+          ContentWarning: selectedWarning?.ContentWarning,
+        });
+      } else {
+        res = await apiCreateWarning(data);
+      }
       if (res?.status === 200) {
         toast.success(res?.message);
         navigate(`/${path.ADMIN}/${path.STUDENT_WARNING}`);
@@ -150,7 +160,7 @@ const StudentWarningForm = () => {
           register={register}
           errors={errors}
           setValue={setValue}
-          value={selectedWarning?.ContentWarning || htmlWarning}
+          value={selectedWarning?.ContentWarning}
         />
         <div className="mt-5 flex justify-end">
           <Button

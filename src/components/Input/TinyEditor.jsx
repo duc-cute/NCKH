@@ -19,7 +19,7 @@ const TinyEditor = ({
       </span>
       <Editor
         apiKey="dhlxleeqnprm5fginnh3rftr5cvbvcvc3pkxzfke213luzxe"
-        {...register(id, validate)}
+        {...register(id)}
         initialValue={value}
         onChange={(e) => setValue(id, e.target.getContent())}
         init={{

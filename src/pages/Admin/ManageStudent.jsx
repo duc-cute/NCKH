@@ -43,6 +43,7 @@ import {
   apiGetAllWarning,
   apiGetStudentWarning,
 } from "../../apis/warning";
+import moment from "moment";
 
 const ManageStudent = () => {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
@@ -75,7 +76,17 @@ const ManageStudent = () => {
   const columns = [
     { title: "msv", key: "Msv" },
     { title: "Họ tên", key: "FullName" },
-    { title: "Ngày sinh", key: "DateOfBirth" },
+    {
+      title: "Ngày sinh",
+      key: "DateOfBirth",
+      render: (_, row) => (
+        <span>
+          {row?.DateOfBirth
+            ? moment(row?.DateOfBirth).format("DD/MM/YYYY")
+            : ""}
+        </span>
+      ),
+    },
     { title: "Giới tính", key: "Gender" },
     { title: "Khóa", key: "Key" },
     { title: "status", key: "status" },
@@ -114,10 +125,9 @@ const ManageStudent = () => {
             const STC_NO = item?.STC_NO?.reduce((acc, curr) => {
               return acc + curr?.NumberOfCredits;
             }, 0);
-            console.log("STC_NO", STC_NO);
 
             return { ...item, STC_NO };
-          }
+          } else return item;
         });
 
         setStudentArray([...data]);

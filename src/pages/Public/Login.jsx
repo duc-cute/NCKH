@@ -39,7 +39,11 @@ const Login = () => {
           })
         );
         if (res?.role === "Admin") navigate(`/${path.ADMIN}`);
-        else if (res?.role === "User") navigate(`${path.HOME}`);
+        else if (res?.role === "User") {
+          setTimeout(() => {
+            navigate(`${path.HOME}`);
+          }, 1000);
+        }
       } else swal.fire("Oops!", res?.mesage, "error");
     }
   }, [payload]);

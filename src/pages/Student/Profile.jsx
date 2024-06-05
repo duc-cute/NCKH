@@ -27,7 +27,8 @@ const Profile = () => {
   const [selected, setSelected] = useState("studentInfo");
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [profileData, setProfileData] = useState();
-  const [dataModal,setDataModal] = useState(null)
+  const [dataModal, setDataModal] = useState(null);
+  console.log("current", current);
 
   // Hàm cập nhật avatar
   const [urlImage, setUrlImage] = useState(profileData?.student.Avatar || "");
@@ -54,7 +55,7 @@ const Profile = () => {
         const data = await apiDataProfile();
         setProfileData(data?.data);
         if (data?.data?.student?.Avatar) {
-          setUrlImage(data.data.student.Avatar);
+          setUrlImage(data?.data?.student?.Avatar);
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -65,13 +66,13 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
-     const fetchData = async () => {
-        const res = await apiWarningStudent();
-        console.log("res",res)
-        if(res?.status === 200) setDataModal({...res?.data}) 
-     }
-     fetchData()
-  },[])
+    const fetchData = async () => {
+      const res = await apiWarningStudent();
+      console.log("res", res);
+      if (res?.status === 200) setDataModal({ ...res?.data });
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -262,18 +263,23 @@ const Profile = () => {
         <ul className="space-y-4 list-inside font-main ">
           <li className="font-semibold text-xl text-red-500">
             Mức độ cảnh báo:
-            <span className="text-base  font-medium ps-3  mt-2 space-y-1">
-              3
+            <span className="font-semibold text-xl capitalize ps-3  mt-2 space-y-1">
+              {dataModal?.NameWarning}
             </span>
           </li>
-          <li className="font-semibold text-xl text-red-500">
-            Số môn nợ tín chỉ
-            <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
-              <li>Phân tích thiết kế hệ thống(3 tín chỉ)</li>
-              <li>Tiếng anh chuyên nghành(2 tín chỉ)</li>
-              <li>Tin học đại cương(2 tín chỉ)</li>
-            </ul>
-          </li>
+          {dataModal?.STC_NO?.length > 0 && (
+            <li className="font-semibold text-xl text-red-500">
+              Số môn nợ tín chỉ
+              <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
+                {dataModal?.STC_NO?.map((item, key) => (
+                  <li key={key}>
+                    {item?.NameCourse}({item?.NumberOfCredits} tín chỉ)
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )}
+
           <li className="font-semibold text-xl text-red-500">
             Số môn đi học muộn quá 20%, có nguy cơ học lại
             <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
@@ -283,9 +289,9 @@ const Profile = () => {
             </ul>
           </li>
           <li className="font-semibold text-xl text-red-500">
-            Số học phí còn nợ:
-            <span className="ps-3 font-medium text-base mt-2 space-y-1">
-              12.000.000 VND
+            Tình trạng học phí:
+            <span className="ps-3 font-semibold text-xl mt-2 space-y-1">
+              {dataModal?.TTHP}
             </span>
           </li>
         </ul>

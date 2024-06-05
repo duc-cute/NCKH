@@ -93,8 +93,8 @@ const Table = ({
                       {columns?.map((column, ind) => (
                         <td key={ind} className="px-4 py-4">
                           {column.render
-                            ? column.render(item[column.key], item, index)
-                            : item[column.key]}
+                            ? column.render(item[column?.key], item, index)
+                            : item[column?.key]}
                         </td>
                       ))}
                     </tr>
