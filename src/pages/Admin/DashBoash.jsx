@@ -32,14 +32,13 @@ const DashBoash = () => {
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedFacultyValue, setSelectedFacultyValue] = useState();
   const [selectedFacultyId, setSelectedFacultyId] = useState();
+  const [selectedFacultyId2, setSelectedFacultyId2] = useState();
 
   const [selectedSemester, setSelectedSemester] = useState();
   const [selectedSemesterValue, setSelectedSemesterValue] = useState();
-
   const [selectedClass, setSelectedClass] = useState();
   const [selectedClassValue, setSelectedClassValue] = useState();
-  const [selectedClassId, setSelectedClassId] = useState();
-
+  const [selectedClassId, setSelectedClassId] = useState(null);
   const [reportFaculty, setReportFaculty] = useState();
   const [reportClass, setReportClass] = useState();
 
@@ -85,29 +84,69 @@ const DashBoash = () => {
     fetchData();
   }, [selectedSchoolYearId]);
 
-  // api thống kê khóa
+  // // api thống kê khoa
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (selectedSemesterValue !== null) {
+  //       const report = await apiReportFaculty(
+  //         selectedSchoolYearId,
+  //         selectedFacultyId,
+  //         selectedSemesterValue
+  //       );
+  //       setReportFaculty(report?.data);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [selectedSchoolYearId, selectedFacultyId, selectedSemesterValue]);
+
+  // // api thống kê lớp
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (selectedClassId !== null) {
+  //       const report = await apiReportClass(
+  //         selectedSchoolYearId,
+  //         selectedFacultyId,
+  //         selectedSemesterValue,
+  //         selectedClassId
+  //       );
+  //       setReportClass(report?.data);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [
+  //   selectedSchoolYearId,
+  //   selectedFacultyId,
+  //   selectedSemesterValue,
+  //   selectedClassId,
+  // ]);
+
+  // api thống kê khoa
   useEffect(() => {
     const fetchData = async () => {
-      const report = await apiReportFaculty(
-        selectedSchoolYearId,
-        selectedFacultyId,
-        selectedSemesterValue
-      );
-      setReportFaculty(report?.data);
+      if (selectedSemesterValue !== null) {
+        const report = await apiReportFaculty(
+          selectedSchoolYearId,
+          selectedFacultyId2,
+          selectedSemesterValue
+        );
+        setReportFaculty(report?.data);
+      }
     };
     fetchData();
-  }, [selectedSchoolYearId, selectedFacultyId, selectedSemesterValue]);
+  }, [selectedSchoolYearId, selectedFacultyId2, selectedSemesterValue]);
 
   // api thống kê lớp
   useEffect(() => {
     const fetchData = async () => {
-      const report = await apiReportClass(
-        selectedSchoolYearId,
-        selectedFacultyId,
-        selectedSemesterValue,
-        selectedClassId
-      );
-      setReportClass(report?.data);
+      if (selectedClassId !== null) {
+        const report = await apiReportClass(
+          selectedSchoolYearId,
+          selectedFacultyId,
+          selectedSemesterValue,
+          selectedClassId
+        );
+        setReportClass(report?.data);
+      }
     };
     fetchData();
   }, [
@@ -320,8 +359,6 @@ const DashBoash = () => {
         +studentsAtRiskOfNotGraduating +
         +studentTuitionDebt);
 
-    console.log("studentsNotAtRisk, ", svAnToan);
-
     const data = [
       {
         value: studentsAtRiskOfNotQualifyingForExam,
@@ -357,7 +394,6 @@ const DashBoash = () => {
       .attr("transform", "translate(" + 50 + "," + 50 + ")");
     g.append("g").call(d3.axisLeft(yScale));
 
-    console.log("data, ", data);
     g.selectAll(".bar")
       .data(data)
       .enter()
@@ -368,25 +404,6 @@ const DashBoash = () => {
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => yScale(0) - yScale(d.value))
       .attr("fill", (d, i) => d3.schemeCategory10[i]);
-
-    // g.selectAll(".bar")
-    //   .on("mouseover", function (event, d) {
-    //     tooltip.transition().duration(200).style("opacity", 0.9);
-    //     tooltip
-    //       .html(
-    //         "Số lượng sinh viên: " +
-    //           d.value +
-    //           "<br/>" +
-    //           "Tỉ lệ sinh viên: " +
-    //           ((d.value / totalStudents) * 100).toFixed(1) +
-    //           "%"
-    //       )
-    //       .style("left", event.pageX + "px")
-    //       .style("top", event.pageY - 28 + "px");
-    //   })
-    //   .on("mouseout", function (d) {
-    //     tooltip.transition().duration(500).style("opacity", 0);
-    //   });
 
     g.append("g")
       .attr("transform", "translate(0," + 450 + ")")
@@ -450,7 +467,7 @@ const DashBoash = () => {
                     : []
                 }
                 onChange={(event) => {
-                  setSelectedFacultyId(event.target.value);
+                  setSelectedFacultyId2(event.target.value);
                   const selectedId = Number(event.target.value);
                   const selectedItem = selectedFaculty.find(
                     (item) => item.ID === selectedId
