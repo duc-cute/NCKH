@@ -1,16 +1,12 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Table,
-  SelectOption,
-  Modal,
-  DragFile,
-  InputField,
-} from "../../components";
+import backgroundImage from "../../assets/images/bg-avatar.png";
+import avatarDefault from "../../assets/images/avatarDefault.jpeg";
 
+import { Button, Modal, InputField } from "../../components";
+import { toast } from "react-toastify";
 import icons from "../../ultils/icons";
 
 const {
@@ -23,225 +19,226 @@ const {
 import { apiDataProfile, apiUpdateAvatar, apiWarningStudent } from "../../apis";
 
 const Profile = () => {
-  const { current } = useSelector((state) => state.user);
-  const { showModal } = useSelector((state) => state.app);
-
-  const { dataProfile, setDataProfile } = useState();
-  const [updataAvatar, setDataAvatar] = useState();
-
-  const { dataWarning, setDataWarning } = useState();
-
-  const [show, setShow] = useState(true);
   const dispatch = useDispatch();
 
+  const { current } = useSelector((state) => state.user);
+  const { showModal } = useSelector((state) => state.app);
+  const [show, setShow] = useState(true);
+  const [selected, setSelected] = useState("studentInfo");
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [profileData, setProfileData] = useState();
+
+  // Hàm cập nhật avatar
+  const [urlImage, setUrlImage] = useState(profileData?.student.Avatar || "");
+
+  const updateAvatar = useCallback(async () => {
+    try {
+      const data = { UrlImage: urlImage };
+      const response = await apiUpdateAvatar(data);
+      if (response.status === 200) {
+        setUrlImage(urlImage);
+        toast.success("Cập nhật avatar thành công !");
+      } else {
+        toast.error("Cập nhật avatar thất bại !");
+      }
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      toast.error("Đã xảy ra lỗi khi cập nhật avatar !");
+    }
+  }, [urlImage]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await apiDataProfile();
-      setDataProfile(data);
+      try {
+        const data = await apiDataProfile();
+        setProfileData(data?.data);
+        if (data?.data?.student?.Avatar) {
+          setUrlImage(data.data.student.Avatar);
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        toast.error("Đã xảy ra lỗi khi tải dữ liệu profile !");
+      }
     };
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await apiWarningStudent();
-      setDataWarning(data);
-    };
-    fetchData();
-  }, []);
-
-  // useEffect(() => {
-  //   dispatch(showModal({
-  //     isShow
-  //   }))
-
-  // },[])
 
   return (
     <>
-      <div className="h-screen">
-        <div className="flex items-center">
-          <div className="text-[#3a3939] font-bold text-[24px] pl-8">
-            Profile sinh viên
+      <div className="flex gap-10 justify-center bg-[#f5f5f5] mt-5 font-sans-serif">
+        <div className="w-[25%] h-[540px] bg-black rounded-[20px] mt-6">
+          <div className="h-[50%] rounded-[20px] relative">
+            <img
+              className="h-full inset-0 bg-black opacity-60 rounded-[20px]"
+              src={backgroundImage}
+              alt="Background"
+            />
+            <div className="absolute top-[12%] left-[24%] transform-[-50%,-50%] flex flex-col justify-center items-center">
+              <div className="w-[140px] h-[140px] rounded-[50%] border-solid border-purple-300 border-2">
+                <img
+                  className="w-[140px] h-[140px] rounded-[50%] border-solid border-purple-300 border-2"
+                  src={urlImage}
+                  alt="Avatar"
+                />
+              </div>
+              <div className="flex flex-col items-center mt-3 text-[#fff]">
+                <div className="font-bold">
+                  {profileData?.student.FullName || "Mạnh Mạnh Đức"}
+                </div>
+                <div className="mt-3">
+                  Mã sinh viên: {profileData?.student.Msv || "20210719"}
+                </div>
+                <div className="mt-3">
+                  Khóa: {profileData?.student.Key || "12"}
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="ml-3">
-            <GrContactInfo />
+          <div className="bg-[#fff] h-[50%] ">
+            <div className="p-8">
+              <div className="font-bold text-[22px]">Quản lý thông tin</div>
+              <div
+                className={`flex gap-2 item-center mt-6 cursor-pointer p-3 ${
+                  selected === "studentInfo" ? "bg-[#ebebeb] rounded" : ""
+                }`}
+                onClick={() => setSelected("studentInfo")}
+              >
+                <div>
+                  <GrContactInfo color="black" />
+                </div>
+                <div className="text-[18px]">Thông tin sinh viên</div>
+              </div>
+              <div
+                className={`flex gap-2 item-center mt-2 cursor-pointer p-3 ${
+                  selected === "relativeInfo" ? "bg-[#ebebeb] rounded" : ""
+                }`}
+                onClick={() => setSelected("relativeInfo")}
+              >
+                <div>
+                  <FaUserFriends color="black" />
+                </div>
+                <div className="text-[18px]">Thông tin người thân</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex">
-          <div>
-            <div className="ml-3 flex flex-col items-center justify-center">
-              <div className="h-[200px] w-[200px] bg-[#3d3b3d] mt-6 rounded-full">
-                <img
-                  className="h-[200px] w-[200px] rounded-full"
-                  src="https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcStpnv_tQ4R7IwFANRwU3wv6K76_5jcrwiQgn40GdwgDQ0b7Xz7Dhycce6WR4zRFSlcAvgqAzUtQ4B0wdA"
-                  alt=""
-                />
-              </div>
-
-              <div className="mt-3">
-                <div className="font-bold">Nguyễn Thế Mạnh</div>
-                <div className="mt-3">20210719</div>
-              </div>
-
-              <div className="mt-3 w-[150px]">
-                <Button
-                  style={" text-white rounded-md "}
-                  icon={<AiOutlineCloudUpload />}
-                  handleOnclick={() => setShowUploadModal(true)}
-                >
-                  Upload photo
-                </Button>
-                {showUploadModal && (
-                  <Modal
-                    title="Upload Photo"
-                    setShow={setShowUploadModal}
-                    show={showUploadModal}
-                    onClickBtnCancel={() => setShowUploadModal(false)}
-                  >
-                    <InputField
-                      placeholder={"Nhập url avatar ..."}
-                      style={`flex max-h-[40px] w-full`}
-                      name={"avatar"}
-                    />
-                  </Modal>
-                )}
-              </div>
+        <div className="w-[65%] rounded-[20px] bg-[#fff] mt-6">
+          <div className="flex items-center">
+            <div className="font-bold text-[22px] pl-10 py-10">
+              Thông tin chi tiết
+            </div>
+            <div className="ml-2">
+              <IoMdInformationCircleOutline size={"22px"} />
             </div>
           </div>
-          <div>
-            <div className="ml-[140px] p-4 rounded-[3%] text-[#000] border-gray-400">
-              <div className="flex items-center">
-                <div className="font-bold my-5 text-[20px]">
-                  Thông tin sinh viên
+          <div className="ml-10">
+            {selected === "studentInfo" ? (
+              <div className="flex gap-7 flex-wrap">
+                <div className="w-[400px]">
+                  <InputField
+                    value={profileData?.student.Email || ""}
+                    label="Email"
+                    onChange={() => {}}
+                  />
                 </div>
-                <div className="ml-2">
-                  <IoMdInformationCircleOutline />
+                <div className="w-[400px]">
+                  <InputField
+                    value={profileData?.student.Gender || ""}
+                    label="Giới tính"
+                    onChange={() => {}}
+                  />
                 </div>
-              </div>
-              <div className="flex gap-10 flex-wrap">
-                <div className="">
-                  <label htmlFor="" className="font-bold">
-                    Mã sinh viên
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    20210719
-                  </div>
+                <div className="w-[400px]">
+                  <InputField
+                    value={
+                      new Date(
+                        profileData?.student.DateOfBirth
+                      ).toLocaleDateString() || ""
+                    }
+                    label="Ngày sinh"
+                    onChange={() => {}}
+                  />
                 </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Họ và tên
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Nguyễn Thế Mạnh
-                  </div>
+                <div className="w-[400px]">
+                  <InputField
+                    value={profileData?.student.Hometown || ""}
+                    label="Quê quán"
+                    onChange={() => {}}
+                  />
                 </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Ngày sinh
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    05/03/2003
-                  </div>
+                <div className="w-[400px]">
+                  <InputField
+                    value={profileData?.student.PermanentResidence || ""}
+                    label="Nơi thường trú"
+                    onChange={() => {}}
+                  />
                 </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Thường chú
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Ba vì, Hà Nội
-                  </div>
+                <div className="w-[400px]">
+                  <InputField
+                    value={profileData?.student.PhoneNumber || ""}
+                    label="Số điện thoại"
+                    onChange={() => {}}
+                  />
                 </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Giới tính
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Nam
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Quê quán
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Ba vì
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Số điện thoại
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    12
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Khóa
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    12
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Người thân 1
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Nguyễn Văn Quân
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Số điện thoại người thân 1
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    0987739823
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Nơi thường chú người thân 1
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Hà Nội
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Người thân 2
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Nguyễn Văn A
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Số điện thoại người thân 2
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    0987739823
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="" className="font-bold">
-                    Nơi thường chú người thân 2
-                  </label>
-                  <div className="bg-white w-[300px] p-4 mt-2 border-solid border-rose-600 rounded-full">
-                    Hà Nội
+                <div className="w-[130px] h[100px]">
+                  <div className="font-bold">Cập nhật avatar</div>
+                  <div className="mt-5">
+                    <Button
+                      style={"text-white rounded-md"}
+                      icon={<AiOutlineCloudUpload />}
+                      handleOnclick={() => setShowUploadModal(true)}
+                    >
+                      Cập nhật
+                    </Button>
+                    <Modal
+                      title={<p className="text-[#000]">Cập nhật avatar</p>}
+                      setShow={setShowUploadModal}
+                      show={showUploadModal}
+                      onClickBtnCancel={() => setShowUploadModal(false)}
+                      onClickBtnOk={() => {
+                        if (urlImage === "") {
+                          toast.error("Không được bỏ trống url !");
+                        } else {
+                          updateAvatar();
+                          setShowUploadModal(false);
+                        }
+                      }}
+                    >
+                      <div className="w-full">
+                        <InputField
+                          value={urlImage}
+                          onChange={(e) => {
+                            setUrlImage(e.target.value);
+                          }}
+                          type="text"
+                          placeholder="Nhập url địa chỉ ảnh để cập nhật avatar ..."
+                        />
+                      </div>
+                    </Modal>
                   </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex gap-7 flex-wrap">
+                {profileData?.relatives.map((relative, index) => (
+                  <div className="w-[400px]" key={index}>
+                    <InputField
+                      value={relative.Name || ""}
+                      label={`Tên giám hộ ${index + 1}`}
+                    />
+                    <InputField
+                      value={relative.Role || ""}
+                      label={`Vai trò giám hộ ${index + 1}`}
+                    />
+                    <InputField
+                      value={relative.PhoneNumber || ""}
+                      label={`Số điện thoại giám hộ ${index + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -268,7 +265,7 @@ const Profile = () => {
             </ul>
           </li>
           <li className="font-semibold text-xl text-red-500">
-            Số môn đi học muộn quá 20%,có nguy cơ học lại
+            Số môn đi học muộn quá 20%, có nguy cơ học lại
             <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
               <li>Lập trình Java(3 tín chỉ)</li>
               <li>Mạng máy tính(2 tín chỉ)</li>

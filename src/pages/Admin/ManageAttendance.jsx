@@ -241,7 +241,7 @@ const ManageAttendance = () => {
         }, {});
 
         var fakeStart = "17/08/2023";
-        var fakeEnd = "06/10/2023";
+        var fakeEnd = "2023-10-06";
 
         const dataFormat = Object.values(attendanceByStudent).map(
           (student) => ({
