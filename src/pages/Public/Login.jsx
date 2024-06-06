@@ -38,6 +38,7 @@ const Login = () => {
             },
           })
         );
+        console.log("123");
         if (res?.role === "Admin") navigate(`/${path.ADMIN}`);
         else if (res?.role === "User") {
           setTimeout(() => {

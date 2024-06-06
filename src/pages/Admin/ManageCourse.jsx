@@ -45,8 +45,6 @@ const ManageCourse = () => {
 
   // handle import
   const handleImportButtonClick = useCallback(async () => {
-    console.log(dataImport);
-
     const response = await apiImportProgram(dataImport);
     if (response.status === 200) {
       toast.success("Import dữ liệu thành công !");
@@ -113,6 +111,9 @@ const ManageCourse = () => {
 
           setDataImport(transformedData);
           setDataPreview(mergedDataPreview);
+
+          console.log("transformedData, ", transformedData);
+          console.log("mergedDataPreview, ", mergedDataPreview);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -168,55 +169,28 @@ const ManageCourse = () => {
     { title: "Tên học phần", key: "NameCourse", sort: true },
     { title: "Số tín chỉ", key: "NumberOfCredits" },
     { title: "Số giờ tự học", key: "SelfLearning" },
-    // { title: "Mã học phần tiên quyết", key: "MHPKQ" },
     { title: "Học kỳ", key: "Semester" },
     { title: "LT, BT", key: "ExerciseTheory" },
-    // { title: "Ngày thi kết thúc môn", key: "FinalExamDate" },
     { title: "ĐAMH/ BTL", key: "SpecializedProjects" },
     { title: "KLTN/ ĐATN/ TT", key: "BigExercise" },
     { title: "Mô tả", key: "Describe" },
   ];
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     courseCode: "IT3213",
-  //     courseName: "Kiến trúc máy tính",
-  //     numberOfCredits: 2,
-  //     selfStudy: "45",
-  //     prerequisiteCourse: "IT1208",
-  //     semester: "2",
-  //   },
-  //   {
-  //     id: 2,
-  //     courseCode: "IT3214",
-  //     courseName: "An toàn bảo mật thông tin",
-  //     numberOfCredits: 3,
-  //     selfStudy: "75",
-  //     prerequisiteCourse: "IT1208",
-  //     semester: "5",
-  //   },
-  //   {
-  //     id: 3,
-  //     courseCode: "IT3215",
-  //     courseName: "Quản trị hệ thống Windows Server1",
-  //     numberOfCredits: 2,
-  //     selfStudy: "45",
-  //     prerequisiteCourse: "IT1208",
-  //     semester: "3",
-  //   },
-  //   {
-  //     id: 4,
-  //     courseCode: "IT3216",
-  //     courseName: "Hệ quản trị CSDL Oracle",
-  //     numberOfCredits: 2,
-  //     selfStudy: "45",
-  //     prerequisiteCourse: "IT1208",
-  //     semester: "2",
-  //   },
-  // ];
-
-  // api select option khóa
+  const columnPreview = [
+    { title: "stt", key: "STT", sort: true },
+    {
+      title: "Mã học phần",
+      key: "MHP",
+      sort: true,
+    },
+    { title: "Tên học phần", key: "TENHP", sort: true },
+    { title: "Số tín chỉ", key: "STC" },
+    { title: "Số giờ tự học", key: "GIO_TH" },
+    { title: "Học kỳ", key: "HK" },
+    { title: "LT, BT", key: "LT_BT" },
+    { title: "ĐAMH/ BTL", key: "DAMH_BTL" },
+    { title: "KLTN/ ĐATN/ TT", key: "KLTN_DATN_TT" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -395,7 +369,7 @@ const ManageCourse = () => {
         >
           <DragFile
             data={dataPreview}
-            columns={columns}
+            columns={columnPreview}
             onChange={handlePreviewData}
             fileName={fileName}
             setFileName={setFileName}
