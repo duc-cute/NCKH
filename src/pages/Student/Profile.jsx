@@ -280,15 +280,20 @@ const Profile = () => {
               </ul>
             </li>
           )}
+          {dataModal?.SBN?.lenght > 0 && (
+            <li className="font-semibold text-xl text-red-500">
+              Số môn nghỉ học nhiều quá mức:{dataModal?.NameWarning}, có nguy cơ
+              học lại
+              <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
+                {dataModal?.SNB.map((item, ind) => (
+                  <li key={ind}>
+                    {item?.NameCourse}({item?.NumberOfCredits} tín chỉ)
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )}
 
-          {/* <li className="font-semibold text-xl text-red-500">
-            Số môn đi học muộn quá 20%, có nguy cơ học lại
-            <ul className="ps-5 font-normal text-base mt-2 space-y-1 list-decimal list-inside">
-              <li>Lập trình Java(3 tín chỉ)</li>
-              <li>Mạng máy tính(2 tín chỉ)</li>
-              <li>Lịch sử Đảng(2 tín chỉ)</li>
-            </ul>
-          </li> */}
           <li className="font-semibold text-xl text-red-500">
             Tình trạng học phí:
             <span className="ps-3 font-semibold text-xl mt-2 space-y-1">
