@@ -137,7 +137,7 @@ const StudentWarningForm = () => {
         <div className="grid grid-cols-2 gap-3 mb-3">
           <InputForm
             id={"GPA"}
-            label={"Điểm GPA thấp dưới"}
+            label={"Điểm theo thang điểm 10 thấp dưới"}
             register={register}
             errors={errors}
             validate={{ required: "Need Fill This Field" }}
