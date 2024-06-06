@@ -6,11 +6,19 @@ export const apiAllKey = (url) =>
      method: "get"
   });
 
+  // lấy tất cả thông tin khoa
 export const apiAllFaculties =  (url, id) =>
    axios({
     url: `/${url}/?key=${id}`,
     method: "get",
   });
+
+  // lấy tất cả tên và id khoa
+  export const apiAllFacultieGetName =  () =>
+    axios({
+     url: "v1/common/all-faculty",
+     method: "get",
+   });
 
 export const apiClassById = (url, id) =>
   axios({
@@ -156,4 +164,18 @@ export const apiImportProgram= (data) =>
     url: "/v1/studyprogram/import-studyprograms", 
     method: "post",
     data,
+});
+
+// lấy thống kê khoa
+export const apiReportFaculty = (Key, IDFaculty, Semester) =>
+  axios({
+    url: `v1/report/follow-report-faculty?Key=${Key}&IDFaculty=${IDFaculty}&Semester=${Semester}`,
+    method: "get",
+});
+
+// lấy thống kê lớp
+export const apiReportClass = (Key, IDFaculty, Semester, IDClass) =>
+  axios({
+    url: `v1/report/follow-report-class?Key=${Key}&IDFaculty=${IDFaculty}&Semester=${Semester}&IDClass=${IDClass}`,
+    method: "get",
 });

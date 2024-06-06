@@ -21,6 +21,7 @@ import {
   apiDeleteClass,
   apiUpdateClass,
   apiImportClass,
+  apiAllFacultieGetName,
 } from "../../apis";
 
 import { toast } from "react-toastify";
@@ -174,8 +175,7 @@ const CategorySchoolYear = () => {
   // api select option khoa
   useEffect(() => {
     const fetchData = async () => {
-      const url = "v1/common/select-all-faculty";
-      const facultie = await apiAllFaculties(url, selectedSchoolYearId);
+      const facultie = await apiAllFacultieGetName();
       setSelectedFaculty(facultie?.data);
     };
     fetchData();
