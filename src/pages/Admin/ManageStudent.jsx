@@ -131,7 +131,12 @@ const ManageStudent = () => {
           } else return item;
         });
 
+        if (debounceSearch) {
+          data = data?.filter((item) => item?.Msv?.includes(debounceSearch));
+        }
         setStudentArray([...data]);
+      } else {
+        setStudentArray([]);
       }
     } else {
       setStudentArray([]);
@@ -141,6 +146,10 @@ const ManageStudent = () => {
   useEffect(() => {
     fetchDataAfterWarning(watch("warwning"));
   }, [watch("warwning")]);
+
+  useEffect(() => {
+    fetchDataAfterWarning(watch("warwning"));
+  }, [debounceSearch]);
 
   useEffect(() => {
     const fetchData = async () => {

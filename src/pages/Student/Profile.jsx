@@ -163,9 +163,11 @@ const Profile = () => {
                 <div className="w-[400px]">
                   <InputField
                     value={
-                      new Date(
-                        profileData?.student.DateOfBirth
-                      ).toLocaleDateString() || ""
+                      profileData?.student?.DateOfBirth
+                        ? new Date(
+                            profileData?.student?.DateOfBirth
+                          ).toLocaleDateString()
+                        : ""
                     }
                     label="Ngày sinh"
                     onChange={() => {}}
@@ -266,6 +268,12 @@ const Profile = () => {
             Mức độ cảnh báo:
             <span className="font-semibold text-xl capitalize ps-3  mt-2 space-y-1">
               {dataModal?.NameWarning}
+            </span>
+          </li>
+          <li className="font-semibold text-xl text-red-500">
+            Điểm học tập của bạn:
+            <span className="font-semibold text-xl capitalize ps-3  mt-2 space-y-1">
+              {dataModal?.GPA?.diem_thang_10}
             </span>
           </li>
           {dataModal?.STC_NO?.length > 0 && (
