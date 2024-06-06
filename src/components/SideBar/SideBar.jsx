@@ -4,6 +4,7 @@ import logo from "../../assets/images/logo.png";
 import icons from "../../ultils/icons";
 import path from "../../ultils/path";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 const {
   AiOutlineMessage,
   AiOutlineSchedule,
@@ -15,7 +16,7 @@ const {
   BiCategory,
   IoSettingsOutline,
 } = icons;
-const menus = [
+let menusSub = [
   {
     id: 1,
     path: `/${path.ADMIN}`,
@@ -46,24 +47,7 @@ const menus = [
       },
     ],
   },
-  {
-    id: 3,
-    path: path.STUDENT_WARNING,
-    title: <Link to={path.STUDENT_WARNING}>Thiết lập cảnh báo</Link>,
-    icon: <IoSettingsOutline />,
-  },
-  {
-    id: 4,
-    path: path.MANAGE_CATEGORY,
-    title: <Link to={path.MANAGE_CATEGORY}>Quản lý danh mục</Link>,
-    icon: <BiCategory />,
-  },
-  {
-    id: 5,
-    path: path.MANAGE_COURSE,
-    title: <Link to={path.MANAGE_COURSE}>Chương trình đào tạo</Link>,
-    icon: <GiArchiveResearch />,
-  },
+
   {
     id: 6,
     path: path.MANAGE_SCHEDULE,
@@ -82,6 +66,29 @@ const menus = [
     title: <Link to={path.MANAGE_MAIL}>Quản lý Mail</Link>,
     icon: <AiOutlineMessage />,
   },
+];
+
+const menuAdmin = [
+  {
+    id: 3,
+    path: path.STUDENT_WARNING,
+    title: <Link to={path.STUDENT_WARNING}>Thiết lập cảnh báo</Link>,
+    icon: <IoSettingsOutline />,
+  },
+  {
+    id: 5,
+    path: path.MANAGE_COURSE,
+    title: <Link to={path.MANAGE_COURSE}>Chương trình đào tạo</Link>,
+    icon: <GiArchiveResearch />,
+  },
+  ,
+  {
+    id: 4,
+    path: path.MANAGE_CATEGORY,
+    title: <Link to={path.MANAGE_CATEGORY}>Quản lý danh mục</Link>,
+    icon: <BiCategory />,
+  },
+
   {
     id: 9,
     title: <label>Quản trị</label>,
@@ -104,6 +111,7 @@ const menus = [
 const SideBar = () => {
   const [showSubmenu, setShowSubmenu] = useState(false);
   const location = useLocation();
+  const { current } = useSelector((state) => state.user);
 
   const isActive = (locationPath) => {
     if (location.pathname === locationPath) {
@@ -114,6 +122,11 @@ const SideBar = () => {
       locationPath !== `/${path.ADMIN}`
     );
   };
+  let menus = [...menusSub];
+  if (current?.role === "Admin") {
+    menus = [...menusSub, ...menuAdmin];
+    menus = menus.sort((a, b) => a?.id - b?.id);
+  }
 
   const handleShowSubMenu = (id) => {
     id === showSubmenu ? setShowSubmenu(null) : setShowSubmenu(id);
@@ -134,39 +147,39 @@ const SideBar = () => {
       <ul className="mt-6 flex flex-col gap-[10px] select-none">
         {menus.map((el) => (
           <li
-            key={el.id}
+            key={el?.id}
             className={`relative ${
-              isActive(el.path)
+              isActive(el?.path)
                 ? "bg-[#1677ff] mx-1 rounded-md text-white"
                 : "text-[#ffffffa6]"
             } transition-all duration-200 ease-out ${
-              el.subtitle && el.id === showSubmenu ? "mb-[120px]" : "mb-0"
+              el?.subtitle && el?.id === showSubmenu ? "mb-[120px]" : "mb-0"
             } `}
           >
             <div
               className="flex gap-3 h-10 items-center pl-6 cursor-pointer "
-              onClick={() => handleShowSubMenu(el.id)}
+              onClick={() => handleShowSubMenu(el?.id)}
             >
-              {el.icon}
-              {el.title}
+              {el?.icon}
+              {el?.title}
             </div>
 
             {el?.subtitle && (
               <ul
                 className={`absolute w-full bg-[#000c17]  ${
-                  el.id === showSubmenu ? ` visible ` : " invisible"
+                  el?.id === showSubmenu ? ` visible ` : " invisible"
                 }`}
               >
-                {el.subtitle.map((sub) => (
-                  <li key={sub.id} onClick={(e) => e.preventDefault()}>
+                {el?.subtitle.map((sub) => (
+                  <li key={sub?.id} onClick={(e) => e.preventDefault()}>
                     <div
                       className={` ${
-                        isActive(sub.path)
+                        isActive(sub?.path)
                           ? "bg-[#1677ff] text-white"
                           : "text-[#ffffffa6]"
                       }  flex gap-3 pl-12 h-10 items-center py-[10px] mx-1 rounded-md`}
                     >
-                      {sub.title}
+                      {sub?.title}
                     </div>
                   </li>
                 ))}

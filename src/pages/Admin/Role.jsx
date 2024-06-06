@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import { Button, InputSearch, Modal, Table } from "../../components";
 import icons from "../../ultils/icons";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import path from "../../ultils/path";
 
 const { TiPlus, LuPencilLine, IoClose, LuSettings } = icons;
 const data = [
@@ -169,7 +172,11 @@ const Role = () => {
   const [show, setShow] = useState(false);
   const [dataModal, setDataModal] = useState({});
   const [moduleNumber, setModuleNumber] = useState(1);
+  const { current } = useSelector((state) => state?.user);
 
+  if (current?.role === "Lecturers") {
+    return <Navigate to={`/${path.LOGIN}`} />;
+  }
   const handleSetSelectRow = (no, index) => {
     if (index === 0) {
       setShow(true);
@@ -224,10 +231,12 @@ const Role = () => {
       <Modal
         show={show}
         setShow={setShow}
-        title={<>
-         Function for role:{" "}
-          <span className="text-[22px]">{dataModal?.role}</span>
-        </>}
+        title={
+          <>
+            Function for role:{" "}
+            <span className="text-[22px]">{dataModal?.role}</span>
+          </>
+        }
       >
         <div className="flex justify-between gap-2">
           <div className="flex-1">

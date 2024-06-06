@@ -26,8 +26,15 @@ const { AiOutlineCloudUpload, CgImport } = icons;
 
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import path from "../../ultils/path";
 
 const ManageCourse = () => {
+  const { current } = useSelector((state) => state?.user);
+  if (current?.role === "Lecturers") {
+    return <Navigate to={`/${path.LOGIN}`} />;
+  }
   const [selectedSchoolYear, setSelectedSchoolYear] = useState();
   const [selectedFaculty, setSelectedFaculty] = useState();
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState();

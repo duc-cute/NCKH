@@ -90,7 +90,14 @@ const ManageStudent = () => {
     },
     { title: "Giới tính", key: "Gender" },
     { title: "Khóa", key: "Key" },
-    { title: "status", key: "status" },
+    {
+      title: "Tình trạng",
+      key: "status",
+
+      render: (_, row) => (
+        <span>{row?.status === "active" ? "Đang học" : "Bỏ học"}</span>
+      ),
+    },
     { title: "Số điện thoại", key: "PhoneNumber" },
     { title: "Số tín chỉ nợ", key: "STC_NO" },
   ];

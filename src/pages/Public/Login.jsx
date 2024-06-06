@@ -38,8 +38,9 @@ const Login = () => {
             },
           })
         );
-        console.log("123");
-        if (res?.role === "Admin") navigate(`/${path.ADMIN}`);
+
+        if (res?.role === "Admin" || res?.role === "Lecturers")
+          navigate(`/${path.ADMIN}`);
         else if (res?.role === "User") {
           setTimeout(() => {
             navigate(`${path.HOME}`);

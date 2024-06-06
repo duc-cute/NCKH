@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Table,
-} from "../../../components";
+import { Button, Table } from "../../../components";
 import swal from "sweetalert2";
 import icons from "../../../ultils/icons";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import path from "../../../ultils/path";
-import { apiDeleteWarning, apiGetAllWarning, apiSendWarning } from "../../../apis/warning";
+import {
+  apiDeleteWarning,
+  apiGetAllWarning,
+  apiSendWarning,
+} from "../../../apis/warning";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
-const {
-  AiOutlineCloudUpload,
-  AiOutlineSend,
-  FiTrash2,
-  LuPencilLine,
-} = icons;
+const { AiOutlineCloudUpload, AiOutlineSend, FiTrash2, LuPencilLine } = icons;
 
 const StudentWarningIndex = () => {
   const {
@@ -30,6 +27,11 @@ const StudentWarningIndex = () => {
   const navigate = useNavigate();
   const [listWarning, setListWarning] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const { current } = useSelector((state) => state?.user);
+
+  if (current?.role === "Lecturers") {
+    return <Navigate to={`/${path.LOGIN}`} />;
+  }
   const fetchData = async () => {
     const res = await apiGetAllWarning();
     if (res?.status === 200) {
@@ -65,12 +67,12 @@ const StudentWarningIndex = () => {
       });
   };
 
-  const handleSendWarning =async (data) => {
+  const handleSendWarning = async (data) => {
     let selectedIds = Object.keys(data.checkboxes);
     let list_id_warning = selectedIds.filter((key) => data.checkboxes[key]);
-    const res = await apiSendWarning({list_id_warning:list_id_warning})
-    if(res?.status === "200") toast.success(res?.message)
-    else toast.error("Error sending warning !!")
+    const res = await apiSendWarning({ list_id_warning: list_id_warning });
+    if (res?.status === "200") toast.success(res?.message);
+    else toast.error("Error sending warning !!");
   };
 
   const columns = [
@@ -196,4 +198,3 @@ const StudentWarningIndex = () => {
 };
 
 export default StudentWarningIndex;
-
